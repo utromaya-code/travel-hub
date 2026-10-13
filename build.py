@@ -3,6 +3,11 @@
 
     python3 build.py                 -> index.html (картинки из папки img/)
     python3 build.py --inline OUT    -> одна страница с картинками внутри (для превью)
+
+Места, цены и ранние тарифы меняются в content.json:
+  seats   {"left": осталось, "total": всего или null, "of": "по ранней цене" или ""}
+  tiers   ступени цены, state: sold (продано) / now (сейчас) / next (потом) / option (вариант)
+  urgency надпись на фото, hot + hotOrder строка в блоке «Места заканчиваются»
 """
 import base64
 import html
@@ -19,10 +24,10 @@ FONTS = ("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500"
          "&family=Onest:wght@400;500;600&family=Unbounded:wght@500;600&display=swap")
 
 CSS = r"""
-/* Сезонный указатель: семь фото-корешков по месяцам, затем по одной широкой главе на каждую поездку. */
+/* Сезонный указатель: заголовок и горящие места, семь фото-корешков по месяцам, затем по одной широкой главе на поездку. */
 :root{
   --paper:#F0F3F2; --surface:#FFFFFF; --ink:#111A1C; --ink-soft:#4C5A5D; --line:#D2DAD9;
-  --stamp:#1D3EC4; --on-stamp:#FFFFFF;
+  --stamp:#1D3EC4; --on-stamp:#FFFFFF; --stamp-wash:rgba(29,62,196,.08);
   --on-photo:#FFFFFF; --scrim:rgba(6,10,12,.78); --chip-bg:rgba(255,255,255,.93); --chip-ink:#1D3EC4;
   --f-display:"Unbounded","Arial Black",system-ui,sans-serif;
   --f-body:"Onest","Segoe UI",system-ui,-apple-system,sans-serif;
@@ -31,12 +36,12 @@ CSS = r"""
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --paper:#0B1011; --surface:#131A1C; --ink:#E4EAE9; --ink-soft:#9BA8AA; --line:#243033;
-    --stamp:#8CA1FF; --on-stamp:#0B1011; color-scheme:dark;
+    --stamp:#8CA1FF; --on-stamp:#0B1011; --stamp-wash:rgba(140,161,255,.1); color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --paper:#0B1011; --surface:#131A1C; --ink:#E4EAE9; --ink-soft:#9BA8AA; --line:#243033;
-  --stamp:#8CA1FF; --on-stamp:#0B1011; color-scheme:dark;
+  --stamp:#8CA1FF; --on-stamp:#0B1011; --stamp-wash:rgba(140,161,255,.1); color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -53,19 +58,40 @@ a{color:inherit}
 .top a:hover{border-color:var(--ink)}
 
 /* первый экран */
-.hero{padding-block:clamp(1.5rem,5vw,3.5rem) clamp(1.25rem,3vw,2rem);display:grid;gap:1rem}
+.intro{display:grid;gap:clamp(1.75rem,4vw,2.5rem);padding-block:clamp(1.25rem,4vw,3rem) 0;
+  grid-template-areas:"text" "spines" "hot"}
+@media (min-width:980px){.intro{grid-template-columns:minmax(0,1fr) 25rem;grid-template-areas:"text hot" "spines spines";column-gap:4rem;align-items:end}}
+.hero{grid-area:text;display:grid;gap:1.1rem;align-content:start;min-width:0}
 .eyebrow{margin:0;font:500 .78rem/1.3 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--stamp)}
-.hero h1{margin:0;font:600 clamp(2rem,6.2vw,4.6rem)/1.04 var(--f-display);letter-spacing:-.02em;text-wrap:balance;max-width:16ch}
-.lead{margin:0;max-width:60ch;font-size:clamp(1.02rem,1.6vw,1.2rem);color:var(--ink-soft)}
+.hero h1{margin:0;font:600 clamp(2rem,5.6vw,4.3rem)/1.05 var(--f-display);letter-spacing:-.02em;text-wrap:balance;max-width:17ch}
+.lead{margin:0;max-width:58ch;font-size:clamp(1.02rem,1.6vw,1.2rem);color:var(--ink-soft)}
+.hero-cta{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.25rem;padding-top:.25rem}
+.hero-cta .btn{min-width:min(100%,15rem)}
+.hero-cta span{font-size:.9rem;color:var(--ink-soft)}
+
+/* горящие места */
+.hot{grid-area:hot;min-width:0}
+.hot h2{margin:0 0 .35rem;font:600 1.15rem/1.25 var(--f-display);letter-spacing:-.01em}
+.hot>p{margin:0 0 .9rem;color:var(--ink-soft);font-size:.95rem}
+.hot ul{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink)}
+.hot li{border-bottom:1px solid var(--line)}
+.hot a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.1rem 1rem;align-items:baseline;padding:.65rem .1rem;text-decoration:none}
+.hot a:hover .hot-name{color:var(--stamp)}
+.hot-name{font:600 1rem/1.3 var(--f-body)}
+.hot-name small{font:400 .78rem/1 var(--f-mono);color:var(--ink-soft);margin-left:.45rem;letter-spacing:.04em}
+.hot-what{font:500 .8rem/1.3 var(--f-mono);color:var(--stamp);text-align:right}
 
 /* корешки */
-.spines{display:flex;gap:clamp(4px,.8vw,8px);height:clamp(300px,44vw,470px)}
+.spines-nav{grid-area:spines;min-width:0}
+.spines{display:flex;gap:clamp(4px,.8vw,8px);height:clamp(300px,42vw,460px)}
 .spine{position:relative;flex:1 1 0;min-width:0;overflow:hidden;border-radius:4px;text-decoration:none;color:var(--on-photo);
   background:#2a3133 var(--img) var(--pos)/cover no-repeat;transition:flex-grow .55s cubic-bezier(.2,.7,.2,1)}
 .spine::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(6,10,12,.82) 0%,rgba(6,10,12,.15) 55%,rgba(6,10,12,.05) 100%)}
 .spine-name{position:absolute;z-index:1;left:50%;bottom:3rem;writing-mode:vertical-rl;transform:translateX(-50%) rotate(180deg);
   font:600 clamp(.92rem,2.1vw,1.45rem)/1 var(--f-display);white-space:nowrap;letter-spacing:.01em}
 .spine-month{position:absolute;z-index:1;left:0;right:0;bottom:.9rem;text-align:center;font:500 .72rem/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;opacity:.9}
+.spine-seats{position:absolute;z-index:1;top:.6rem;left:50%;transform:translateX(-50%);display:grid;place-items:center;
+  width:1.7rem;height:1.7rem;border-radius:50%;background:var(--chip-bg);color:var(--chip-ink);font:600 .82rem/1 var(--f-mono)}
 .spine.is-past{filter:grayscale(.85) brightness(.8)}
 @media (hover:hover) and (min-width:760px){
   .spines:hover .spine{flex-grow:.75}
@@ -82,17 +108,18 @@ a{color:inherit}
 .photo{position:absolute;inset:0;background:var(--img) var(--pos)/cover no-repeat;transition:transform 1.4s cubic-bezier(.2,.7,.2,1)}
 .trip-photo:hover .photo{transform:scale(1.035)}
 .trip-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,var(--scrim) 0%,rgba(6,10,12,.5) 36%,rgba(6,10,12,0) 66%)}
-.cap{text-shadow:0 1px 14px rgba(0,0,0,.35)}
-.cap{position:absolute;z-index:1;left:0;right:0;bottom:0;padding:clamp(1rem,3.5vw,2.5rem);display:grid;gap:.35rem}
+.cap{position:absolute;z-index:1;left:0;right:0;bottom:0;padding:clamp(1rem,3.5vw,2.5rem);display:grid;gap:.35rem;text-shadow:0 1px 14px rgba(0,0,0,.35)}
 .kicker{font:500 .75rem/1.2 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;opacity:.92}
 .trip h2{margin:0;font:600 clamp(1.85rem,8.2vw,5.4rem)/1 var(--f-display);letter-spacing:-.02em}
 .project{font:500 clamp(1rem,2vw,1.3rem)/1.3 var(--f-body)}
 .stamp{position:absolute;z-index:1;top:clamp(.8rem,2.5vw,1.4rem);left:clamp(.8rem,2.5vw,1.4rem);transform:rotate(-3deg);
   background:var(--chip-bg);color:var(--chip-ink);border:1.5px solid currentColor;outline:1px solid var(--chip-bg);border-radius:4px;
   padding:.4rem .6rem;font:500 .78rem/1.15 var(--f-mono);letter-spacing:.04em;font-variant-numeric:tabular-nums}
-.status{position:absolute;z-index:1;top:clamp(.8rem,2.5vw,1.4rem);right:clamp(.8rem,2.5vw,1.4rem);
-  background:var(--stamp);color:var(--on-stamp);border-radius:4px;padding:.4rem .6rem;font:500 .75rem/1.15 var(--f-mono);letter-spacing:.04em}
-.status.past{background:var(--chip-bg);color:#111A1C}
+.chips{position:absolute;z-index:1;top:clamp(.8rem,2.5vw,1.4rem);right:clamp(.8rem,2.5vw,1.4rem);display:grid;gap:.35rem;justify-items:end;max-width:44%}
+@media (max-width:599px){.stamp{max-width:46%}}
+.flag,.status{border-radius:4px;padding:.4rem .6rem;font:500 .75rem/1.2 var(--f-mono);letter-spacing:.04em;text-align:right}
+.flag{background:var(--stamp);color:var(--on-stamp)}
+.status{background:var(--chip-bg);color:#111A1C}
 
 .trip-body{display:grid;gap:1.75rem;padding-top:clamp(1.25rem,3vw,2rem)}
 @media (min-width:880px){.trip-body{grid-template-columns:minmax(0,1fr) 23rem;gap:clamp(2rem,5vw,4.5rem)}}
@@ -102,14 +129,33 @@ a{color:inherit}
 .facts{margin:0;display:grid;grid-template-columns:7.2rem minmax(0,1fr);gap:.55rem 1rem;padding-top:1rem;border-top:1px solid var(--line)}
 .facts dt{font:500 .7rem/1.9 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
 .facts dd{margin:0;font-variant-numeric:tabular-nums}
-.facts .price{font:600 1.15rem/1.4 var(--f-body)}
-.aside{display:grid;gap:.65rem;align-content:start}
+
+/* правая колонка: места, цена, действия */
+.aside{display:grid;gap:.7rem;align-content:start;min-width:0}
+.aside-label{margin:0;font:500 .7rem/1.4 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+.seats{display:grid;gap:.45rem;padding:.9rem 1rem;border-radius:6px;background:var(--stamp-wash)}
+.seats strong{font:600 1.05rem/1.3 var(--f-body);color:var(--stamp)}
+.dots{display:flex;flex-wrap:wrap;gap:5px}
+.dot{width:11px;height:11px;border-radius:50%;background:var(--ink-soft);opacity:.28}
+.dot.free{background:var(--stamp);opacity:1}
+.ladder{margin:0;padding:0;list-style:none;display:grid}
+.tier{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:.75rem;align-items:baseline;padding:.5rem 0;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+.tier:first-child{border-top:1px solid var(--line)}
+.tier-price{font:600 1.05rem/1.3 var(--f-body)}
+.tier-label{font-size:.9rem;color:var(--ink-soft)}
+.tier-state{font:500 .7rem/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
+.tier.is-sold .tier-price{text-decoration:line-through;text-decoration-thickness:1.5px;color:var(--ink-soft);font-weight:500}
+.tier.is-now .tier-price{font-size:1.25rem;color:var(--ink)}
+.tier.is-now .tier-state{background:var(--stamp);color:var(--on-stamp);padding:.3rem .45rem;border-radius:3px}
+.tier.is-next .tier-price{color:var(--ink-soft);font-weight:500}
 .btn{display:flex;align-items:center;justify-content:center;gap:.5rem;min-height:3.1rem;padding:.6rem 1.2rem;border-radius:6px;
   font:600 1rem/1.2 var(--f-body);text-decoration:none;text-align:center;transition:background-color .2s,color .2s,border-color .2s}
 .btn-primary{background:var(--stamp);color:var(--on-stamp);border:1.5px solid var(--stamp)}
 .btn-primary:hover{filter:brightness(1.08)}
 .btn-ghost{border:1.5px solid var(--ink);color:var(--ink)}
 .btn-ghost:hover{background:var(--ink);color:var(--paper)}
+.aside .btn-primary{margin-top:.35rem}
+.micro{margin:0;font-size:.82rem;line-height:1.45;color:var(--ink-soft);text-align:center}
 .domain{margin:.15rem 0 0;text-align:center;font:400 .78rem/1.3 var(--f-mono);color:var(--ink-soft)}
 
 /* как мы ездим */
@@ -147,7 +193,9 @@ JS = r"""
     var s=new Date(t.dataset.start+'T00:00:00'), e=new Date(t.dataset.end+'T00:00:00');
     var badge=t.querySelector('.status'), spine=document.querySelector('.spine[href="#'+t.id+'"]');
     if(!badge||isNaN(s))return;
-    if(now>e){badge.textContent='Состоялось';badge.classList.add('past');badge.hidden=false;if(spine)spine.classList.add('is-past');return;}
+    if(now>e){badge.textContent='Состоялось';badge.hidden=false;if(spine)spine.classList.add('is-past');
+      var f=t.querySelector('.flag'); if(f)f.hidden=true;
+      var hot=document.querySelector('.hot a[href="#'+t.id+'"]'); if(hot)hot.parentNode.hidden=true; return;}
     if(now>=s){badge.textContent='Идёт сейчас';badge.hidden=false;nextFound=true;return;}
     if(!nextFound){var d=Math.round((s-now)/DAY);badge.textContent='Старт через '+d+' '+plural(d);badge.hidden=false;nextFound=true;}
   });
@@ -155,39 +203,86 @@ JS = r"""
 """
 
 e = html.escape
+STATE = {"sold": "продано", "now": "сейчас", "next": "потом", "option": ""}
 
 
-def tg_link(t):
-    msg = f"Здравствуйте! Хочу поехать: {t['name']}, «{t['project']}», {t['dates']}. Расскажите подробнее."
-    return f"https://t.me/{META['telegram']}?text={quote(msg)}"
+def seats_word(n):
+    a, b = n % 10, n % 100
+    if a == 1 and b != 11:
+        return "место"
+    if 2 <= a <= 4 and not 12 <= b <= 14:
+        return "места"
+    return "мест"
+
+
+def tg(text):
+    return f"https://t.me/{META['telegram']}?text={quote(text)}"
+
+
+def tg_book(t):
+    return tg(f"Здравствуйте! Хочу забронировать место: {t['name']}, «{t['project']}», {t['dates']}.")
 
 
 def image_css(img_src):
-    rules = []
-    for t in TOURS:
-        rules.append(f'.t-{t["id"]}{{--img:url("{img_src(t["id"])}");--pos:{t["pos"]}}}')
-    return "\n".join(rules)
+    return "\n".join(f'.t-{t["id"]}{{--img:url("{img_src(t["id"])}");--pos:{t["pos"]}}}' for t in TOURS)
+
+
+def render_seats(t):
+    s = t.get("seats")
+    if not s:
+        return ""
+    left, total, of = s["left"], s.get("total"), s.get("of", "")
+    word = seats_word(left)
+    if total:
+        label = f"{'По ранней цене о' if of else 'О'}сталось {left} {word} из {total}"
+        dots = "".join('<span class="dot free"></span>' if i >= total - left else '<span class="dot"></span>'
+                       for i in range(total))
+        meter = f'<span class="dots" aria-hidden="true">{dots}</span>'
+    else:
+        label = f"Осталось {left} {word}"
+        meter = ""
+    return f'<div class="seats">{meter}<strong>{e(label)}</strong></div>'
+
+
+def render_ladder(t):
+    rows = []
+    for tier in t["tiers"]:
+        st = tier.get("state", "")
+        rows.append(f'<li class="tier is-{st}"><span class="tier-price">{e(tier["price"])}</span>'
+                    f'<span class="tier-label">{e(tier["label"])}</span>'
+                    f'<span class="tier-state">{STATE.get(st, "")}</span></li>')
+    return f'<p class="aside-label">Стоимость</p><ol class="ladder">{"".join(rows)}</ol>'
 
 
 def render_body():
     spines = "\n".join(
-        f'    <a class="spine t-{t["id"]}" href="#{t["id"]}" aria-label="{e(t["name"])}, {e(t["dates"])}">'
-        f'<span class="spine-name">{e(t["name"])}</span><span class="spine-month">{e(t["month"])}</span></a>'
+        f'    <a class="spine t-{t["id"]}" href="#{t["id"]}" aria-label="{e(t["name"])}, {e(t["dates"])}'
+        + (f', осталось {t["seats"]["left"]} {seats_word(t["seats"]["left"])}' if t.get("seats") and not t["seats"].get("of") else "")
+        + '">'
+        + (f'<span class="spine-seats" aria-hidden="true">{t["seats"]["left"]}</span>' if t.get("seats") and not t["seats"].get("of") else "")
+        + f'<span class="spine-name">{e(t["name"])}</span><span class="spine-month">{e(t["month"])}</span></a>'
         for t in TOURS)
+
+    hot = sorted((t for t in TOURS if t.get("hot")), key=lambda t: t["hotOrder"])
+    hot_rows = "\n".join(
+        f'      <li><a href="#{t["id"]}"><span class="hot-name">{e(t["name"])}<small>{e(t["monthFull"])}</small></span>'
+        f'<span class="hot-what">{e(t["hot"])}</span></a></li>' for t in hot)
 
     trips = []
     for t in TOURS:
         facts = [("Даты", e(t["dates"])), ("Длительность", e(t["days"])), ("Ведут", e(t["leaders"]))]
         if t["group"]:
             facts.append(("Группа", e(t["group"])))
-        facts.append(("Стоимость", f'<span class="price">{e(t["price"])}</span>'))
         dl = "".join(f"<dt>{k}</dt><dd>{v}</dd>" for k, v in facts)
+        flag = f'<span class="flag">{e(t["urgency"])}</span>' if t.get("urgency") else ""
+        micro = ("Заявка ни к чему не обязывает. " +
+                 (f"Место закрепляет предоплата {t['deposit']}." if t.get("deposit") else "Место закрепляет предоплата."))
         trips.append(f"""
   <article class="trip t-{t['id']}" id="{t['id']}" data-start="{t['start']}" data-end="{t['end']}">
     <a class="trip-photo" href="{e(t['url'])}" target="_blank" rel="noopener" aria-label="{e(t['name'])}: открыть сайт поездки">
       <span class="photo" role="img" aria-label="{e(t['alt'])}"></span>
       <span class="stamp">{e(t['dates'])}</span>
-      <span class="status" hidden></span>
+      <span class="chips">{flag}<span class="status" hidden></span></span>
       <div class="cap">
         <span class="kicker">{e(t['kicker'])}</span>
         <h2>{e(t['name'])}</h2>
@@ -201,7 +296,10 @@ def render_body():
         <dl class="facts">{dl}</dl>
       </div>
       <div class="aside">
-        <a class="btn btn-primary" href="{e(tg_link(t))}" target="_blank" rel="noopener">Записаться</a>
+        {render_seats(t)}
+        {render_ladder(t)}
+        <a class="btn btn-primary" href="{e(tg_book(t))}" target="_blank" rel="noopener">Забронировать место</a>
+        <p class="micro">{e(micro)}</p>
         <a class="btn btn-ghost" href="{e(t['url'])}" target="_blank" rel="noopener">Подробнее о поездке ↗</a>
         <p class="domain">{e(t['domain'])}</p>
       </div>
@@ -213,25 +311,39 @@ def render_body():
         f'<a href="{e(c["licenseUrl"])}" target="_blank" rel="noopener">{e(c["license"])}</a>'
         for c in C["credits"])
 
-    tg = META["telegram"]
+    handle = META["telegram"]
     return f"""
 <div class="wrap top">
   <span class="brand">Авторские путешествия <b>· сезон 26/27</b></span>
-  <a href="https://t.me/{tg}" target="_blank" rel="noopener">@{tg}</a>
+  <a href="https://t.me/{handle}" target="_blank" rel="noopener">@{handle}</a>
 </div>
 
-<header class="wrap hero">
-  <p class="eyebrow">Ноябрь 2026 · Август 2027</p>
-  <h1>Куда мы едем в&nbsp;этом сезоне</h1>
-  <p class="lead">Красное море, край Патагонии, Бали, дороги Камбоджи, Китай, Гималаи и Тибет. Выберите маршрут, откройте программу на его сайте и напишите нам, если хотите поехать.</p>
-</header>
+<div class="wrap intro">
+  <header class="hero">
+    <p class="eyebrow">Ноябрь 2026 · Август 2027</p>
+    <h1>Куда поехать с&nbsp;нами в&nbsp;ближайшие месяцы</h1>
+    <p class="lead">Риф Красного моря, гранит Патагонии, рисовые террасы Бали, мотоциклы на красных дорогах Камбоджи, туманы Китая, снега Канченджанги и кора вокруг Кайласа. Маленькие группы, авторские маршруты и ведущие, которые едут с вами от первого дня до последнего.</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="{e(tg('Здравствуйте! Помогите выбрать поездку.'))}" target="_blank" rel="noopener">Помочь с выбором</a>
+      <span>Расскажем про сложность и группу в Telegram</span>
+    </div>
+  </header>
 
-<nav class="wrap" aria-label="Все поездки сезона">
-  <div class="spines">
+  <section class="hot" aria-labelledby="hot-title">
+    <h2 id="hot-title">Места заканчиваются</h2>
+    <p>Группы маленькие, а цена растёт по мере записи. Первые места всегда дешевле.</p>
+    <ul>
+{hot_rows}
+    </ul>
+  </section>
+
+  <nav class="spines-nav" aria-label="Все поездки сезона">
+    <div class="spines">
 {spines}
-  </div>
-  <p class="spines-note">Семь поездок по порядку дат. Нажмите на любую.</p>
-</nav>
+    </div>
+    <p class="spines-note">Семь поездок по порядку дат. Цифра в кружке: сколько мест осталось.</p>
+  </nav>
+</div>
 
 <main class="wrap trips">{''.join(trips)}
 </main>
@@ -252,11 +364,11 @@ def render_body():
   <div class="wrap">
     <div>
       <h2 id="contact-title">Не знаете, что выбрать?</h2>
-      <p>Напишите Андрею. Расскажем про сложность, погоду и группу каждого маршрута и подберём поездку под ваш темп.</p>
+      <p>Напишите Андрею. Расскажем про сложность, погоду и группу каждого маршрута и подберём поездку под ваш темп. Пока места по ранней цене ещё есть.</p>
     </div>
     <div class="contact-links">
-      <a class="btn btn-primary" href="https://t.me/{tg}" target="_blank" rel="noopener">Написать в Telegram</a>
-      <small>@{tg}</small>
+      <a class="btn btn-primary" href="{e(tg('Здравствуйте! Помогите выбрать поездку.'))}" target="_blank" rel="noopener">Написать в Telegram</a>
+      <small>@{handle}</small>
       <a class="btn btn-ghost" href="https://wa.me/{META['whatsapp']}" target="_blank" rel="noopener">Написать в WhatsApp</a>
       <small>{e(META['whatsappHuman'])}</small>
     </div>
@@ -264,7 +376,7 @@ def render_body():
 </section>
 
 <footer class="wrap">
-  <span>Андрей Баранов · авторские путешествия · 2026–2027</span>
+  <span>Андрей Баранов · авторские путешествия · 2026–2027. Места и цены на {e(META.get('updated', ''))}.</span>
   <span>Фото с Wikimedia Commons, кадрировано: {credits}. Остальные снимки из материалов поездок.</span>
 </footer>
 """
