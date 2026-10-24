@@ -8,6 +8,8 @@
   seats   {"left": осталось, "total": всего или null, "of": "по ранней цене" или ""}
   tiers   ступени цены, state: sold (продано) / now (сейчас) / next (потом) / option (вариант)
   urgency надпись на фото, hot + hotOrder строка в блоке «Места заканчиваются»
+  reviews отзывы {"name", "trip", "text", "photo": имя файла в img/ без расширения или пусто};
+          пока список пустой, секции на странице нет
 
 WebP-версии фото, иконки и img/og.jpg готовит python3 images.py (нужен Pillow).
 Если WebP для поездки ещё нет, страница возьмёт исходный img/<id>.jpg.
@@ -259,11 +261,22 @@ a{color:inherit}
 
 /* почему с нами */
 .why{padding-block:clamp(3rem,7vw,5rem) 0}
-.why h2,.faq h2,.contact h2{margin:0 0 1.75rem;font:600 clamp(1.5rem,3.6vw,2.4rem)/1.1 var(--f-display);letter-spacing:-.015em;text-wrap:balance}
+.why h2,.reviews h2,.faq h2,.contact h2{margin:0 0 1.75rem;font:600 clamp(1.5rem,3.6vw,2.4rem)/1.1 var(--f-display);letter-spacing:-.015em;text-wrap:balance}
 .why-grid{display:grid;gap:2rem clamp(1.5rem,3vw,2.75rem);grid-template-columns:repeat(auto-fit,minmax(min(100%,17rem),1fr))}
 .why-item{display:grid;gap:.5rem;align-content:start;padding-top:1rem;border-top:2px solid var(--stamp);min-width:0}
 .why-item h3{margin:0;font:600 1.12rem/1.3 var(--f-body)}
 .why-item p{margin:0;color:var(--ink-soft);line-height:1.6}
+
+/* что говорят участники */
+.reviews{padding-block:clamp(3.5rem,8vw,6rem);border-top:1px solid var(--line)}
+.reviews-grid{display:grid;gap:clamp(1rem,2.5vw,1.75rem);grid-template-columns:repeat(auto-fit,minmax(min(100%,19rem),1fr))}
+.review{margin:0;display:grid;gap:1.25rem;align-content:space-between;padding:1.4rem 1.5rem;border:1px solid var(--line);border-radius:6px;background:var(--surface);min-width:0}
+.review blockquote{margin:0}
+.review blockquote p{margin:0;font-size:1.05rem;line-height:1.62}
+.review figcaption{display:flex;align-items:center;gap:.8rem}
+.review img{width:3rem;height:3rem;border-radius:50%;object-fit:cover;flex-shrink:0;background:var(--line)}
+.review b{display:block;font:600 1rem/1.3 var(--f-body)}
+.review small{display:block;margin-top:.2rem;font:500 .74rem/1.3 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--stamp)}
 
 /* частые сомнения */
 .faq{padding-block:clamp(3.5rem,8vw,6rem);border-top:1px solid var(--line);display:grid;gap:1.5rem}
@@ -464,6 +477,22 @@ def render_faq():
 </section>"""
 
 
+def render_reviews(src):
+    items = C.get("reviews") or []
+    if not items:
+        return ""
+    cards = []
+    for r in items:
+        photo = (picture(src, r["photo"], 'alt="" width="96" height="96" loading="lazy" decoding="async"')
+                 if r.get("photo") else "")
+        cards.append(f'<figure class="review"><blockquote><p>{e(r["text"])}</p></blockquote>'
+                     f'<figcaption>{photo}<span><b>{e(r["name"])}</b><small>{e(r["trip"])}</small></span></figcaption></figure>')
+    return f"""<section class="wrap reviews" id="reviews" aria-labelledby="reviews-title">
+  <h2 id="reviews-title">{e(C.get("reviewsTitle", "Что говорят участники"))}</h2>
+  <div class="reviews-grid">{"".join(cards)}</div>
+</section>"""
+
+
 def render_about(src):
     a = C.get("about")
     if not a:
@@ -607,6 +636,8 @@ def render_body(src, inline=False):
 </main>
 
 {render_about(src)}
+
+{render_reviews(src)}
 
 {render_faq()}
 

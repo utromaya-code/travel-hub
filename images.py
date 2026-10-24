@@ -6,7 +6,7 @@
   img/<id>.jpg (фото поездки, 1440 px)     -> img/<id>-1440.webp  для широких экранов
                                             -> img/<id>-800.webp   вертикальный кадр 4:5 по точке pos
                                                из content.json: фото-полосы и главы на телефоне
-  img/past-*.jpg, team-*.jpg               -> .webp того же размера
+  img/past-*.jpg, team-*.jpg, review-*.jpg -> .webp того же размера
   favicon.ico, apple-touch-icon.png        -> буква «П» шрифтом Unbounded, как в favicon.svg
   img/og.jpg                               -> превью ссылки 1200×630: семь полос и заголовок
 
@@ -51,7 +51,7 @@ def tour_images():
 
 
 def about_images():
-    for f in sorted(IMG.glob("past-*.jpg")) + sorted(IMG.glob("team-*.jpg")):
+    for f in sorted(IMG.glob("past-*.jpg")) + sorted(IMG.glob("team-*.jpg")) + sorted(IMG.glob("review-*.jpg")):
         webp(Image.open(f).convert("RGB"), f.with_suffix(".webp"), 70)
 
 
