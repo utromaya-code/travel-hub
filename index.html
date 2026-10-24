@@ -47,6 +47,7 @@
   --f-body:"Onest","Segoe UI",system-ui,-apple-system,sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   --gutter:max(clamp(16px,4vw,40px),env(safe-area-inset-left,0px),env(safe-area-inset-right,0px));
+  --bar:2.75rem;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -137,9 +138,23 @@ a{color:inherit}
   .spine-seats{top:.75rem;left:auto;right:.75rem;transform:none;width:2rem;height:2rem;font-size:.9rem}
 }
 
+/* строка поездок: появляется, пока на экране главы */
+.tripnav{position:fixed;z-index:20;top:env(safe-area-inset-top,0px);left:0;right:0;background:var(--paper);border-bottom:1px solid var(--line);
+  transform:translateY(-110%);visibility:hidden;transition:transform .3s ease,visibility 0s linear .3s}
+.tripnav.is-on{transform:none;visibility:visible;transition:transform .3s ease}
+.tripnav-in{display:flex;gap:1.5rem;height:var(--bar);overflow-x:auto;scrollbar-width:none}
+.tripnav-in::-webkit-scrollbar{display:none}
+.tripnav a{display:flex;align-items:center;gap:.45rem;flex-shrink:0;padding-top:2px;border-bottom:2px solid transparent;
+  text-decoration:none;font:600 .9rem/1 var(--f-body);color:var(--ink-soft);white-space:nowrap}
+.tripnav small{font:500 .68rem/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase}
+.tripnav a:hover{color:var(--ink)}
+.tripnav a[aria-current]{color:var(--stamp);border-bottom-color:var(--stamp)}
+.tripnav a.is-past{opacity:.55}
+.tripnav a:focus-visible{outline-offset:-2px}
+
 /* поездки */
 .trips{display:grid;gap:clamp(3.5rem,8vw,6.5rem);padding-block:clamp(3rem,7vw,5.5rem)}
-.trip{scroll-margin-top:1rem}
+.trip{scroll-margin-top:calc(var(--bar) + env(safe-area-inset-top,0px) + .75rem)}
 .trip-photo{position:relative;display:block;overflow:hidden;border-radius:6px;aspect-ratio:4/5;max-width:100%;color:var(--on-photo);text-decoration:none;background:#2a3133}
 @media (min-width:600px){.trip-photo{aspect-ratio:3/2}}
 @media (min-width:1000px){.trip-photo{aspect-ratio:21/9}}
@@ -261,9 +276,18 @@ a{color:inherit}
 footer{padding-block:2rem 2.5rem;font-size:.82rem;color:var(--ink-soft);display:grid;gap:.5rem}
 footer a{color:var(--ink-soft)}
 
+/* плашка внизу экрана на телефоне: после первого экрана и до контактов */
+.dock{position:fixed;z-index:20;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:.75rem;
+  padding:.6rem var(--gutter) calc(.6rem + env(safe-area-inset-bottom,0px));background:var(--surface);border-top:1px solid var(--line);
+  transform:translateY(110%);visibility:hidden;transition:transform .3s ease,visibility 0s linear .3s}
+.dock.is-on{transform:none;visibility:visible;transition:transform .3s ease}
+.dock-text{font:600 .95rem/1.25 var(--f-body)}
+.dock .btn{flex-shrink:0;min-height:2.85rem;padding:.5rem 1.1rem;font-size:.95rem}
+@media (min-width:760px){.dock{display:none}}
+
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .spine,.photo,.btn{transition:none}
+  .spine,.photo,.btn,.tripnav,.tripnav.is-on,.dock,.dock.is-on{transition:none}
   .trip-photo:hover .photo{transform:none}
 }
 
@@ -328,6 +352,8 @@ footer a{color:var(--ink-soft)}
   <h2 id="why-title">Почему с нами</h2>
   <div class="why-grid"><div class="why-item"><h3>Небанальные места</h3><p>Ищем локации, куда не возят автобусы: монастырь, где пускают на утреннюю пуджу, перевал с видом на пол-Гималаев, остров, где слышно только море. Маршрут строим так, чтобы такие моменты случались каждый день.</p></div><div class="why-item"><h3>Практики в дороге</h3><p>Утром йога, цигун или медитация, днём горы, храмы и море. Поездка даёт и этнографию, и пользу телу и голове. Все практики по желанию и под любой уровень.</p></div><div class="why-item"><h3>Опыт с 2009 года</h3><p>Знаем тонкости: где оформить разрешения, как пройти высоту без спешки, где ночевать, чтобы утром успеть к рассвету. Маршруты проверены, местные команды тоже.</p></div><div class="why-item"><h3>Команда</h3><p>Преподаватели практик, организаторы и свои люди на местах: гиды, водители, хозяева отелей. Ведущие едут с вами от первого дня до последнего.</p></div><div class="why-item"><h3>Люди</h3><p>Мы соединяем разных людей. После поездок остаются друзья, общие планы и даже пары. У нас сложился костяк постоянных участников, и в эту компанию легко влиться.</p></div><div class="why-item"><h3>Сервис</h3><p>Поможем с билетами, дополнительными ночами, трансферами и программой до или после поездки. Андрей на связи с момента заявки.</p></div></div>
 </section>
+
+<nav class="tripnav" aria-label="Поездки сезона"><div class="wrap tripnav-in"><a href="#dahab"><small>ноя</small> Дахаб</a><a href="#patagonia"><small>янв</small> Патагония</a><a href="#bali"><small>фев</small> Бали</a><a href="#cambodia"><small>фев</small> Камбоджа</a><a href="#china"><small>мар</small> Китай</a><a href="#kanchenjunga"><small>апр</small> Канченджанга</a><a href="#tibet"><small>авг</small> Тибет</a></div></nav>
 
 <main class="wrap trips">
   <article class="trip t-dahab" id="dahab" data-start="2026-11-11" data-end="2026-11-21">
@@ -567,6 +593,11 @@ footer a{color:var(--ink-soft)}
   <span>Фото с Wikimedia Commons, кадрировано: Бали: <a href="https://commons.wikimedia.org/w/index.php?curid=60538665" target="_blank" rel="noopener">Putu Andika Panendra</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>; Яншо: <a href="https://commons.wikimedia.org/w/index.php?curid=17072137" target="_blank" rel="noopener">chensiyuan</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>; Кайлас: <a href="https://commons.wikimedia.org/wiki/File:Kailash-Tibet-27-Sept-2018.jpg" target="_blank" rel="noopener">Tibetissimo</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>. Остальные снимки из материалов поездок.</span>
 </footer>
 
+<div class="dock">
+  <span class="dock-text">Места заканчиваются</span>
+  <a class="btn btn-primary" href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%9F%D0%BE%D0%BC%D0%BE%D0%B3%D0%B8%D1%82%D0%B5%20%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D0%BF%D0%BE%D0%B5%D0%B7%D0%B4%D0%BA%D1%83." target="_blank" rel="noopener">Помочь с выбором</a>
+</div>
+
 <script>
 (function(){
   var DAY=864e5, now=new Date(); now.setHours(0,0,0,0);
@@ -574,14 +605,43 @@ footer a{color:var(--ink-soft)}
   var nextFound=false;
   document.querySelectorAll('.trip').forEach(function(t){
     var s=new Date(t.dataset.start+'T00:00:00'), e=new Date(t.dataset.end+'T00:00:00');
-    var badge=t.querySelector('.status'), spine=document.querySelector('.spine[href="#'+t.id+'"]');
+    var badge=t.querySelector('.status'), spine=document.querySelector('.spine[href="#'+t.id+'"]'), link=document.querySelector('.tripnav a[href="#'+t.id+'"]');
     if(!badge||isNaN(s))return;
-    if(now>e){badge.textContent='Состоялось';badge.hidden=false;if(spine)spine.classList.add('is-past');
+    if(now>e){badge.textContent='Состоялось';badge.hidden=false;if(spine)spine.classList.add('is-past');if(link)link.classList.add('is-past');
       var f=t.querySelector('.flag'); if(f)f.hidden=true;
       var hot=document.querySelector('.hot a[href="#'+t.id+'"]'); if(hot)hot.parentNode.hidden=true; return;}
     if(now>=s){badge.textContent='Идёт сейчас';badge.hidden=false;nextFound=true;return;}
     if(!nextFound){var d=Math.round((s-now)/DAY);badge.textContent='Старт через '+d+' '+plural(d);badge.hidden=false;nextFound=true;}
   });
+
+  if(!('IntersectionObserver' in window))return;
+  var smooth=!matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // строка поездок видна, пока главы пересекают верх экрана; текущая глава подсвечена
+  var nav=document.querySelector('.tripnav'), trips=document.querySelector('.trips');
+  if(nav&&trips){
+    var row=nav.querySelector('.tripnav-in');
+    new IntersectionObserver(function(es){nav.classList.toggle('is-on',es[0].isIntersecting);},{rootMargin:'0px 0px -99% 0px'}).observe(trips);
+    var current=new IntersectionObserver(function(es){es.forEach(function(en){
+      if(!en.isIntersecting)return;
+      row.querySelectorAll('a').forEach(function(a){
+        if(a.getAttribute('href')!=='#'+en.target.id){a.removeAttribute('aria-current');return;}
+        a.setAttribute('aria-current','true');
+        var r=a.getBoundingClientRect(), b=row.getBoundingClientRect();
+        if(r.left<b.left||r.right>b.right)row.scrollTo({left:row.scrollLeft+r.left-b.left-(b.width-r.width)/2,behavior:smooth?'smooth':'auto'});
+      });
+    });},{rootMargin:'-40% 0px -55% 0px'});
+    document.querySelectorAll('.trip').forEach(function(t){current.observe(t);});
+  }
+
+  // плашка «Помочь с выбором»: первый экран уже прокручен, а до контактов ещё не дошли
+  var dock=document.querySelector('.dock'), hero=document.querySelector('.hero'), contact=document.querySelector('.contact');
+  if(dock&&hero&&contact){
+    var passed=false, reached=false;
+    var show=function(){dock.classList.toggle('is-on',passed&&!reached);};
+    new IntersectionObserver(function(es){var en=es[0];passed=!en.isIntersecting&&en.boundingClientRect.top<0;show();}).observe(hero);
+    new IntersectionObserver(function(es){var en=es[0];reached=en.isIntersecting||en.boundingClientRect.top<0;show();}).observe(contact);
+  }
 })();
 </script>
 </body>

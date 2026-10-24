@@ -57,6 +57,7 @@ CSS = r"""
   --f-body:"Onest","Segoe UI",system-ui,-apple-system,sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   --gutter:max(clamp(16px,4vw,40px),env(safe-area-inset-left,0px),env(safe-area-inset-right,0px));
+  --bar:2.75rem;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -147,9 +148,23 @@ a{color:inherit}
   .spine-seats{top:.75rem;left:auto;right:.75rem;transform:none;width:2rem;height:2rem;font-size:.9rem}
 }
 
+/* строка поездок: появляется, пока на экране главы */
+.tripnav{position:fixed;z-index:20;top:env(safe-area-inset-top,0px);left:0;right:0;background:var(--paper);border-bottom:1px solid var(--line);
+  transform:translateY(-110%);visibility:hidden;transition:transform .3s ease,visibility 0s linear .3s}
+.tripnav.is-on{transform:none;visibility:visible;transition:transform .3s ease}
+.tripnav-in{display:flex;gap:1.5rem;height:var(--bar);overflow-x:auto;scrollbar-width:none}
+.tripnav-in::-webkit-scrollbar{display:none}
+.tripnav a{display:flex;align-items:center;gap:.45rem;flex-shrink:0;padding-top:2px;border-bottom:2px solid transparent;
+  text-decoration:none;font:600 .9rem/1 var(--f-body);color:var(--ink-soft);white-space:nowrap}
+.tripnav small{font:500 .68rem/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase}
+.tripnav a:hover{color:var(--ink)}
+.tripnav a[aria-current]{color:var(--stamp);border-bottom-color:var(--stamp)}
+.tripnav a.is-past{opacity:.55}
+.tripnav a:focus-visible{outline-offset:-2px}
+
 /* поездки */
 .trips{display:grid;gap:clamp(3.5rem,8vw,6.5rem);padding-block:clamp(3rem,7vw,5.5rem)}
-.trip{scroll-margin-top:1rem}
+.trip{scroll-margin-top:calc(var(--bar) + env(safe-area-inset-top,0px) + .75rem)}
 .trip-photo{position:relative;display:block;overflow:hidden;border-radius:6px;aspect-ratio:4/5;max-width:100%;color:var(--on-photo);text-decoration:none;background:#2a3133}
 @media (min-width:600px){.trip-photo{aspect-ratio:3/2}}
 @media (min-width:1000px){.trip-photo{aspect-ratio:21/9}}
@@ -271,9 +286,18 @@ a{color:inherit}
 footer{padding-block:2rem 2.5rem;font-size:.82rem;color:var(--ink-soft);display:grid;gap:.5rem}
 footer a{color:var(--ink-soft)}
 
+/* плашка внизу экрана на телефоне: после первого экрана и до контактов */
+.dock{position:fixed;z-index:20;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:.75rem;
+  padding:.6rem var(--gutter) calc(.6rem + env(safe-area-inset-bottom,0px));background:var(--surface);border-top:1px solid var(--line);
+  transform:translateY(110%);visibility:hidden;transition:transform .3s ease,visibility 0s linear .3s}
+.dock.is-on{transform:none;visibility:visible;transition:transform .3s ease}
+.dock-text{font:600 .95rem/1.25 var(--f-body)}
+.dock .btn{flex-shrink:0;min-height:2.85rem;padding:.5rem 1.1rem;font-size:.95rem}
+@media (min-width:760px){.dock{display:none}}
+
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .spine,.photo,.btn{transition:none}
+  .spine,.photo,.btn,.tripnav,.tripnav.is-on,.dock,.dock.is-on{transition:none}
   .trip-photo:hover .photo{transform:none}
 }
 """
@@ -285,14 +309,43 @@ JS = r"""
   var nextFound=false;
   document.querySelectorAll('.trip').forEach(function(t){
     var s=new Date(t.dataset.start+'T00:00:00'), e=new Date(t.dataset.end+'T00:00:00');
-    var badge=t.querySelector('.status'), spine=document.querySelector('.spine[href="#'+t.id+'"]');
+    var badge=t.querySelector('.status'), spine=document.querySelector('.spine[href="#'+t.id+'"]'), link=document.querySelector('.tripnav a[href="#'+t.id+'"]');
     if(!badge||isNaN(s))return;
-    if(now>e){badge.textContent='Состоялось';badge.hidden=false;if(spine)spine.classList.add('is-past');
+    if(now>e){badge.textContent='Состоялось';badge.hidden=false;if(spine)spine.classList.add('is-past');if(link)link.classList.add('is-past');
       var f=t.querySelector('.flag'); if(f)f.hidden=true;
       var hot=document.querySelector('.hot a[href="#'+t.id+'"]'); if(hot)hot.parentNode.hidden=true; return;}
     if(now>=s){badge.textContent='Идёт сейчас';badge.hidden=false;nextFound=true;return;}
     if(!nextFound){var d=Math.round((s-now)/DAY);badge.textContent='Старт через '+d+' '+plural(d);badge.hidden=false;nextFound=true;}
   });
+
+  if(!('IntersectionObserver' in window))return;
+  var smooth=!matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // строка поездок видна, пока главы пересекают верх экрана; текущая глава подсвечена
+  var nav=document.querySelector('.tripnav'), trips=document.querySelector('.trips');
+  if(nav&&trips){
+    var row=nav.querySelector('.tripnav-in');
+    new IntersectionObserver(function(es){nav.classList.toggle('is-on',es[0].isIntersecting);},{rootMargin:'0px 0px -99% 0px'}).observe(trips);
+    var current=new IntersectionObserver(function(es){es.forEach(function(en){
+      if(!en.isIntersecting)return;
+      row.querySelectorAll('a').forEach(function(a){
+        if(a.getAttribute('href')!=='#'+en.target.id){a.removeAttribute('aria-current');return;}
+        a.setAttribute('aria-current','true');
+        var r=a.getBoundingClientRect(), b=row.getBoundingClientRect();
+        if(r.left<b.left||r.right>b.right)row.scrollTo({left:row.scrollLeft+r.left-b.left-(b.width-r.width)/2,behavior:smooth?'smooth':'auto'});
+      });
+    });},{rootMargin:'-40% 0px -55% 0px'});
+    document.querySelectorAll('.trip').forEach(function(t){current.observe(t);});
+  }
+
+  // плашка «Помочь с выбором»: первый экран уже прокручен, а до контактов ещё не дошли
+  var dock=document.querySelector('.dock'), hero=document.querySelector('.hero'), contact=document.querySelector('.contact');
+  if(dock&&hero&&contact){
+    var passed=false, reached=false;
+    var show=function(){dock.classList.toggle('is-on',passed&&!reached);};
+    new IntersectionObserver(function(es){var en=es[0];passed=!en.isIntersecting&&en.boundingClientRect.top<0;show();}).observe(hero);
+    new IntersectionObserver(function(es){var en=es[0];reached=en.isIntersecting||en.boundingClientRect.top<0;show();}).observe(contact);
+  }
 })();
 """
 
@@ -458,6 +511,8 @@ def render_body(src, inline=False):
         f'      <li><a href="#{t["id"]}"><span class="hot-name">{e(t["name"])}<small>{e(t["monthFull"])}</small></span>'
         f'<span class="hot-what">{e(t["hot"])}</span></a></li>' for t in hot)
 
+    nav_links = "".join(f'<a href="#{t["id"]}"><small>{e(t["month"])}</small> {e(t["name"])}</a>' for t in TOURS)
+
     trips = []
     for n, t in enumerate(TOURS):
         facts = [("Даты", e(t["dates"])), ("Длительность", e(t["days"])), ("Ведут", e(t["leaders"]))]
@@ -541,6 +596,8 @@ def render_body(src, inline=False):
 
 {render_why()}
 
+<nav class="tripnav" aria-label="{e(C["tripNav"])}"><div class="wrap tripnav-in">{nav_links}</div></nav>
+
 <main class="wrap trips">{''.join(trips)}
 </main>
 
@@ -567,6 +624,11 @@ def render_body(src, inline=False):
   <span>Андрей Баранов · авторские путешествия · 2026–2027. Места и цены на {e(META.get('updated', ''))}.</span>
   <span>Фото с Wikimedia Commons, кадрировано: {credits}. Остальные снимки из материалов поездок.</span>
 </footer>
+
+<div class="dock">
+  <span class="dock-text">{e(C["dock"]["label"])}</span>
+  <a class="btn btn-primary" href="{choose}" target="_blank" rel="noopener">{e(H["cta"])}</a>
+</div>
 """
 
 
