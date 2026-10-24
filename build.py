@@ -185,14 +185,31 @@ a{color:inherit}
 .guests{margin:1.75rem 0 0;max-width:72ch;padding-top:1.25rem;border-top:1px solid var(--line);color:var(--ink-soft)}
 .trust{font-size:.9rem;color:var(--ink-soft)}
 .trust a{color:var(--stamp);font-weight:500}
-.top nav{display:flex;gap:.5rem}
+.top nav{display:flex;gap:.5rem;flex-shrink:0}
+.top nav a{white-space:nowrap}
+@media (max-width:520px){.brand b{display:none}}
 
-/* как мы ездим */
-.how{padding-block:clamp(3rem,7vw,5rem);border-top:1px solid var(--line)}
-.how h2,.contact h2{margin:0 0 1.75rem;font:600 clamp(1.5rem,3.6vw,2.4rem)/1.1 var(--f-display);letter-spacing:-.015em;text-wrap:balance}
-.how-grid{display:grid;gap:1.5rem 2rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,15rem),1fr))}
-.how h3{margin:0 0 .4rem;font:600 1.05rem/1.3 var(--f-body)}
-.how p{margin:0;color:var(--ink-soft)}
+/* почему с нами */
+.why{padding-block:clamp(3rem,7vw,5rem) 0}
+.why h2,.faq h2,.contact h2{margin:0 0 1.75rem;font:600 clamp(1.5rem,3.6vw,2.4rem)/1.1 var(--f-display);letter-spacing:-.015em;text-wrap:balance}
+.why-grid{display:grid;gap:2rem clamp(1.5rem,3vw,2.75rem);grid-template-columns:repeat(auto-fit,minmax(min(100%,17rem),1fr))}
+.why-item{display:grid;gap:.5rem;align-content:start;padding-top:1rem;border-top:2px solid var(--stamp);min-width:0}
+.why-item h3{margin:0;font:600 1.12rem/1.3 var(--f-body)}
+.why-item p{margin:0;color:var(--ink-soft);line-height:1.6}
+
+/* частые сомнения */
+.faq{padding-block:clamp(3.5rem,8vw,6rem);border-top:1px solid var(--line);display:grid;gap:1.5rem}
+@media (min-width:980px){.faq{grid-template-columns:22rem minmax(0,1fr);gap:4.5rem}}
+.faq-head h2{margin-bottom:.75rem}
+.faq-head p{margin:0;color:var(--ink-soft);max-width:40ch}
+.faq-list{border-top:1px solid var(--ink);min-width:0}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1rem;align-items:baseline;padding:1.05rem .1rem;font:600 1.08rem/1.35 var(--f-body)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font:500 1.3rem/1 var(--f-mono);color:var(--stamp);transition:transform .2s}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq summary:hover{color:var(--stamp)}
+.faq details p{margin:0;padding:0 2.5rem 1.2rem .1rem;max-width:64ch;color:var(--ink-soft);line-height:1.62}
 
 /* контакты */
 .contact{background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
@@ -281,6 +298,28 @@ def render_ladder(t):
                     f'<span class="tier-label">{e(tier["label"])}</span>'
                     f'<span class="tier-state">{STATE.get(st, "")}</span></li>')
     return f'<p class="aside-label">Стоимость</p><ol class="ladder">{"".join(rows)}</ol>'
+
+
+def render_why():
+    w = C.get("why")
+    if not w:
+        return ""
+    items = "".join(f'<div class="why-item"><h3>{e(x["t"])}</h3><p>{e(x["d"])}</p></div>' for x in w["items"])
+    return f"""<section class="wrap why" id="why" aria-labelledby="why-title">
+  <h2 id="why-title">{e(w["title"])}</h2>
+  <div class="why-grid">{items}</div>
+</section>"""
+
+
+def render_faq():
+    f = C.get("faq")
+    if not f:
+        return ""
+    items = "".join(f'<details><summary>{e(x["q"])}</summary><p>{e(x["a"])}</p></details>' for x in f["items"])
+    return f"""<section class="wrap faq" id="faq" aria-labelledby="faq-title">
+  <div class="faq-head"><h2 id="faq-title">{e(f["title"])}</h2><p>{e(f["lead"])}</p></div>
+  <div class="faq-list">{items}</div>
+</section>"""
 
 
 def render_about(img_src):
@@ -383,14 +422,14 @@ def render_body(img_src):
 
 <div class="wrap intro">
   <header class="hero">
-    <p class="eyebrow">Ноябрь 2026 · Август 2027</p>
-    <h1>Куда поехать с&nbsp;нами в&nbsp;ближайшие месяцы</h1>
-    <p class="lead">Риф Красного моря, гранит Патагонии, рисовые террасы Бали, мотоциклы на красных дорогах Камбоджи, туманы Китая, снега Канченджанги и кора вокруг Кайласа. Маленькие группы, авторские маршруты и ведущие, которые едут с вами от первого дня до последнего.</p>
+    <p class="eyebrow">Сезон 2026–2027 · семь путешествий</p>
+    <h1>Комфорт забывается. Впечатления остаются.</h1>
+    <p class="lead">С 2009 года мы ищем особые места и собираем маршруты, ради которых стоит лететь через полмира: утренняя пуджа в тибетском монастыре, рассвет над облаками на вулкане, кора вокруг Кайласа. Добавляем йогу, цигун и медитацию, чтобы поездка давала силы телу и голове. И едем небольшой компанией, в которую легко влиться.</p>
     <div class="hero-cta">
       <a class="btn btn-primary" href="{e(tg('Здравствуйте! Помогите выбрать поездку.'))}" target="_blank" rel="noopener">Помочь с выбором</a>
       <span>Расскажем про сложность и группу в Telegram</span>
     </div>
-    <p class="trust">Возим группы с 2009 года. <a href="#about">Кто мы</a></p>
+    <p class="trust"><a href="#why">Почему с нами</a> · <a href="#about">Кто мы</a> · <a href="#faq">Частые сомнения</a></p>
   </header>
 
   <section class="hot" aria-labelledby="hot-title">
@@ -409,28 +448,20 @@ def render_body(img_src):
   </nav>
 </div>
 
+{render_why()}
+
 <main class="wrap trips">{''.join(trips)}
 </main>
 
 {render_about(img_src)}
 
-<section class="how" aria-labelledby="how-title">
-  <div class="wrap">
-    <h2 id="how-title">Как мы ездим</h2>
-    <div class="how-grid">
-      <div><h3>Небольшие группы</h3><p>Обычно до 15–20 человек. Все успевают познакомиться, никто не теряется.</p></div>
-      <div><h3>Ведущие рядом весь маршрут</h3><p>Те, кто придумал поездку, едут с вами от первого до последнего дня.</p></div>
-      <div><h3>Практики по желанию</h3><p>Во многих поездках утро начинается с цигуна, йоги или дыхания. Можно присоединиться, можно поспать.</p></div>
-      <div><h3>Логистика на нас</h3><p>Трансферы, отели, разрешения и местные гиды. С вас билеты до старта и удобная обувь.</p></div>
-    </div>
-  </div>
-</section>
+{render_faq()}
 
 <section class="contact" aria-labelledby="contact-title">
   <div class="wrap">
     <div>
-      <h2 id="contact-title">Не знаете, что выбрать?</h2>
-      <p>Напишите Андрею. Расскажем про сложность, погоду и группу каждого маршрута и подберём поездку под ваш темп. Пока места по ранней цене ещё есть.</p>
+      <h2 id="contact-title">Места заканчиваются быстро</h2>
+      <p>Смотрите поездки и записывайтесь заранее: группы маленькие, а первые места дешевле. Не знаете, что выбрать? Напишите Андрею, подберём поездку под ваш темп.</p>
     </div>
     <div class="contact-links">
       <a class="btn btn-primary" href="{e(tg('Здравствуйте! Помогите выбрать поездку.'))}" target="_blank" rel="noopener">Написать в Telegram</a>
