@@ -48,7 +48,7 @@ FONT_FACES = """
 PRELOAD = ("unbounded-cyrillic", "onest-cyrillic", "onest-latin")
 
 CSS = r"""
-/* Сезонный указатель: заголовок и горящие места, семь фото-корешков по месяцам, затем по одной широкой главе на поездку. */
+/* Сезонный указатель: заголовок и семь фото-корешков по месяцам, горящие места, затем по одной широкой главе на поездку. */
 :root{
   --paper:#F0F3F2; --surface:#FFFFFF; --ink:#111A1C; --ink-soft:#4C5A5D; --line:#D2DAD9;
   --stamp:#1D3EC4; --on-stamp:#FFFFFF; --stamp-wash:rgba(29,62,196,.08);
@@ -56,6 +56,7 @@ CSS = r"""
   --f-display:"Unbounded","Arial Black",system-ui,sans-serif;
   --f-body:"Onest","Segoe UI",system-ui,-apple-system,sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --gutter:max(clamp(16px,4vw,40px),env(safe-area-inset-left,0px),env(safe-area-inset-right,0px));
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -72,7 +73,7 @@ html{scroll-behavior:smooth}
 body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--f-body);-webkit-font-smoothing:antialiased}
 a{color:inherit}
 :focus-visible{outline:2px solid var(--stamp);outline-offset:3px;border-radius:4px}
-.wrap{max-width:1240px;margin-inline:auto;padding-inline:clamp(16px,4vw,40px)}
+.wrap{max-width:1240px;margin-inline:auto;padding-inline:var(--gutter)}
 
 /* шапка */
 .top{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding-block:1.1rem}
@@ -84,7 +85,6 @@ a{color:inherit}
 /* первый экран */
 .intro{display:grid;gap:clamp(1.75rem,4vw,2.5rem);padding-block:clamp(1.25rem,4vw,3rem) 0;
   grid-template-areas:"text" "spines" "hot"}
-@media (min-width:980px){.intro{grid-template-columns:minmax(0,1fr) 25rem;grid-template-areas:"text hot" "spines spines";column-gap:4rem;align-items:end}}
 .hero{grid-area:text;display:grid;gap:1.1rem;align-content:start;min-width:0}
 .eyebrow{margin:0;font:500 .78rem/1.3 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--stamp)}
 .hero h1{margin:0;font:600 clamp(2rem,5.6vw,4.3rem)/1.05 var(--f-display);letter-spacing:-.02em;text-wrap:balance;max-width:17ch}
@@ -92,18 +92,31 @@ a{color:inherit}
 .hero-cta{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.25rem;padding-top:.25rem}
 .hero-cta .btn{min-width:min(100%,15rem)}
 .hero-cta span{font-size:.9rem;color:var(--ink-soft)}
+/* на широком экране полосы стоят рядом с заголовком и целиком видны на первом экране */
+@media (min-width:980px){
+  .intro{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);grid-template-areas:"text spines" "hot hot";
+    column-gap:clamp(2.5rem,4.5vw,4rem);row-gap:2.25rem;padding-top:clamp(1rem,2.2vw,2rem)}
+  .hero h1{font-size:clamp(2.3rem,3.7vw,3.5rem)}
+  .lead{font-size:1.08rem}
+  .spines-nav{display:flex;flex-direction:column}
+  .spines{flex:1 1 auto;height:auto;min-height:24rem}
+}
 
 /* горящие места */
 .hot{grid-area:hot;min-width:0}
 .hot h2{margin:0 0 .35rem;font:600 1.15rem/1.25 var(--f-display);letter-spacing:-.01em}
-.hot>p{margin:0 0 .9rem;color:var(--ink-soft);font-size:.95rem}
+.hot>div>p{margin:0 0 .9rem;color:var(--ink-soft);font-size:.95rem}
 .hot ul{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink)}
-.hot li{border-bottom:1px solid var(--line)}
+.hot li{border-bottom:1px solid var(--line);break-inside:avoid}
 .hot a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.1rem 1rem;align-items:baseline;padding:.65rem .1rem;text-decoration:none}
 .hot a:hover .hot-name{color:var(--stamp)}
 .hot-name{font:600 1rem/1.3 var(--f-body)}
 .hot-name small{font:400 .78rem/1 var(--f-mono);color:var(--ink-soft);margin-left:.45rem;letter-spacing:.04em}
 .hot-what{font:500 .8rem/1.3 var(--f-mono);color:var(--stamp);text-align:right}
+@media (min-width:980px){
+  .hot{display:grid;grid-template-columns:minmax(0,18.5rem) minmax(0,1fr);column-gap:clamp(2.5rem,4.5vw,4rem);align-items:start}
+}
+@media (min-width:1200px){.hot ul{columns:2;column-gap:2.5rem}}
 
 /* корешки */
 .spines-nav{grid-area:spines;min-width:0}
@@ -122,6 +135,17 @@ a{color:inherit}
   .spines .spine:hover,.spines .spine:focus-visible{flex-grow:3.2}
 }
 .spines-note{margin:.8rem 0 0;font:400 .8rem/1.4 var(--f-mono);color:var(--ink-soft)}
+/* на телефоне полосы становятся лентой карточек, которая листается пальцем */
+@media (max-width:759px){
+  .spines{height:auto;gap:10px;margin-inline:calc(var(--gutter)*-1);padding-inline:var(--gutter);overflow-x:auto;overscroll-behavior-x:contain;
+    scroll-snap-type:x mandatory;scroll-padding-inline:var(--gutter);scrollbar-width:none}
+  .spines::-webkit-scrollbar{display:none}
+  .spine{flex:0 0 min(70vw,22rem);aspect-ratio:4/5;border-radius:6px;scroll-snap-align:start}
+  .spine::after{background:linear-gradient(to top,rgba(6,10,12,.82) 0%,rgba(6,10,12,.3) 38%,rgba(6,10,12,0) 62%)}
+  .spine-name{left:1rem;right:1rem;bottom:2.5rem;writing-mode:horizontal-tb;transform:none;font-size:1.45rem;white-space:normal}
+  .spine-month{left:1rem;right:auto;bottom:1rem;text-align:left}
+  .spine-seats{top:.75rem;left:auto;right:.75rem;transform:none;width:2rem;height:2rem;font-size:.9rem}
+}
 
 /* поездки */
 .trips{display:grid;gap:clamp(3.5rem,8vw,6.5rem);padding-block:clamp(3rem,7vw,5.5rem)}
@@ -293,6 +317,10 @@ def tg_book(t):
     return tg(f"Здравствуйте! Хочу забронировать место: {t['name']}, «{t['project']}», {t['dates']}.")
 
 
+def lines(text):
+    return "<br>".join(e(x) for x in text.split("\n"))
+
+
 def variant(i, size):
     """WebP-версия фото поездки из images.py, а если её нет, исходный JPEG."""
     name = f"{i}-{size}.webp"
@@ -416,6 +444,7 @@ def render_about(src):
 
 
 def render_body(src, inline=False):
+    H, HOT, CT = C["hero"], C["hot"], C["contact"]
     spines = "\n".join(
         f'    <a class="spine t-{t["id"]}" href="#{t["id"]}" aria-label="{e(t["name"])}, {e(t["dates"])}'
         + (f', осталось {t["seats"]["left"]} {seats_word(t["seats"]["left"])}' if t.get("seats") and not t["seats"].get("of") else "")
@@ -473,6 +502,7 @@ def render_body(src, inline=False):
         for c in C["credits"])
 
     handle = META["telegram"]
+    choose = e(tg(H["ctaMessage"]))
     return f"""
 <div class="wrap top">
   <span class="brand">Авторские путешествия <b>· сезон 26/27</b></span>
@@ -481,30 +511,32 @@ def render_body(src, inline=False):
 
 <div class="wrap intro">
   <header class="hero">
-    <p class="eyebrow">Сезон 2026–2027 · семь путешествий</p>
-    <h1>Комфорт забывается. Впечатления остаются.</h1>
-    <p class="lead">С 2009 года мы ищем особые места и собираем маршруты, ради которых стоит лететь через полмира: утренняя пуджа в тибетском монастыре, рассвет над облаками на вулкане, кора вокруг Кайласа. Добавляем йогу, цигун и медитацию, чтобы поездка давала силы телу и голове. И едем небольшой компанией, в которую легко влиться.</p>
+    <p class="eyebrow">{e(H["eyebrow"])}</p>
+    <h1>{lines(H["title"])}</h1>
+    <p class="lead">{e(H["lead"])}</p>
     <div class="hero-cta">
-      <a class="btn btn-primary" href="{e(tg('Здравствуйте! Помогите выбрать поездку.'))}" target="_blank" rel="noopener">Помочь с выбором</a>
-      <span>Расскажем про сложность и группу в Telegram</span>
+      <a class="btn btn-primary" href="{choose}" target="_blank" rel="noopener">{e(H["cta"])}</a>
+      <span>{e(H["ctaNote"])}</span>
     </div>
     <p class="trust"><a href="#why">Почему с нами</a> · <a href="#about">Кто мы</a> · <a href="#faq">Частые сомнения</a></p>
   </header>
-
-  <section class="hot" aria-labelledby="hot-title">
-    <h2 id="hot-title">Места заканчиваются</h2>
-    <p>Группы маленькие, а цена растёт по мере записи. Первые места всегда дешевле.</p>
-    <ul>
-{hot_rows}
-    </ul>
-  </section>
 
   <nav class="spines-nav" aria-label="Все поездки сезона">
     <div class="spines">
 {spines}
     </div>
-    <p class="spines-note">Семь поездок по порядку дат. Цифра в кружке: сколько мест осталось.</p>
+    <p class="spines-note">{e(C["spinesNote"])}</p>
   </nav>
+
+  <section class="hot" aria-labelledby="hot-title">
+    <div>
+      <h2 id="hot-title">{e(HOT["title"])}</h2>
+      <p>{e(HOT["lead"])}</p>
+    </div>
+    <ul>
+{hot_rows}
+    </ul>
+  </section>
 </div>
 
 {render_why()}
@@ -519,13 +551,13 @@ def render_body(src, inline=False):
 <section class="contact" aria-labelledby="contact-title">
   <div class="wrap">
     <div>
-      <h2 id="contact-title">Места заканчиваются быстро</h2>
-      <p>Смотрите поездки и записывайтесь заранее: группы маленькие, а первые места дешевле. Не знаете, что выбрать? Напишите Андрею, подберём поездку под ваш темп.</p>
+      <h2 id="contact-title">{e(CT["title"])}</h2>
+      <p>{e(CT["text"])}</p>
     </div>
     <div class="contact-links">
-      <a class="btn btn-primary" href="{e(tg('Здравствуйте! Помогите выбрать поездку.'))}" target="_blank" rel="noopener">Написать в Telegram</a>
+      <a class="btn btn-primary" href="{choose}" target="_blank" rel="noopener">{e(CT["telegram"])}</a>
       <small>@{handle}</small>
-      <a class="btn btn-ghost" href="https://wa.me/{META['whatsapp']}" target="_blank" rel="noopener">Написать в WhatsApp</a>
+      <a class="btn btn-ghost" href="https://wa.me/{META['whatsapp']}" target="_blank" rel="noopener">{e(CT["whatsapp"])}</a>
       <small>{e(META['whatsappHuman'])}</small>
     </div>
   </div>
