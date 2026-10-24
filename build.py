@@ -74,14 +74,19 @@ html{scroll-behavior:smooth}
 body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--f-body);-webkit-font-smoothing:antialiased}
 a{color:inherit}
 :focus-visible{outline:2px solid var(--stamp);outline-offset:3px;border-radius:4px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .wrap{max-width:1240px;margin-inline:auto;padding-inline:var(--gutter)}
 
 /* шапка */
 .top{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding-block:1.1rem}
-.brand{font:500 .78rem/1.2 var(--f-mono);letter-spacing:.14em;text-transform:uppercase}
+.brand{font:500 .78rem/1.2 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
 .brand b{font-weight:500;color:var(--ink-soft)}
 .top a{font:500 .85rem/1 var(--f-mono);text-decoration:none;padding:.55rem .8rem;border:1px solid var(--line);border-radius:6px}
 .top a:hover{border-color:var(--ink)}
+.top nav{display:flex;gap:.5rem;flex-shrink:0}
+.top nav a{white-space:nowrap}
+@media (max-width:520px){.brand b{display:none}}
+@media (max-width:420px){.top{gap:.6rem}.brand{font-size:.72rem;letter-spacing:.08em}.top nav{gap:.3rem}.top a{font-size:.8rem;padding:.55rem .55rem}}
 
 /* первый экран */
 .intro{display:grid;gap:clamp(1.75rem,4vw,2.5rem);padding-block:clamp(1.25rem,4vw,3rem) 0;
@@ -109,11 +114,11 @@ a{color:inherit}
 .hot>div>p{margin:0 0 .9rem;color:var(--ink-soft);font-size:.95rem}
 .hot ul{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink)}
 .hot li{border-bottom:1px solid var(--line);break-inside:avoid}
-.hot a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.1rem 1rem;align-items:baseline;padding:.65rem .1rem;text-decoration:none}
+.hot a{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:.1rem 1rem;padding:.65rem .1rem;text-decoration:none}
 .hot a:hover .hot-name{color:var(--stamp)}
 .hot-name{font:600 1rem/1.3 var(--f-body)}
-.hot-name small{font:400 .78rem/1 var(--f-mono);color:var(--ink-soft);margin-left:.45rem;letter-spacing:.04em}
-.hot-what{font:500 .8rem/1.3 var(--f-mono);color:var(--stamp);text-align:right}
+.hot-name small{font:400 .78rem/1 var(--f-mono);color:var(--ink-soft);margin-left:.2rem;letter-spacing:.04em}
+.hot-what{margin-left:auto;font:500 .8rem/1.3 var(--f-mono);color:var(--stamp);text-align:right}
 @media (min-width:980px){
   .hot{display:grid;grid-template-columns:minmax(0,18.5rem) minmax(0,1fr);column-gap:clamp(2.5rem,4.5vw,4rem);align-items:start}
 }
@@ -175,19 +180,22 @@ a{color:inherit}
 .kicker{font:500 .75rem/1.2 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;opacity:.92}
 .trip h2{margin:0;font:600 clamp(1.85rem,8.2vw,5.4rem)/1 var(--f-display);letter-spacing:-.02em}
 .project{font:500 clamp(1rem,2vw,1.3rem)/1.3 var(--f-body)}
-.stamp{position:absolute;z-index:1;top:clamp(.8rem,2.5vw,1.4rem);left:clamp(.8rem,2.5vw,1.4rem);transform:rotate(-3deg);
+/* даты слева, флажки справа: в одной строке, поэтому не наезжают друг на друга на любой ширине */
+.badges{position:absolute;z-index:1;top:clamp(.8rem,2.5vw,1.4rem);left:clamp(.8rem,2.5vw,1.4rem);right:clamp(.8rem,2.5vw,1.4rem);
+  display:flex;justify-content:space-between;align-items:flex-start;gap:.9rem}
+.stamp{flex:0 1 auto;min-width:0;transform:rotate(-3deg);
   background:var(--chip-bg);color:var(--chip-ink);border:1.5px solid currentColor;outline:1px solid var(--chip-bg);border-radius:4px;
   padding:.4rem .6rem;font:500 .78rem/1.15 var(--f-mono);letter-spacing:.04em;font-variant-numeric:tabular-nums}
-.chips{position:absolute;z-index:1;top:clamp(.8rem,2.5vw,1.4rem);right:clamp(.8rem,2.5vw,1.4rem);display:grid;gap:.35rem;justify-items:end;max-width:44%}
-@media (max-width:599px){.stamp{max-width:46%}}
+.chips{flex:0 1 auto;min-width:0;display:grid;gap:.35rem;justify-items:end}
 .flag,.status{border-radius:4px;padding:.4rem .6rem;font:500 .75rem/1.2 var(--f-mono);letter-spacing:.04em;text-align:right}
 .flag{background:var(--stamp);color:var(--on-stamp)}
 .status{background:var(--chip-bg);color:#111A1C}
 
+/* под фото: маршрут на всю ширину, ниже описание и правая колонка начинаются на одной линии */
 .trip-body{display:grid;gap:1.75rem;padding-top:clamp(1.25rem,3vw,2rem)}
-@media (min-width:880px){.trip-body{grid-template-columns:minmax(0,1fr) 23rem;gap:clamp(2rem,5vw,4.5rem)}}
+@media (min-width:880px){.trip-body{grid-template-columns:minmax(0,1fr) 23rem;column-gap:clamp(2rem,5vw,4.5rem)}.route{grid-column:1/-1}}
 .trip-main{min-width:0;display:grid;gap:1rem;align-content:start}
-.route{margin:0;font:500 .82rem/1.5 var(--f-mono);color:var(--stamp);letter-spacing:.02em}
+.route{margin:0 0 -.75rem;font:500 .82rem/1.5 var(--f-mono);color:var(--stamp);letter-spacing:.02em}
 .trip-text{margin:0;font-size:clamp(1.05rem,1.5vw,1.2rem);line-height:1.62;max-width:60ch}
 .facts{margin:0;display:grid;grid-template-columns:7.2rem minmax(0,1fr);gap:.55rem 1rem;padding-top:1rem;border-top:1px solid var(--line)}
 .facts dt{font:500 .7rem/1.9 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
@@ -248,9 +256,6 @@ a{color:inherit}
 .guests{margin:1.75rem 0 0;max-width:72ch;padding-top:1.25rem;border-top:1px solid var(--line);color:var(--ink-soft)}
 .trust{font-size:.9rem;color:var(--ink-soft)}
 .trust a{color:var(--stamp);font-weight:500}
-.top nav{display:flex;gap:.5rem;flex-shrink:0}
-.top nav a{white-space:nowrap}
-@media (max-width:520px){.brand b{display:none}}
 
 /* почему с нами */
 .why{padding-block:clamp(3rem,7vw,5rem) 0}
@@ -297,7 +302,7 @@ footer a{color:var(--ink-soft)}
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .spine,.photo,.btn,.tripnav,.tripnav.is-on,.dock,.dock.is-on{transition:none}
+  .spine,.photo,.btn,.tripnav,.tripnav.is-on,.dock,.dock.is-on,.faq summary::after{transition:none}
   .trip-photo:hover .photo{transform:none}
 }
 """
@@ -499,16 +504,17 @@ def render_about(src):
 def render_body(src, inline=False):
     H, HOT, CT = C["hero"], C["hot"], C["contact"]
     spines = "\n".join(
-        f'    <a class="spine t-{t["id"]}" href="#{t["id"]}" aria-label="{e(t["name"])}, {e(t["dates"])}'
-        + (f', осталось {t["seats"]["left"]} {seats_word(t["seats"]["left"])}' if t.get("seats") and not t["seats"].get("of") else "")
-        + '">'
+        f'    <a class="spine t-{t["id"]}" href="#{t["id"]}">'
         + (f'<span class="spine-seats" aria-hidden="true">{t["seats"]["left"]}</span>' if t.get("seats") and not t["seats"].get("of") else "")
-        + f'<span class="spine-name">{e(t["name"])}</span><span class="spine-month">{e(t["month"])}</span></a>'
+        + f'<span class="spine-name">{e(t["name"])}</span> <span class="spine-month">{e(t["month"])}</span>'
+        + f'<span class="sr">{e(t["dates"])}'
+        + (f', осталось {t["seats"]["left"]} {seats_word(t["seats"]["left"])}' if t.get("seats") and not t["seats"].get("of") else "")
+        + '</span></a>'
         for t in TOURS)
 
     hot = sorted((t for t in TOURS if t.get("hot")), key=lambda t: t["hotOrder"])
     hot_rows = "\n".join(
-        f'      <li><a href="#{t["id"]}"><span class="hot-name">{e(t["name"])}<small>{e(t["monthFull"])}</small></span>'
+        f'      <li><a href="#{t["id"]}"><span class="hot-name">{e(t["name"])} <small>{e(t["monthFull"])}</small></span>'
         f'<span class="hot-what">{e(t["hot"])}</span></a></li>' for t in hot)
 
     nav_links = "".join(f'<a href="#{t["id"]}"><small>{e(t["month"])}</small> {e(t["name"])}</a>' for t in TOURS)
@@ -526,8 +532,7 @@ def render_body(src, inline=False):
   <article class="trip t-{t['id']}" id="{t['id']}" data-start="{t['start']}" data-end="{t['end']}">
     <a class="trip-photo" href="{e(t['url'])}" target="_blank" rel="noopener" aria-label="{e(t['name'])}: открыть сайт поездки">
       {render_photo(t, src, inline, n == 0)}
-      <span class="stamp">{e(t['dates'])}</span>
-      <span class="chips">{flag}<span class="status" hidden></span></span>
+      <span class="badges"><span class="stamp">{e(t['dates'])}</span><span class="chips">{flag}<span class="status" hidden></span></span></span>
       <div class="cap">
         <span class="kicker">{e(t['kicker'])}</span>
         <h2>{e(t['name'])}</h2>
@@ -535,8 +540,8 @@ def render_body(src, inline=False):
       </div>
     </a>
     <div class="trip-body">
+      <p class="route">{e(t['route'])}</p>
       <div class="trip-main">
-        <p class="route">{e(t['route'])}</p>
         <p class="trip-text">{e(t['text'])}</p>
         <dl class="facts">{dl}</dl>
       </div>

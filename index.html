@@ -64,14 +64,19 @@ html{scroll-behavior:smooth}
 body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--f-body);-webkit-font-smoothing:antialiased}
 a{color:inherit}
 :focus-visible{outline:2px solid var(--stamp);outline-offset:3px;border-radius:4px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .wrap{max-width:1240px;margin-inline:auto;padding-inline:var(--gutter)}
 
 /* шапка */
 .top{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding-block:1.1rem}
-.brand{font:500 .78rem/1.2 var(--f-mono);letter-spacing:.14em;text-transform:uppercase}
+.brand{font:500 .78rem/1.2 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
 .brand b{font-weight:500;color:var(--ink-soft)}
 .top a{font:500 .85rem/1 var(--f-mono);text-decoration:none;padding:.55rem .8rem;border:1px solid var(--line);border-radius:6px}
 .top a:hover{border-color:var(--ink)}
+.top nav{display:flex;gap:.5rem;flex-shrink:0}
+.top nav a{white-space:nowrap}
+@media (max-width:520px){.brand b{display:none}}
+@media (max-width:420px){.top{gap:.6rem}.brand{font-size:.72rem;letter-spacing:.08em}.top nav{gap:.3rem}.top a{font-size:.8rem;padding:.55rem .55rem}}
 
 /* первый экран */
 .intro{display:grid;gap:clamp(1.75rem,4vw,2.5rem);padding-block:clamp(1.25rem,4vw,3rem) 0;
@@ -99,11 +104,11 @@ a{color:inherit}
 .hot>div>p{margin:0 0 .9rem;color:var(--ink-soft);font-size:.95rem}
 .hot ul{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink)}
 .hot li{border-bottom:1px solid var(--line);break-inside:avoid}
-.hot a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.1rem 1rem;align-items:baseline;padding:.65rem .1rem;text-decoration:none}
+.hot a{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:.1rem 1rem;padding:.65rem .1rem;text-decoration:none}
 .hot a:hover .hot-name{color:var(--stamp)}
 .hot-name{font:600 1rem/1.3 var(--f-body)}
-.hot-name small{font:400 .78rem/1 var(--f-mono);color:var(--ink-soft);margin-left:.45rem;letter-spacing:.04em}
-.hot-what{font:500 .8rem/1.3 var(--f-mono);color:var(--stamp);text-align:right}
+.hot-name small{font:400 .78rem/1 var(--f-mono);color:var(--ink-soft);margin-left:.2rem;letter-spacing:.04em}
+.hot-what{margin-left:auto;font:500 .8rem/1.3 var(--f-mono);color:var(--stamp);text-align:right}
 @media (min-width:980px){
   .hot{display:grid;grid-template-columns:minmax(0,18.5rem) minmax(0,1fr);column-gap:clamp(2.5rem,4.5vw,4rem);align-items:start}
 }
@@ -165,19 +170,22 @@ a{color:inherit}
 .kicker{font:500 .75rem/1.2 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;opacity:.92}
 .trip h2{margin:0;font:600 clamp(1.85rem,8.2vw,5.4rem)/1 var(--f-display);letter-spacing:-.02em}
 .project{font:500 clamp(1rem,2vw,1.3rem)/1.3 var(--f-body)}
-.stamp{position:absolute;z-index:1;top:clamp(.8rem,2.5vw,1.4rem);left:clamp(.8rem,2.5vw,1.4rem);transform:rotate(-3deg);
+/* даты слева, флажки справа: в одной строке, поэтому не наезжают друг на друга на любой ширине */
+.badges{position:absolute;z-index:1;top:clamp(.8rem,2.5vw,1.4rem);left:clamp(.8rem,2.5vw,1.4rem);right:clamp(.8rem,2.5vw,1.4rem);
+  display:flex;justify-content:space-between;align-items:flex-start;gap:.9rem}
+.stamp{flex:0 1 auto;min-width:0;transform:rotate(-3deg);
   background:var(--chip-bg);color:var(--chip-ink);border:1.5px solid currentColor;outline:1px solid var(--chip-bg);border-radius:4px;
   padding:.4rem .6rem;font:500 .78rem/1.15 var(--f-mono);letter-spacing:.04em;font-variant-numeric:tabular-nums}
-.chips{position:absolute;z-index:1;top:clamp(.8rem,2.5vw,1.4rem);right:clamp(.8rem,2.5vw,1.4rem);display:grid;gap:.35rem;justify-items:end;max-width:44%}
-@media (max-width:599px){.stamp{max-width:46%}}
+.chips{flex:0 1 auto;min-width:0;display:grid;gap:.35rem;justify-items:end}
 .flag,.status{border-radius:4px;padding:.4rem .6rem;font:500 .75rem/1.2 var(--f-mono);letter-spacing:.04em;text-align:right}
 .flag{background:var(--stamp);color:var(--on-stamp)}
 .status{background:var(--chip-bg);color:#111A1C}
 
+/* под фото: маршрут на всю ширину, ниже описание и правая колонка начинаются на одной линии */
 .trip-body{display:grid;gap:1.75rem;padding-top:clamp(1.25rem,3vw,2rem)}
-@media (min-width:880px){.trip-body{grid-template-columns:minmax(0,1fr) 23rem;gap:clamp(2rem,5vw,4.5rem)}}
+@media (min-width:880px){.trip-body{grid-template-columns:minmax(0,1fr) 23rem;column-gap:clamp(2rem,5vw,4.5rem)}.route{grid-column:1/-1}}
 .trip-main{min-width:0;display:grid;gap:1rem;align-content:start}
-.route{margin:0;font:500 .82rem/1.5 var(--f-mono);color:var(--stamp);letter-spacing:.02em}
+.route{margin:0 0 -.75rem;font:500 .82rem/1.5 var(--f-mono);color:var(--stamp);letter-spacing:.02em}
 .trip-text{margin:0;font-size:clamp(1.05rem,1.5vw,1.2rem);line-height:1.62;max-width:60ch}
 .facts{margin:0;display:grid;grid-template-columns:7.2rem minmax(0,1fr);gap:.55rem 1rem;padding-top:1rem;border-top:1px solid var(--line)}
 .facts dt{font:500 .7rem/1.9 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
@@ -238,9 +246,6 @@ a{color:inherit}
 .guests{margin:1.75rem 0 0;max-width:72ch;padding-top:1.25rem;border-top:1px solid var(--line);color:var(--ink-soft)}
 .trust{font-size:.9rem;color:var(--ink-soft)}
 .trust a{color:var(--stamp);font-weight:500}
-.top nav{display:flex;gap:.5rem;flex-shrink:0}
-.top nav a{white-space:nowrap}
-@media (max-width:520px){.brand b{display:none}}
 
 /* почему с нами */
 .why{padding-block:clamp(3rem,7vw,5rem) 0}
@@ -287,7 +292,7 @@ footer a{color:var(--ink-soft)}
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .spine,.photo,.btn,.tripnav,.tripnav.is-on,.dock,.dock.is-on{transition:none}
+  .spine,.photo,.btn,.tripnav,.tripnav.is-on,.dock,.dock.is-on,.faq summary::after{transition:none}
   .trip-photo:hover .photo{transform:none}
 }
 
@@ -321,13 +326,13 @@ footer a{color:var(--ink-soft)}
 
   <nav class="spines-nav" aria-label="Все поездки сезона">
     <div class="spines">
-    <a class="spine t-dahab" href="#dahab" aria-label="Дахаб, 11–21 ноября 2026, осталось 1 место"><span class="spine-seats" aria-hidden="true">1</span><span class="spine-name">Дахаб</span><span class="spine-month">ноя</span></a>
-    <a class="spine t-patagonia" href="#patagonia" aria-label="Патагония, 3–15 января 2027, осталось 1 место"><span class="spine-seats" aria-hidden="true">1</span><span class="spine-name">Патагония</span><span class="spine-month">янв</span></a>
-    <a class="spine t-bali" href="#bali" aria-label="Бали, 12–22 февраля 2027"><span class="spine-name">Бали</span><span class="spine-month">фев</span></a>
-    <a class="spine t-cambodia" href="#cambodia" aria-label="Камбоджа, 26 февраля – 8 марта 2027, осталось 5 мест"><span class="spine-seats" aria-hidden="true">5</span><span class="spine-name">Камбоджа</span><span class="spine-month">фев</span></a>
-    <a class="spine t-china" href="#china" aria-label="Китай, 23 марта – 2 апреля 2027"><span class="spine-name">Китай</span><span class="spine-month">мар</span></a>
-    <a class="spine t-kanchenjunga" href="#kanchenjunga" aria-label="Канченджанга, 5–20 апреля 2027"><span class="spine-name">Канченджанга</span><span class="spine-month">апр</span></a>
-    <a class="spine t-tibet" href="#tibet" aria-label="Тибет, 12–29 августа 2027"><span class="spine-name">Тибет</span><span class="spine-month">авг</span></a>
+    <a class="spine t-dahab" href="#dahab"><span class="spine-seats" aria-hidden="true">1</span><span class="spine-name">Дахаб</span> <span class="spine-month">ноя</span><span class="sr">11–21 ноября 2026, осталось 1 место</span></a>
+    <a class="spine t-patagonia" href="#patagonia"><span class="spine-seats" aria-hidden="true">1</span><span class="spine-name">Патагония</span> <span class="spine-month">янв</span><span class="sr">3–15 января 2027, осталось 1 место</span></a>
+    <a class="spine t-bali" href="#bali"><span class="spine-name">Бали</span> <span class="spine-month">фев</span><span class="sr">12–22 февраля 2027</span></a>
+    <a class="spine t-cambodia" href="#cambodia"><span class="spine-seats" aria-hidden="true">5</span><span class="spine-name">Камбоджа</span> <span class="spine-month">фев</span><span class="sr">26 февраля – 8 марта 2027, осталось 5 мест</span></a>
+    <a class="spine t-china" href="#china"><span class="spine-name">Китай</span> <span class="spine-month">мар</span><span class="sr">23 марта – 2 апреля 2027</span></a>
+    <a class="spine t-kanchenjunga" href="#kanchenjunga"><span class="spine-name">Канченджанга</span> <span class="spine-month">апр</span><span class="sr">5–20 апреля 2027</span></a>
+    <a class="spine t-tibet" href="#tibet"><span class="spine-name">Тибет</span> <span class="spine-month">авг</span><span class="sr">12–29 августа 2027</span></a>
     </div>
     <p class="spines-note">Семь поездок по порядку дат. Цифра в кружке: сколько мест осталось.</p>
   </nav>
@@ -338,12 +343,12 @@ footer a{color:var(--ink-soft)}
       <p>Группы маленькие, а цена растёт по мере записи. Первые места всегда дешевле.</p>
     </div>
     <ul>
-      <li><a href="#dahab"><span class="hot-name">Дахаб<small>ноябрь</small></span><span class="hot-what">Осталось 1 место</span></a></li>
-      <li><a href="#patagonia"><span class="hot-name">Патагония<small>январь</small></span><span class="hot-what">Осталось 1 место</span></a></li>
-      <li><a href="#cambodia"><span class="hot-name">Камбоджа<small>февраль</small></span><span class="hot-what">Осталось 5 мест</span></a></li>
-      <li><a href="#kanchenjunga"><span class="hot-name">Канченджанга<small>апрель</small></span><span class="hot-what">3 места по ранней цене</span></a></li>
-      <li><a href="#china"><span class="hot-name">Китай<small>март</small></span><span class="hot-what">Ранняя цена заканчивается</span></a></li>
-      <li><a href="#tibet"><span class="hot-name">Тибет<small>август</small></span><span class="hot-what">Ранняя цена заканчивается</span></a></li>
+      <li><a href="#dahab"><span class="hot-name">Дахаб <small>ноябрь</small></span><span class="hot-what">Осталось 1 место</span></a></li>
+      <li><a href="#patagonia"><span class="hot-name">Патагония <small>январь</small></span><span class="hot-what">Осталось 1 место</span></a></li>
+      <li><a href="#cambodia"><span class="hot-name">Камбоджа <small>февраль</small></span><span class="hot-what">Осталось 5 мест</span></a></li>
+      <li><a href="#kanchenjunga"><span class="hot-name">Канченджанга <small>апрель</small></span><span class="hot-what">3 места по ранней цене</span></a></li>
+      <li><a href="#china"><span class="hot-name">Китай <small>март</small></span><span class="hot-what">Ранняя цена заканчивается</span></a></li>
+      <li><a href="#tibet"><span class="hot-name">Тибет <small>август</small></span><span class="hot-what">Ранняя цена заканчивается</span></a></li>
     </ul>
   </section>
 </div>
@@ -359,8 +364,7 @@ footer a{color:var(--ink-soft)}
   <article class="trip t-dahab" id="dahab" data-start="2026-11-11" data-end="2026-11-21">
     <a class="trip-photo" href="https://dahab-camp.ru/dahab-yoga-camp.html" target="_blank" rel="noopener" aria-label="Дахаб: открыть сайт поездки">
       <picture><source media="(max-width:599px)" srcset="img/dahab-800.webp" type="image/webp"><source srcset="img/dahab-1440.webp" type="image/webp"><img src="img/dahab.jpg" class="photo" alt="Дайвер и стая жёлтых рыб у рифа Красного моря" loading="eager" decoding="async"></picture>
-      <span class="stamp">11–21 ноября 2026</span>
-      <span class="chips"><span class="flag">Последнее место</span><span class="status" hidden></span></span>
+      <span class="badges"><span class="stamp">11–21 ноября 2026</span><span class="chips"><span class="flag">Последнее место</span><span class="status" hidden></span></span></span>
       <div class="cap">
         <span class="kicker">Йога-кэмп</span>
         <h2>Дахаб</h2>
@@ -368,8 +372,8 @@ footer a{color:var(--ink-soft)}
       </div>
     </a>
     <div class="trip-body">
+      <p class="route">Дахаб · каньон · Абу-Галум · риф</p>
       <div class="trip-main">
-        <p class="route">Дахаб · каньон · Абу-Галум · риф</p>
         <p class="trip-text">Цигун на рассвете, днём риф и маска, вечером йога, пока песок ещё тёплый. Между практиками каньон, темаскаль-баня и бухта Абу-Галум. Живём в отеле с завтраками.</p>
         <dl class="facts"><dt>Даты</dt><dd>11–21 ноября 2026</dd><dt>Длительность</dt><dd>11 дней</dd><dt>Ведут</dt><dd>Илья Баринов</dd><dt>Группа</dt><dd>до 15 человек</dd></dl>
       </div>
@@ -386,8 +390,7 @@ footer a{color:var(--ink-soft)}
   <article class="trip t-patagonia" id="patagonia" data-start="2027-01-03" data-end="2027-01-15">
     <a class="trip-photo" href="https://patagonya.ru" target="_blank" rel="noopener" aria-label="Патагония: открыть сайт поездки">
       <picture><source media="(max-width:599px)" srcset="img/patagonia-800.webp" type="image/webp"><source srcset="img/patagonia-1440.webp" type="image/webp"><img src="img/patagonia.jpg" class="photo" alt="Рассвет над Фицроем и его отражение в горном озере" loading="lazy" decoding="async"></picture>
-      <span class="stamp">3–15 января 2027</span>
-      <span class="chips"><span class="flag">Последнее место</span><span class="status" hidden></span></span>
+      <span class="badges"><span class="stamp">3–15 января 2027</span><span class="chips"><span class="flag">Последнее место</span><span class="status" hidden></span></span></span>
       <div class="cap">
         <span class="kicker">Треккинг</span>
         <h2>Патагония</h2>
@@ -395,8 +398,8 @@ footer a{color:var(--ink-soft)}
       </div>
     </a>
     <div class="trip-body">
+      <p class="route">Эль-Калафате → Эль-Чальтен → Торрес-дель-Пайне → Ушуая</p>
       <div class="trip-main">
-        <p class="route">Эль-Калафате → Эль-Чальтен → Торрес-дель-Пайне → Ушуая</p>
         <p class="trip-text">Гранитный Фицрой, который краснеет на рассвете, башни Торрес-дель-Пайне, ледник Перито-Морено с воды и канал Бигль с пингвинами. Чистый треккинг без практик: горы, ветер и дорога. Живём в отелях и на эстансиях.</p>
         <dl class="facts"><dt>Даты</dt><dd>3–15 января 2027</dd><dt>Длительность</dt><dd>12 дней</dd><dt>Ведут</dt><dd>Леонид Кутузов, Андрей Баранов</dd></dl>
       </div>
@@ -413,8 +416,7 @@ footer a{color:var(--ink-soft)}
   <article class="trip t-bali" id="bali" data-start="2027-02-12" data-end="2027-02-22">
     <a class="trip-photo" href="https://bali-soul.ru" target="_blank" rel="noopener" aria-label="Бали: открыть сайт поездки">
       <picture><source media="(max-width:599px)" srcset="img/bali-800.webp" type="image/webp"><source srcset="img/bali-1440.webp" type="image/webp"><img src="img/bali.jpg" class="photo" alt="Рисовые террасы Джатилувих у подножия гор" loading="lazy" decoding="async"></picture>
-      <span class="stamp">12–22 февраля 2027</span>
-      <span class="chips"><span class="status" hidden></span></span>
+      <span class="badges"><span class="stamp">12–22 февраля 2027</span><span class="chips"><span class="status" hidden></span></span></span>
       <div class="cap">
         <span class="kicker">Путешествие-практика</span>
         <h2>Бали</h2>
@@ -422,8 +424,8 @@ footer a{color:var(--ink-soft)}
       </div>
     </a>
     <div class="trip-body">
+      <p class="route">Баланган → Убуд → Гили Мено → Санур</p>
       <div class="trip-main">
-        <p class="route">Баланган → Убуд → Гили Мено → Санур</p>
         <p class="trip-text">Цигун на рассвете и поющие чаши на закате. Ночной подъём на вулкан Батур к рассвету над облаками, рисовые террасы Джатилувих, вилла среди полей Убуда и два тихих дня на Гили Мено, где слышно только море.</p>
         <dl class="facts"><dt>Даты</dt><dd>12–22 февраля 2027</dd><dt>Длительность</dt><dd>11 дней</dd><dt>Ведут</dt><dd>Илья Баринов, Вита Бузик</dd></dl>
       </div>
@@ -440,8 +442,7 @@ footer a{color:var(--ink-soft)}
   <article class="trip t-cambodia" id="cambodia" data-start="2027-02-26" data-end="2027-03-08">
     <a class="trip-photo" href="https://cambodiamoto.ru" target="_blank" rel="noopener" aria-label="Камбоджа: открыть сайт поездки">
       <picture><source media="(max-width:599px)" srcset="img/cambodia-800.webp" type="image/webp"><source srcset="img/cambodia-1440.webp" type="image/webp"><img src="img/cambodia.jpg" class="photo" alt="Колонна мотоциклов на пыльной дороге, на горизонте башни храма" loading="lazy" decoding="async"></picture>
-      <span class="stamp">26 февраля – 8 марта 2027</span>
-      <span class="chips"><span class="flag">Осталось 5 мест</span><span class="status" hidden></span></span>
+      <span class="badges"><span class="stamp">26 февраля – 8 марта 2027</span><span class="chips"><span class="flag">Осталось 5 мест</span><span class="status" hidden></span></span></span>
       <div class="cap">
         <span class="kicker">Мототур</span>
         <h2>Камбоджа</h2>
@@ -449,8 +450,8 @@ footer a{color:var(--ink-soft)}
       </div>
     </a>
     <div class="trip-body">
+      <p class="route">Ангкор → джунгли и горы → Сиануквиль · остров Ко Ронг</p>
       <div class="trip-main">
-        <p class="route">Ангкор → джунгли и горы → Сиануквиль · остров Ко Ронг</p>
         <p class="trip-text">От Ангкора через деревни, джунгли и горы к морю. Маршрут один, способов два: за рулём Honda FTR 230 или в микроавтобусе. После можно остаться на неделю на острове Ко Ронг, 8–15 марта.</p>
         <dl class="facts"><dt>Даты</dt><dd>26 февраля – 8 марта 2027</dd><dt>Длительность</dt><dd>11 дней, из них 10 в дороге</dd><dt>Ведут</dt><dd>Илья Баринов, Леонид Кутузов, Андрей Баранов, Елена Бакина</dd></dl>
       </div>
@@ -467,8 +468,7 @@ footer a{color:var(--ink-soft)}
   <article class="trip t-china" id="china" data-start="2027-03-23" data-end="2027-04-02">
     <a class="trip-photo" href="https://shangrila-trip.ru" target="_blank" rel="noopener" aria-label="Китай: открыть сайт поездки">
       <picture><source media="(max-width:599px)" srcset="img/china-800.webp" type="image/webp"><source srcset="img/china-1440.webp" type="image/webp"><img src="img/china.jpg" class="photo" alt="Карстовые горы Яншо на закате" loading="lazy" decoding="async"></picture>
-      <span class="stamp">23 марта – 2 апреля 2027</span>
-      <span class="chips"><span class="flag">Ранняя цена заканчивается</span><span class="status" hidden></span></span>
+      <span class="badges"><span class="stamp">23 марта – 2 апреля 2027</span><span class="chips"><span class="flag">Ранняя цена заканчивается</span><span class="status" hidden></span></span></span>
       <div class="cap">
         <span class="kicker">Авторское путешествие</span>
         <h2>Китай</h2>
@@ -476,8 +476,8 @@ footer a{color:var(--ink-soft)}
       </div>
     </a>
     <div class="trip-body">
+      <p class="route">Гуанчжоу → Яншо → Шангри-Ла → Лицзян</p>
       <div class="trip-main">
-        <p class="route">Гуанчжоу → Яншо → Шангри-Ла → Лицзян</p>
         <p class="trip-text">Ночные огни Гуанчжоу, винчун на родине Ип Мана, туманы над карстом Яншо, утренняя пуджа в монастыре Сонгцзанлинь на 3300 метрах, старый Лицзян и озеро Лугу, где живёт народ мосо.</p>
         <dl class="facts"><dt>Даты</dt><dd>23 марта – 2 апреля 2027</dd><dt>Длительность</dt><dd>11 дней</dd><dt>Ведут</dt><dd>Илья Баринов, Андрей Баранов, Елена Бакина</dd><dt>Группа</dt><dd>до 20 человек</dd></dl>
       </div>
@@ -494,8 +494,7 @@ footer a{color:var(--ink-soft)}
   <article class="trip t-kanchenjunga" id="kanchenjunga" data-start="2027-04-05" data-end="2027-04-20">
     <a class="trip-photo" href="https://kanchenjunga.ru" target="_blank" rel="noopener" aria-label="Канченджанга: открыть сайт поездки">
       <picture><source media="(max-width:599px)" srcset="img/kanchenjunga-800.webp" type="image/webp"><source srcset="img/kanchenjunga-1440.webp" type="image/webp"><img src="img/kanchenjunga.jpg" class="photo" alt="Канченджанга в огненном свете заката" loading="lazy" decoding="async"></picture>
-      <span class="stamp">5–20 апреля 2027</span>
-      <span class="chips"><span class="flag">3 места по ранней цене</span><span class="status" hidden></span></span>
+      <span class="badges"><span class="stamp">5–20 апреля 2027</span><span class="chips"><span class="flag">3 места по ранней цене</span><span class="status" hidden></span></span></span>
       <div class="cap">
         <span class="kicker">Высокогорный трек</span>
         <h2>Канченджанга</h2>
@@ -503,8 +502,8 @@ footer a{color:var(--ink-soft)}
       </div>
     </a>
     <div class="trip-body">
+      <p class="route">Илам → Гунса → Пангпема, 5143 м → перевал Селе Ла</p>
       <div class="trip-main">
-        <p class="route">Илам → Гунса → Пангпема, 5143 м → перевал Селе Ла</p>
         <p class="trip-text">Восточный Непал, куда пускают только по спецпермиту. Чайные холмы, цветущие рододендроны, стена Жанну и северный базовый лагерь третьей вершины мира. Обратно другой долиной, через перевал Селе Ла. Практики Ильи каждый день, под высоту и нагрузку.</p>
         <dl class="facts"><dt>Даты</dt><dd>5–20 апреля 2027</dd><dt>Длительность</dt><dd>16 дней</dd><dt>Ведут</dt><dd>Илья Баринов, Андрей Баранов, непальский гид Манки</dd><dt>Группа</dt><dd>до 15 человек</dd></dl>
       </div>
@@ -521,8 +520,7 @@ footer a{color:var(--ink-soft)}
   <article class="trip t-tibet" id="tibet" data-start="2027-08-12" data-end="2027-08-29">
     <a class="trip-photo" href="https://tibet2027.ru" target="_blank" rel="noopener" aria-label="Тибет: открыть сайт поездки">
       <picture><source media="(max-width:599px)" srcset="img/tibet-800.webp" type="image/webp"><source srcset="img/tibet-1440.webp" type="image/webp"><img src="img/tibet.jpg" class="photo" alt="Кайлас под синим небом" loading="lazy" decoding="async"></picture>
-      <span class="stamp">12–29 августа 2027</span>
-      <span class="chips"><span class="flag">Ранняя цена заканчивается</span><span class="status" hidden></span></span>
+      <span class="badges"><span class="stamp">12–29 августа 2027</span><span class="chips"><span class="flag">Ранняя цена заканчивается</span><span class="status" hidden></span></span></span>
       <div class="cap">
         <span class="kicker">Паломничество</span>
         <h2>Тибет</h2>
@@ -530,8 +528,8 @@ footer a{color:var(--ink-soft)}
       </div>
     </a>
     <div class="trip-body">
+      <p class="route">Лхаса → Эверест → Гуге → Кайлас</p>
       <div class="trip-main">
-        <p class="route">Лхаса → Эверест → Гуге → Кайлас</p>
         <p class="trip-text">Лхаса и её монастыри, базовый лагерь Эвереста, руины царства Гуге и трёхдневная кора вокруг Кайласа. С группой едет экспедиционный фотограф, съёмка уже в стоимости.</p>
         <dl class="facts"><dt>Даты</dt><dd>12–29 августа 2027</dd><dt>Длительность</dt><dd>18 дней</dd><dt>Ведут</dt><dd>Леонид Кутузов, Ксения Абрамова, Андрей Баранов, фотограф Симона Малиренко</dd></dl>
       </div>
