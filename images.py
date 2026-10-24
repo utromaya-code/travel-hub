@@ -3,19 +3,24 @@
 
     python3 images.py
 
-  img/<id>.jpg (фото поездки, 1440 px)     -> img/<id>-1440.webp  для широких экранов
-                                            -> img/<id>-800.webp   вертикальный кадр 4:5 по точке pos
-                                               из content.json: фото-полосы и главы на телефоне
-  img/past-*.jpg, team-*.jpg, review-*.jpg -> .webp того же размера
-  favicon.ico, apple-touch-icon.png        -> буква «П» шрифтом Unbounded, как в favicon.svg
-  img/og.jpg                               -> превью ссылки 1200×630: семь полос и заголовок
+  img/<id>.jpg (фото поездки, 1440 px)  -> img/<id>-1440.webp  для широких экранов
+                                         -> img/<id>-800.webp   вертикальный кадр 4:5 по точке pos
+                                            из content.json: фото-полосы и главы на телефоне
+  gallery.items: img/<img>.jpg           -> img/<img>-360/640/960.webp в пропорции ratio по точке pos
+  about.team:    img/<img>.jpg           -> img/<img>-400.webp, -800.webp, кадр 4:5 по точке pos
+  contact.photo: img/<photo>.jpg         -> img/<photo>-bg-800.webp, -bg-1280.webp, фон блока контактов
+  img/review-*.jpg                       -> .webp того же размера
+  favicon.ico, apple-touch-icon.png      -> буква «П» шрифтом Unbounded, как в favicon.svg
+  img/og.jpg                             -> превью ссылки 1200×630: семь полос и заголовок
 
-Запускать после замены фото, смены pos или текста превью, затем python3 build.py.
+Все фото проходят одну цветокоррекцию (grade): снимки из разных поездок и с разных
+камер выглядят одной серией. Запускать после замены фото, смены pos или текста
+превью, затем python3 build.py.
 """
 import json
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont, ImageOps
 
 ROOT = Path(__file__).resolve().parent
 IMG = ROOT / "img"
@@ -25,34 +30,99 @@ OG = C["og"]
 BLUE = "#1D3EC4"
 
 
-def pos(t):
-    return [float(v.rstrip("%")) / 100 for v in t["pos"].split()]
+def pos(item):
+    return [float(v.rstrip("%")) / 100 for v in item.get("pos", "50% 50%").split()]
 
 
-def webp(im, out, q):
+def webp(im, out, q, budget=None):
+    """WebP; если файл тяжелее budget КБ (шумные снимки с телефона), качество снижается до 50."""
     im.save(out, "WEBP", quality=q, method=6)
-    print(f"{out.relative_to(ROOT)}  {im.width}×{im.height}  {out.stat().st_size // 1024} КБ")
+    while budget and out.stat().st_size > budget * 1024 and q > 50:
+        q -= 4
+        im.save(out, "WEBP", quality=q, method=6)
+    print(f"{out.relative_to(ROOT)}  {im.width}×{im.height}  q{q}  {out.stat().st_size // 1024} КБ")
+
+
+def grade(im):
+    """Единая цветокоррекция: выровнять тона, чуть теплее и контрастнее."""
+    im = im.convert("RGB")
+    # автоуровни вполсилы, чтобы сумеречные кадры не превращались в дневные
+    im = Image.blend(im, ImageOps.autocontrast(im, cutoff=0.4, preserve_tone=True), 0.7)
+    r, g, b = im.split()
+    r = r.point(lambda v: min(255, round(v * 1.03)))
+    b = b.point(lambda v: round(v * 0.97))
+    im = Image.merge("RGB", (r, g, b))
+    im = ImageEnhance.Contrast(im).enhance(1.06)
+    return ImageEnhance.Color(im).enhance(1.04)
+
+
+def source(name):
+    return grade(ImageOps.exif_transpose(Image.open(IMG / f"{name}.jpg")))
+
+
+def crop(im, ratio, item):
+    """Кадр нужной пропорции; лишнее срезается так же, как object-position: pos."""
+    w, h = (int(x) for x in ratio.split(":"))
+    px, py = pos(item)
+    if im.width / im.height > w / h:
+        cw = round(im.height * w / h)
+        left = round((im.width - cw) * px)
+        return im.crop((left, 0, left + cw, im.height))
+    ch = round(im.width * h / w)
+    top = round((im.height - ch) * py)
+    return im.crop((0, top, im.width, top + ch))
+
+
+def sized(im, width):
+    if im.width <= width:
+        return im
+    return im.resize((width, round(im.height * width / im.width)), Image.LANCZOS)
 
 
 def tour_images():
     for t in C["tours"]:
-        im = Image.open(IMG / f"{t['id']}.jpg").convert("RGB")
-        if im.width > 1440:
-            im = im.resize((1440, round(im.height * 1440 / im.width)), Image.LANCZOS)
-        webp(im, IMG / f"{t['id']}-1440.webp", 72)
+        im = sized(source(t["id"]), 1440)
+        out = IMG / f"{t['id']}-1440.webp"
+        im.save(out, "WEBP", quality=70, method=6)
+        if out.stat().st_size > 200 * 1024:
+            # шумный кадр: лёгкое шумоподавление вместо грубого сжатия, на экране разница не видна
+            im = im.filter(ImageFilter.MedianFilter(3))
+        webp(im, out, 70, 200)
         # Кадр 4:5 режется там же, где его показал бы background-position: pos,
         # поэтому то же значение pos даёт на нём ту же картинку, что и на полном фото.
         cw = min(im.width, round(im.height * 4 / 5))
         left = round((im.width - cw) * pos(t)[0])
-        crop = im.crop((left, 0, left + cw, im.height))
-        if crop.width > 800:
-            crop = crop.resize((800, round(crop.height * 800 / crop.width)), Image.LANCZOS)
-        webp(crop, IMG / f"{t['id']}-800.webp", 72)
+        webp(sized(im.crop((left, 0, left + cw, im.height)), 800), IMG / f"{t['id']}-800.webp", 66, 90)
 
 
-def about_images():
-    for f in sorted(IMG.glob("past-*.jpg")) + sorted(IMG.glob("team-*.jpg")) + sorted(IMG.glob("review-*.jpg")):
-        webp(Image.open(f).convert("RGB"), f.with_suffix(".webp"), 70)
+def gallery_images():
+    for x in C["gallery"]["items"]:
+        # лёгкое шумоподавление: снимки с телефона без него весят вдвое больше
+        im = crop(source(x["img"]), x["ratio"], x).filter(ImageFilter.MedianFilter(3))
+        for w, budget in ((360, 28), (640, 64), (960, 130)):
+            webp(sized(im, w), IMG / f"{x['img']}-{w}.webp", 66, budget)
+
+
+def team_images():
+    for x in C["about"]["team"]:
+        im = crop(source(x["img"]), "4:5", x)
+        for w in (400, 800):
+            webp(sized(im, w), IMG / f"{x['img']}-{w}.webp", 70)
+
+
+def contact_image():
+    name = C["contact"].get("photo")
+    if not name:
+        return
+    # фон под тёмной вуалью: мелкие детали не видны, поэтому сжимается сильнее
+    im = source(name).filter(ImageFilter.MedianFilter(3))
+    for w, budget in ((800, 50), (1280, 110)):
+        webp(sized(im, w), IMG / f"{name}-bg-{w}.webp", 60, budget)
+
+
+def review_images():
+    for f in sorted(IMG.glob("review-*.jpg")):
+        webp(grade(Image.open(f)), f.with_suffix(".webp"), 72)
 
 
 def letter(size, radius):
@@ -79,7 +149,7 @@ def og_image():
     n = len(C["tours"])
     sw = (W - GAP * (n - 1)) / n
     for i, t in enumerate(C["tours"]):
-        im = Image.open(IMG / f"{t['id']}.jpg").convert("RGB")
+        im = source(t["id"])
         x0, x1 = round(i * (sw + GAP)), round(i * (sw + GAP) + sw)
         scaled = im.resize((round(im.width * H / im.height), H), Image.LANCZOS)
         left = round((scaled.width - (x1 - x0)) * pos(t)[0])
@@ -108,6 +178,9 @@ def og_image():
 
 if __name__ == "__main__":
     tour_images()
-    about_images()
+    gallery_images()
+    team_images()
+    contact_image()
+    review_images()
     icons()
     og_image()

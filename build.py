@@ -8,8 +8,11 @@
   seats   {"left": осталось, "total": всего или null, "of": "по ранней цене" или ""}
   tiers   ступени цены, state: sold (продано) / now (сейчас) / next (потом) / option (вариант)
   urgency надпись на фото, hot + hotOrder строка в блоке «Места заканчиваются»
+  pos     точка кадра для фото поездки; spinePos (необязательно) то же для узкой полосы на первом экране
   reviews отзывы {"name", "trip", "text", "photo": имя файла в img/ без расширения или пусто};
           пока список пустой, секции на странице нет
+  gallery снимки прошлых поездок «Как это было»: img, ratio (3:2, 4:5, 2:1), pos, cap, alt
+  contact.photo фон блока контактов, файл из img/ без расширения
 
 WebP-версии фото, иконки и img/og.jpg готовит python3 images.py (нужен Pillow).
 Если WebP для поездки ещё нет, страница возьмёт исходный img/<id>.jpg.
@@ -50,68 +53,63 @@ FONT_FACES = """
 PRELOAD = ("unbounded-cyrillic", "onest-cyrillic", "onest-latin")
 
 CSS = r"""
-/* Сезонный указатель: заголовок и семь фото-корешков по месяцам, горящие места, затем по одной широкой главе на поездку. */
+/* Витрина сезона: тёмный первый экран с семью фото-полосами, горящие места, главы-поездки на всю ширину, снимки прошлых поездок. */
 :root{
   --paper:#F0F3F2; --surface:#FFFFFF; --ink:#111A1C; --ink-soft:#4C5A5D; --line:#D2DAD9;
   --stamp:#1D3EC4; --on-stamp:#FFFFFF; --stamp-wash:rgba(29,62,196,.08);
+  --night:#0B1011; --on-night:#F0F3F2; --on-night-soft:rgba(240,243,242,.72); --night-line:rgba(240,243,242,.2); --night-accent:#8CA1FF;
   --on-photo:#FFFFFF; --scrim:rgba(6,10,12,.78); --chip-bg:rgba(255,255,255,.93); --chip-ink:#1D3EC4;
   --f-display:"Unbounded","Arial Black",system-ui,sans-serif;
   --f-body:"Onest","Segoe UI",system-ui,-apple-system,sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   --gutter:max(clamp(16px,4vw,40px),env(safe-area-inset-left,0px),env(safe-area-inset-right,0px));
+  --edge:max(var(--gutter),calc((100% - 1160px) / 2));
   --bar:2.75rem;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --paper:#0B1011; --surface:#131A1C; --ink:#E4EAE9; --ink-soft:#9BA8AA; --line:#243033;
-    --stamp:#8CA1FF; --on-stamp:#0B1011; --stamp-wash:rgba(140,161,255,.1); color-scheme:dark;
+    --stamp:#8CA1FF; --on-stamp:#0B1011; --stamp-wash:rgba(140,161,255,.1); --night:#131A1C; color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --paper:#0B1011; --surface:#131A1C; --ink:#E4EAE9; --ink-soft:#9BA8AA; --line:#243033;
-  --stamp:#8CA1FF; --on-stamp:#0B1011; --stamp-wash:rgba(140,161,255,.1); color-scheme:dark;
+  --stamp:#8CA1FF; --on-stamp:#0B1011; --stamp-wash:rgba(140,161,255,.1); --night:#131A1C; color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--f-body);-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--f-body);-webkit-font-smoothing:antialiased;overflow-x:clip}
 a{color:inherit}
 :focus-visible{outline:2px solid var(--stamp);outline-offset:3px;border-radius:4px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .wrap{max-width:1240px;margin-inline:auto;padding-inline:var(--gutter)}
+picture{display:contents}
 
-/* шапка */
-.top{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding-block:1.1rem}
+/* первый экран: тёмный, справа полосы во всю высоту */
+.masthead{background:var(--night);color:var(--on-night)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:1rem;width:100%;padding-block:1.1rem}
 .brand{font:500 .78rem/1.2 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
-.brand b{font-weight:500;color:var(--ink-soft)}
-.top a{font:500 .85rem/1 var(--f-mono);text-decoration:none;padding:.55rem .8rem;border:1px solid var(--line);border-radius:6px}
-.top a:hover{border-color:var(--ink)}
+.brand b{font-weight:500;color:var(--on-night-soft)}
+.top a{font:500 .85rem/1 var(--f-mono);text-decoration:none;padding:.55rem .8rem;border:1px solid var(--night-line);border-radius:4px;transition:border-color .2s}
+.top a:hover{border-color:var(--on-night)}
 .top nav{display:flex;gap:.5rem;flex-shrink:0}
 .top nav a{white-space:nowrap}
 @media (max-width:520px){.brand b{display:none}}
 @media (max-width:420px){.top{gap:.6rem}.brand{font-size:.72rem;letter-spacing:.08em}.top nav{gap:.3rem}.top a{font-size:.8rem;padding:.55rem .55rem}}
-
-/* первый экран */
-.intro{display:grid;gap:clamp(1.75rem,4vw,2.5rem);padding-block:clamp(1.25rem,4vw,3rem) 0;
-  grid-template-areas:"text" "spines" "hot"}
-.hero{grid-area:text;display:grid;gap:1.1rem;align-content:start;min-width:0}
-.eyebrow{margin:0;font:500 .78rem/1.3 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--stamp)}
+.intro{display:grid;gap:clamp(2rem,5vw,3rem);max-width:1240px;margin-inline:auto;padding:clamp(1.25rem,4vw,2.5rem) var(--gutter) clamp(2.5rem,7vw,4rem)}
+.hero{display:grid;gap:1.2rem;align-content:start;min-width:0}
+.eyebrow{margin:0;font:500 .78rem/1.3 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--night-accent)}
 .hero h1{margin:0;font:600 clamp(2rem,5.6vw,4.3rem)/1.05 var(--f-display);letter-spacing:-.02em;text-wrap:balance;max-width:17ch}
-.lead{margin:0;max-width:58ch;font-size:clamp(1.02rem,1.6vw,1.2rem);color:var(--ink-soft)}
-.hero-cta{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.25rem;padding-top:.25rem}
+.lead{margin:0;max-width:58ch;font-size:clamp(1.02rem,1.6vw,1.2rem);color:var(--on-night-soft)}
+.hero-cta{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.25rem;padding-top:.6rem}
 .hero-cta .btn{min-width:min(100%,15rem)}
-.hero-cta span{font-size:.9rem;color:var(--ink-soft)}
-/* на широком экране полосы стоят рядом с заголовком и целиком видны на первом экране */
-@media (min-width:980px){
-  .intro{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);grid-template-areas:"text spines" "hot hot";
-    column-gap:clamp(2.5rem,4.5vw,4rem);row-gap:2.25rem;padding-top:clamp(1rem,2.2vw,2rem)}
-  .hero h1{font-size:clamp(2.3rem,3.7vw,3.5rem)}
-  .lead{font-size:1.08rem}
-  .spines-nav{display:flex;flex-direction:column}
-  .spines{flex:1 1 auto;height:auto;min-height:24rem}
-}
+.hero-cta span{font-size:.9rem;color:var(--on-night-soft)}
+.spines-note{margin:0;font:400 .8rem/1.45 var(--f-mono);color:var(--on-night-soft)}
+.trust{margin:0;font-size:.9rem;color:var(--on-night-soft)}
+.trust a{color:var(--night-accent);font-weight:500}
 
 /* горящие места */
-.hot{grid-area:hot;min-width:0}
+.hot{padding-block:clamp(3rem,7vw,5rem) 0;min-width:0}
 .hot h2{margin:0 0 .35rem;font:600 1.15rem/1.25 var(--f-display);letter-spacing:-.01em}
 .hot>div>p{margin:0 0 .9rem;color:var(--ink-soft);font-size:.95rem}
 .hot ul{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink)}
@@ -127,7 +125,7 @@ a{color:inherit}
 @media (min-width:1200px){.hot ul{columns:2;column-gap:2.5rem}}
 
 /* корешки */
-.spines-nav{grid-area:spines;min-width:0}
+.spines-nav{min-width:0}
 .spines{display:flex;gap:clamp(4px,.8vw,8px);height:clamp(300px,42vw,460px)}
 .spine{position:relative;flex:1 1 0;min-width:0;overflow:hidden;border-radius:4px;text-decoration:none;color:var(--on-photo);
   background:#2a3133 var(--img) var(--pos)/cover no-repeat;transition:flex-grow .55s cubic-bezier(.2,.7,.2,1)}
@@ -142,17 +140,37 @@ a{color:inherit}
   .spines:hover .spine{flex-grow:.75}
   .spines .spine:hover,.spines .spine:focus-visible{flex-grow:3.2}
 }
-.spines-note{margin:.8rem 0 0;font:400 .8rem/1.4 var(--f-mono);color:var(--ink-soft)}
+@media (min-width:760px){.spine{background-position:var(--spine-pos,var(--pos))}}
+@media (min-width:980px){.spine-seats{top:1.1rem}.spine-name{bottom:3.4rem}.spine-month{bottom:1.2rem}}
+/* широкий экран: текст слева, полосы справа во всю высоту экрана до края */
+@media (min-width:980px){
+  .masthead{display:grid;grid-template-rows:auto 1fr;min-height:min(100svh,58rem)}
+  .intro{grid-template-columns:minmax(0,29rem) minmax(0,1fr);column-gap:clamp(3rem,6vw,6rem);max-width:none;margin:0;padding:0 0 0 var(--edge)}
+  .hero{align-self:center;padding-block:2rem 3.5rem}
+  .hero h1{font-size:clamp(2.4rem,3.8vw,3.6rem)}
+  .lead{font-size:1.08rem}
+  .spines-nav{display:flex}
+  .spines{flex:1 1 auto;height:auto;min-height:30rem;gap:3px}
+  .spine{border-radius:0}
+}
 /* на телефоне полосы становятся лентой карточек, которая листается пальцем */
 @media (max-width:759px){
   .spines{height:auto;gap:10px;margin-inline:calc(var(--gutter)*-1);padding-inline:var(--gutter);overflow-x:auto;overscroll-behavior-x:contain;
     scroll-snap-type:x mandatory;scroll-padding-inline:var(--gutter);scrollbar-width:none}
   .spines::-webkit-scrollbar{display:none}
-  .spine{flex:0 0 min(70vw,22rem);aspect-ratio:4/5;border-radius:6px;scroll-snap-align:start}
+  .spine{flex:0 0 min(70vw,22rem);aspect-ratio:4/5;border-radius:4px;scroll-snap-align:start}
   .spine::after{background:linear-gradient(to top,rgba(6,10,12,.82) 0%,rgba(6,10,12,.3) 38%,rgba(6,10,12,0) 62%)}
   .spine-name{left:1rem;right:1rem;bottom:2.5rem;writing-mode:horizontal-tb;transform:none;font-size:1.45rem;white-space:normal}
   .spine-month{left:1rem;right:auto;bottom:1rem;text-align:left}
   .spine-seats{top:.75rem;left:auto;right:.75rem;transform:none;width:2rem;height:2rem;font-size:.9rem}
+  /* фото сразу под заголовком и кнопкой, длинный абзац после ленты */
+  .intro{row-gap:1.2rem}
+  .hero{display:contents}
+  .hero-cta{order:1;padding-top:0}
+  .spines-nav{order:2;margin-top:.8rem}
+  .spines-note{order:3}
+  .lead{order:4;margin-top:1rem}
+  .trust{order:5}
 }
 
 /* строка поездок: появляется, пока на экране главы */
@@ -169,21 +187,20 @@ a{color:inherit}
 .tripnav a.is-past{opacity:.55}
 .tripnav a:focus-visible{outline-offset:-2px}
 
-/* поездки */
-.trips{display:grid;gap:clamp(3.5rem,8vw,6.5rem);padding-block:clamp(3rem,7vw,5.5rem)}
-.trip{scroll-margin-top:calc(var(--bar) + env(safe-area-inset-top,0px) + .75rem)}
-.trip-photo{position:relative;display:block;overflow:hidden;border-radius:6px;aspect-ratio:4/5;max-width:100%;color:var(--on-photo);text-decoration:none;background:#2a3133}
-@media (min-width:600px){.trip-photo{aspect-ratio:3/2}}
-@media (min-width:1000px){.trip-photo{aspect-ratio:21/9}}
-.photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--pos);transition:transform 1.4s cubic-bezier(.2,.7,.2,1)}
-.trip-photo:hover .photo{transform:scale(1.035)}
-.trip-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,var(--scrim) 0%,rgba(6,10,12,.5) 36%,rgba(6,10,12,0) 66%)}
-.cap{position:absolute;z-index:1;left:0;right:0;bottom:0;padding:clamp(1rem,3.5vw,2.5rem);display:grid;gap:.35rem;text-shadow:0 1px 14px rgba(0,0,0,.35)}
+/* поездки: фото на всю ширину экрана, текст по сетке страницы */
+.trips{display:grid;gap:clamp(4.5rem,10vw,8rem);padding-block:clamp(3.5rem,8vw,6.5rem)}
+.trip{scroll-margin-top:calc(var(--bar) + env(safe-area-inset-top,0px))}
+.trip-photo{position:relative;display:block;overflow:hidden;aspect-ratio:4/5;color:var(--on-photo);text-decoration:none;background:#2a3133}
+@media (min-width:600px){.trip-photo{aspect-ratio:auto;height:clamp(26rem,64vw,40rem)}}
+@media (min-width:1000px){.trip-photo{height:clamp(30rem,80svh,54rem)}}
+.photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--pos)}
+.trip-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,var(--scrim) 0%,rgba(6,10,12,.45) 30%,rgba(6,10,12,0) 58%)}
+.cap{position:absolute;z-index:1;left:0;right:0;bottom:0;padding:0 var(--edge) clamp(1.5rem,4.5vw,3.5rem);display:grid;gap:.5rem;text-shadow:0 1px 14px rgba(0,0,0,.35)}
 .kicker{font:500 .75rem/1.2 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;opacity:.92}
-.trip h2{margin:0;font:600 clamp(1.85rem,8.2vw,5.4rem)/1 var(--f-display);letter-spacing:-.02em}
-.project{font:500 clamp(1rem,2vw,1.3rem)/1.3 var(--f-body)}
+.trip h2{margin:0;font:600 clamp(1.85rem,8.6vw,7.5rem)/.95 var(--f-display);letter-spacing:-.03em}
+.project{font:500 clamp(1.05rem,2vw,1.4rem)/1.3 var(--f-body)}
 /* даты слева, флажки справа: в одной строке, поэтому не наезжают друг на друга на любой ширине */
-.badges{position:absolute;z-index:1;top:clamp(.8rem,2.5vw,1.4rem);left:clamp(.8rem,2.5vw,1.4rem);right:clamp(.8rem,2.5vw,1.4rem);
+.badges{position:absolute;z-index:1;top:clamp(1rem,3vw,2rem);left:var(--edge);right:var(--edge);
   display:flex;justify-content:space-between;align-items:flex-start;gap:.9rem}
 .stamp{flex:0 1 auto;min-width:0;transform:rotate(-3deg);
   background:var(--chip-bg);color:var(--chip-ink);border:1.5px solid currentColor;outline:1px solid var(--chip-bg);border-radius:4px;
@@ -194,7 +211,7 @@ a{color:inherit}
 .status{background:var(--chip-bg);color:#111A1C}
 
 /* под фото: маршрут на всю ширину, ниже описание и правая колонка начинаются на одной линии */
-.trip-body{display:grid;gap:1.75rem;padding-top:clamp(1.25rem,3vw,2rem)}
+.trip-body{display:grid;gap:1.75rem;padding-top:clamp(1.5rem,3.5vw,2.5rem)}
 @media (min-width:880px){.trip-body{grid-template-columns:minmax(0,1fr) 23rem;column-gap:clamp(2rem,5vw,4.5rem)}.route{grid-column:1/-1}}
 .trip-main{min-width:0;display:grid;gap:1rem;align-content:start}
 .route{margin:0 0 -.75rem;font:500 .82rem/1.5 var(--f-mono);color:var(--stamp);letter-spacing:.02em}
@@ -206,7 +223,7 @@ a{color:inherit}
 /* правая колонка: места, цена, действия */
 .aside{display:grid;gap:.7rem;align-content:start;min-width:0}
 .aside-label{margin:0;font:500 .7rem/1.4 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
-.seats{display:grid;gap:.45rem;padding:.9rem 1rem;border-radius:6px;background:var(--stamp-wash)}
+.seats{display:grid;gap:.45rem;padding:.9rem 1rem;border-radius:4px;background:var(--stamp-wash)}
 .seats strong{font:600 1.05rem/1.3 var(--f-body);color:var(--stamp)}
 .dots{display:flex;flex-wrap:wrap;gap:5px}
 .dot{width:11px;height:11px;border-radius:50%;background:var(--ink-soft);opacity:.28}
@@ -221,7 +238,7 @@ a{color:inherit}
 .tier.is-now .tier-price{font-size:1.25rem;color:var(--ink)}
 .tier.is-now .tier-state{background:var(--stamp);color:var(--on-stamp);padding:.3rem .45rem;border-radius:3px}
 .tier.is-next .tier-price{color:var(--ink-soft);font-weight:500}
-.btn{display:flex;align-items:center;justify-content:center;gap:.5rem;min-height:3.1rem;padding:.6rem 1.2rem;border-radius:6px;
+.btn{display:flex;align-items:center;justify-content:center;gap:.5rem;min-height:3.1rem;padding:.6rem 1.2rem;border-radius:4px;
   font:600 1rem/1.2 var(--f-body);text-decoration:none;text-align:center;transition:background-color .2s,color .2s,border-color .2s}
 .btn-primary{background:var(--stamp);color:var(--on-stamp);border:1.5px solid var(--stamp)}
 .btn-primary:hover{filter:brightness(1.08)}
@@ -231,8 +248,22 @@ a{color:inherit}
 .micro{margin:0;font-size:.82rem;line-height:1.45;color:var(--ink-soft);text-align:center}
 .domain{margin:.15rem 0 0;text-align:center;font:400 .78rem/1.3 var(--f-mono);color:var(--ink-soft)}
 
+/* как это было: снимки прошлых поездок, одна серия */
+.gallery{background:var(--night);color:var(--on-night);padding-block:clamp(4rem,9vw,7rem)}
+.gallery h2{margin:0 0 clamp(1.75rem,4vw,3rem);font:600 clamp(1.75rem,4.5vw,3.2rem)/1.05 var(--f-display);letter-spacing:-.02em}
+.moments{columns:2;column-gap:10px}
+.moments figure{margin:0 0 14px;break-inside:avoid;min-width:0}
+.moments img{display:block;width:100%;height:auto;border-radius:2px;background:#1B2427}
+.moments figcaption{padding-top:.45rem;font:400 .74rem/1.4 var(--f-mono);color:var(--on-night-soft)}
+/* шире телефона ряды одной высоты: ширина снимка пропорциональна его соотношению сторон --r, --per задаёт сколько «единиц» в ряду */
+@media (min-width:760px){
+  .moments{columns:auto;display:flex;flex-wrap:wrap;gap:22px 12px;--per:3.6}
+  .moments figure{margin:0;flex:var(--r) 1 calc(100% * var(--r) / var(--per))}
+}
+@media (min-width:1100px){.moments{--per:4.9}}
+
 /* о нас */
-.about{padding-block:clamp(3.5rem,8vw,6rem);border-top:1px solid var(--line);display:grid;gap:clamp(2.5rem,6vw,4.5rem)}
+.about{padding-block:clamp(4rem,9vw,7rem);display:grid;gap:clamp(3rem,7vw,5rem)}
 .about-head{display:grid;gap:1.5rem 4rem}
 @media (min-width:980px){.about-head{grid-template-columns:auto minmax(0,1fr);align-items:start}}
 .year{margin:0;display:grid;gap:.4rem}
@@ -244,24 +275,17 @@ a{color:inherit}
 .places{margin:.5rem 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:.45rem}
 .places li{font:500 .78rem/1 var(--f-mono);letter-spacing:.04em;padding:.5rem .65rem;border:1px solid var(--line);border-radius:4px}
 .sub{margin:0 0 1.25rem;font:500 .78rem/1.3 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--stamp)}
-.past{display:grid;gap:clamp(6px,1vw,12px);grid-template-columns:repeat(2,minmax(0,1fr))}
-@media (min-width:760px){.past{grid-template-columns:repeat(3,minmax(0,1fr))}}
-.past figure{margin:0;display:grid;gap:.45rem;min-width:0}
-.past img{display:block;width:100%;height:auto;max-width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:4px;background:var(--line)}
-.past figcaption{font:400 .78rem/1.35 var(--f-mono);color:var(--ink-soft)}
-.team{display:grid;gap:2rem clamp(1rem,2.5vw,2rem);grid-template-columns:repeat(auto-fit,minmax(min(100%,14.5rem),1fr))}
+.team{display:grid;gap:2.5rem clamp(1.25rem,3vw,2.5rem);grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr))}
 .person{display:grid;gap:.55rem;align-content:start;min-width:0}
-.person img{display:block;width:100%;height:auto;max-width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:4px;background:var(--line);margin-bottom:.35rem}
-.person h3{margin:0;font:600 1.15rem/1.25 var(--f-body)}
+.person img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:2px;background:var(--line);margin-bottom:.5rem}
+.person h3{margin:0;font:600 1.25rem/1.25 var(--f-body)}
 .person .role{margin:0;font:500 .74rem/1.3 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--stamp)}
 .person p:last-child{margin:0;color:var(--ink-soft);font-size:.95rem;line-height:1.55}
-.guests{margin:1.75rem 0 0;max-width:72ch;padding-top:1.25rem;border-top:1px solid var(--line);color:var(--ink-soft)}
-.trust{font-size:.9rem;color:var(--ink-soft)}
-.trust a{color:var(--stamp);font-weight:500}
+.guests{margin:2rem 0 0;max-width:72ch;padding-top:1.25rem;border-top:1px solid var(--line);color:var(--ink-soft)}
 
 /* почему с нами */
-.why{padding-block:clamp(3rem,7vw,5rem) 0}
-.why h2,.reviews h2,.faq h2,.contact h2{margin:0 0 1.75rem;font:600 clamp(1.5rem,3.6vw,2.4rem)/1.1 var(--f-display);letter-spacing:-.015em;text-wrap:balance}
+.why{padding-block:clamp(3.5rem,8vw,6rem);border-top:1px solid var(--line)}
+.why h2,.reviews h2,.faq h2{margin:0 0 1.75rem;font:600 clamp(1.5rem,3.6vw,2.4rem)/1.1 var(--f-display);letter-spacing:-.015em;text-wrap:balance}
 .why-grid{display:grid;gap:2rem clamp(1.5rem,3vw,2.75rem);grid-template-columns:repeat(auto-fit,minmax(min(100%,17rem),1fr))}
 .why-item{display:grid;gap:.5rem;align-content:start;padding-top:1rem;border-top:2px solid var(--stamp);min-width:0}
 .why-item h3{margin:0;font:600 1.12rem/1.3 var(--f-body)}
@@ -270,7 +294,7 @@ a{color:inherit}
 /* что говорят участники */
 .reviews{padding-block:clamp(3.5rem,8vw,6rem);border-top:1px solid var(--line)}
 .reviews-grid{display:grid;gap:clamp(1rem,2.5vw,1.75rem);grid-template-columns:repeat(auto-fit,minmax(min(100%,19rem),1fr))}
-.review{margin:0;display:grid;gap:1.25rem;align-content:space-between;padding:1.4rem 1.5rem;border:1px solid var(--line);border-radius:6px;background:var(--surface);min-width:0}
+.review{margin:0;display:grid;gap:1.25rem;align-content:space-between;padding:1.4rem 1.5rem;border:1px solid var(--line);border-radius:4px;background:var(--surface);min-width:0}
 .review blockquote{margin:0}
 .review blockquote p{margin:0;font-size:1.05rem;line-height:1.62}
 .review figcaption{display:flex;align-items:center;gap:.8rem}
@@ -292,14 +316,18 @@ a{color:inherit}
 .faq summary:hover{color:var(--stamp)}
 .faq details p{margin:0;padding:0 2.5rem 1.2rem .1rem;max-width:64ch;color:var(--ink-soft);line-height:1.62}
 
-/* контакты */
-.contact{background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.contact .wrap{padding-block:clamp(3rem,7vw,5rem);display:grid;gap:1.5rem}
+/* контакты: тёмный финал на фоне утренней практики */
+.contact{position:relative;overflow:hidden;isolation:isolate;background:var(--night);color:var(--on-night)}
+.contact-bg img{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;object-position:50% 70%}
+.contact::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(100deg,rgba(6,10,12,.9) 0%,rgba(6,10,12,.72) 55%,rgba(6,10,12,.5) 100%)}
+.contact .wrap{padding-block:clamp(4.5rem,11vw,8.5rem);display:grid;gap:1.75rem}
 @media (min-width:880px){.contact .wrap{grid-template-columns:minmax(0,1fr) 23rem;align-items:end;gap:4rem}}
-.contact h2{margin-bottom:.75rem}
-.contact p{margin:0;max-width:52ch;color:var(--ink-soft);font-size:1.1rem}
+.contact h2{margin:0 0 .9rem;font:600 clamp(1.9rem,5vw,3.6rem)/1.05 var(--f-display);letter-spacing:-.02em;text-wrap:balance}
+.contact p{margin:0;max-width:52ch;color:var(--on-night-soft);font-size:1.1rem}
 .contact-links{display:grid;gap:.65rem}
-.contact-links small{display:block;text-align:center;font:400 .78rem/1.3 var(--f-mono);color:var(--ink-soft);user-select:all}
+.contact-links small{display:block;text-align:center;font:400 .78rem/1.3 var(--f-mono);color:var(--on-night-soft);user-select:all}
+.contact .btn-ghost{border-color:var(--on-night);color:var(--on-night)}
+.contact .btn-ghost:hover{background:var(--on-night);color:#0B1011}
 
 footer{padding-block:2rem 2.5rem;font-size:.82rem;color:var(--ink-soft);display:grid;gap:.5rem}
 footer a{color:var(--ink-soft)}
@@ -315,10 +343,10 @@ footer a{color:var(--ink-soft)}
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .spine,.photo,.btn,.tripnav,.tripnav.is-on,.dock,.dock.is-on,.faq summary::after{transition:none}
-  .trip-photo:hover .photo{transform:none}
+  .spine,.btn,.top a,.tripnav,.tripnav.is-on,.dock,.dock.is-on,.faq summary::after{transition:none}
 }
 """
+
 
 JS = r"""
 (function(){
@@ -357,7 +385,7 @@ JS = r"""
   }
 
   // плашка «Помочь с выбором»: первый экран уже прокручен, а до контактов ещё не дошли
-  var dock=document.querySelector('.dock'), hero=document.querySelector('.hero'), contact=document.querySelector('.contact');
+  var dock=document.querySelector('.dock'), hero=document.querySelector('.masthead'), contact=document.querySelector('.contact');
   if(dock&&hero&&contact){
     var passed=false, reached=false;
     var show=function(){dock.classList.toggle('is-on',passed&&!reached);};
@@ -407,8 +435,24 @@ def picture(src, name, attrs):
     return f'<picture><source srcset="{src(webp)}" type="image/webp">{img}</picture>'
 
 
+def variants(src, name, widths, sizes, attrs, inline=False, jpg=None):
+    """<picture> с WebP-версиями img/<name>-<ширина>.webp из images.py; браузер берёт нужную ширину.
+    Запасной вариант и замена, если версий нет: исходный img/<jpg или name>.jpg."""
+    have = [(w, f"{name}-{w}.webp") for w in widths if (IMG / f"{name}-{w}.webp").exists()]
+    img = f'<img src="{src((jpg or name) + ".jpg")}" {attrs}>'
+    if not have:
+        return img
+    if inline:
+        return f'<img src="{src(have[-1][1])}" {attrs}>'
+    srcset = ", ".join(f"{src(f)} {w}w" for w, f in have)
+    return f'<picture><source srcset="{srcset}" sizes="{sizes}" type="image/webp">{img}</picture>'
+
+
+
 def image_css(src):
-    return "\n".join(f'.t-{t["id"]}{{--img:url("{src(variant(t["id"], 800))}");--pos:{t["pos"]}}}' for t in TOURS)
+    # spinePos: какую часть кадра показывает узкая полоса на широком экране, если не ту же, что pos
+    return "\n".join(f'.t-{t["id"]}{{--img:url("{src(variant(t["id"], 800))}");--pos:{t["pos"]}'
+                     + (f';--spine-pos:{t["spinePos"]}' if t.get("spinePos") else "") + "}" for t in TOURS)
 
 
 def render_photo(t, src, inline, first):
@@ -455,6 +499,28 @@ def render_ladder(t):
     return f'<p class="aside-label">Стоимость</p><ol class="ladder">{"".join(rows)}</ol>'
 
 
+def render_gallery(src, inline):
+    g = C.get("gallery")
+    if not g or not g["items"]:
+        return ""
+    figs = []
+    for x in g["items"]:
+        w, h = (int(v) for v in x["ratio"].split(":"))
+        r = w / h
+        attrs = (f'alt="{e(x["alt"])}" width="960" height="{round(960 * h / w)}" '
+                 f'loading="lazy" decoding="async"')
+        # ширина снимка в ряду примерно r/2.5 экрана на планшете и r·1160/4.6 px на широком экране
+        sizes = f"(max-width:759px) 50vw, (max-width:1099px) {round(r * 40)}vw, {round(r * 1160 / 4.6)}px"
+        pic = variants(src, x["img"], (360, 640, 960), sizes, attrs, inline)
+        figs.append(f'<figure style="--r:{r:.3g}">{pic}<figcaption>{e(x["cap"])}</figcaption></figure>')
+    return f"""<section class="gallery" id="moments" aria-labelledby="moments-title">
+  <div class="wrap">
+    <h2 id="moments-title">{e(g["title"])}</h2>
+    <div class="moments">{"".join(figs)}</div>
+  </div>
+</section>"""
+
+
 def render_why():
     w = C.get("why")
     if not w:
@@ -493,21 +559,18 @@ def render_reviews(src):
 </section>"""
 
 
-def render_about(src):
+def render_about(src, inline):
     a = C.get("about")
     if not a:
         return ""
-    def photo(name, alt, w, h):
-        return picture(src, name, f'alt="{e(alt)}" width="{w}" height="{h}" loading="lazy" decoding="async"')
-
     paras = "".join(f"<p>{e(p)}</p>" for p in a["paragraphs"])
     places = "".join(f"<li>{e(x)}</li>" for x in a["places"])
-    past = "".join(
-        f'<figure>{photo(x["img"], x["cap"], 600, 600)}'
-        f'<figcaption>{e(x["cap"])}</figcaption></figure>' for x in a["past"])
-    team = "".join(
-        f'<article class="person">{photo(x["img"], x["name"], 480, 600)}'
-        f'<h3>{e(x["name"])}</h3><p class="role">{e(x["role"])}</p><p>{e(x["bio"])}</p></article>' for x in a["team"])
+    team = []
+    for x in a["team"]:
+        attrs = f'alt="{e(x["name"])}" width="800" height="1000" loading="lazy" decoding="async"'
+        pic = variants(src, x["img"], (400, 800), "(max-width:599px) 100vw, (max-width:979px) 50vw, 380px", attrs, inline)
+        team.append(f'<article class="person">{pic}<h3>{e(x["name"])}</h3>'
+                    f'<p class="role">{e(x["role"])}</p><p>{e(x["bio"])}</p></article>')
     return f"""<section class="wrap about" id="about" aria-labelledby="about-title">
   <div class="about-head">
     <p class="year"><b>{e(a["since"])}</b><span>с этого года мы в пути</span></p>
@@ -519,21 +582,41 @@ def render_about(src):
     </div>
   </div>
   <div>
-    <p class="sub">Как это было</p>
-    <div class="past">{past}</div>
-  </div>
-  <div>
     <p class="sub">Команда</p>
-    <div class="team">{team}</div>
+    <div class="team">{"".join(team)}</div>
     <p class="guests">{e(a["guests"])}</p>
   </div>
 </section>"""
 
 
+def render_contact(src, inline, choose, handle):
+    CT = C["contact"]
+    bg = ""
+    if CT.get("photo"):
+        pic = variants(src, f'{CT["photo"]}-bg', (800, 1280), "100vw",
+                       'alt="" width="1280" height="960" loading="lazy" decoding="async"', inline, CT["photo"])
+        bg = f'<div class="contact-bg" aria-hidden="true">{pic}</div>'
+    return f"""<section class="contact" aria-labelledby="contact-title">
+  {bg}
+  <div class="wrap">
+    <div>
+      <h2 id="contact-title">{e(CT["title"])}</h2>
+      <p>{e(CT["text"])}</p>
+    </div>
+    <div class="contact-links">
+      <a class="btn btn-primary" href="{choose}" target="_blank" rel="noopener">{e(CT["telegram"])}</a>
+      <small>@{handle}</small>
+      <a class="btn btn-ghost" href="https://wa.me/{META['whatsapp']}" target="_blank" rel="noopener">{e(CT["whatsapp"])}</a>
+      <small>{e(META['whatsappHuman'])}</small>
+    </div>
+  </div>
+</section>"""
+
+
 def render_body(src, inline=False):
-    H, HOT, CT = C["hero"], C["hot"], C["contact"]
+    H, HOT = C["hero"], C["hot"]
     spines = "\n".join(
-        f'    <a class="spine t-{t["id"]}" href="#{t["id"]}">'
+        f'      <a class="spine t-{t["id"]}" href="#{t["id"]}">'
         + (f'<span class="spine-seats" aria-hidden="true">{t["seats"]["left"]}</span>' if t.get("seats") and not t["seats"].get("of") else "")
         + f'<span class="spine-name">{e(t["name"])}</span> <span class="spine-month">{e(t["month"])}</span>'
         + f'<span class="sr">{e(t["dates"])}'
@@ -543,7 +626,7 @@ def render_body(src, inline=False):
 
     hot = sorted((t for t in TOURS if t.get("hot")), key=lambda t: t["hotOrder"])
     hot_rows = "\n".join(
-        f'      <li><a href="#{t["id"]}"><span class="hot-name">{e(t["name"])} <small>{e(t["monthFull"])}</small></span>'
+        f'    <li><a href="#{t["id"]}"><span class="hot-name">{e(t["name"])} <small>{e(t["monthFull"])}</small></span>'
         f'<span class="hot-what">{e(t["hot"])}</span></a></li>' for t in hot)
 
     nav_links = "".join(f'<a href="#{t["id"]}"><small>{e(t["month"])}</small> {e(t["name"])}</a>' for t in TOURS)
@@ -568,7 +651,7 @@ def render_body(src, inline=False):
         <span class="project">«{e(t['project'])}»</span>
       </div>
     </a>
-    <div class="trip-body">
+    <div class="wrap trip-body">
       <p class="route">{e(t['route'])}</p>
       <div class="trip-main">
         <p class="trip-text">{e(t['text'])}</p>
@@ -593,68 +676,59 @@ def render_body(src, inline=False):
     handle = META["telegram"]
     choose = e(tg(H["ctaMessage"]))
     return f"""
-<div class="wrap top">
-  <span class="brand">Авторские путешествия <b>· сезон 26/27</b></span>
-  <nav aria-label="Разделы"><a href="#about">О нас</a><a href="https://t.me/{handle}" target="_blank" rel="noopener">@{handle}</a></nav>
-</div>
+<div class="masthead">
+  <div class="wrap top">
+    <span class="brand">Авторские путешествия <b>· сезон 26/27</b></span>
+    <nav aria-label="Разделы"><a href="#about">О нас</a><a href="https://t.me/{handle}" target="_blank" rel="noopener">@{handle}</a></nav>
+  </div>
 
-<div class="wrap intro">
-  <header class="hero">
-    <p class="eyebrow">{e(H["eyebrow"])}</p>
-    <h1>{lines(H["title"])}</h1>
-    <p class="lead">{e(H["lead"])}</p>
-    <div class="hero-cta">
-      <a class="btn btn-primary" href="{choose}" target="_blank" rel="noopener">{e(H["cta"])}</a>
-      <span>{e(H["ctaNote"])}</span>
-    </div>
-    <p class="trust"><a href="#why">Почему с нами</a> · <a href="#about">Кто мы</a> · <a href="#faq">Частые сомнения</a></p>
-  </header>
+  <div class="intro">
+    <header class="hero">
+      <p class="eyebrow">{e(H["eyebrow"])}</p>
+      <h1>{lines(H["title"])}</h1>
+      <p class="lead">{e(H["lead"])}</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="{choose}" target="_blank" rel="noopener">{e(H["cta"])}</a>
+        <span>{e(H["ctaNote"])}</span>
+      </div>
+      <p class="trust"><a href="#moments">Как это было</a> · <a href="#about">Кто мы</a> · <a href="#faq">Частые сомнения</a></p>
+      <p class="spines-note">{e(C["spinesNote"])}</p>
+    </header>
 
-  <nav class="spines-nav" aria-label="Все поездки сезона">
-    <div class="spines">
+    <nav class="spines-nav" aria-label="Все поездки сезона">
+      <div class="spines">
 {spines}
-    </div>
-    <p class="spines-note">{e(C["spinesNote"])}</p>
-  </nav>
-
-  <section class="hot" aria-labelledby="hot-title">
-    <div>
-      <h2 id="hot-title">{e(HOT["title"])}</h2>
-      <p>{e(HOT["lead"])}</p>
-    </div>
-    <ul>
-{hot_rows}
-    </ul>
-  </section>
+      </div>
+    </nav>
+  </div>
 </div>
 
-{render_why()}
+<section class="wrap hot" aria-labelledby="hot-title">
+  <div>
+    <h2 id="hot-title">{e(HOT["title"])}</h2>
+    <p>{e(HOT["lead"])}</p>
+  </div>
+  <ul>
+{hot_rows}
+  </ul>
+</section>
 
 <nav class="tripnav" aria-label="{e(C["tripNav"])}"><div class="wrap tripnav-in">{nav_links}</div></nav>
 
-<main class="wrap trips">{''.join(trips)}
+<main class="trips">{''.join(trips)}
 </main>
 
-{render_about(src)}
+{render_gallery(src, inline)}
+
+{render_about(src, inline)}
+
+{render_why()}
 
 {render_reviews(src)}
 
 {render_faq()}
 
-<section class="contact" aria-labelledby="contact-title">
-  <div class="wrap">
-    <div>
-      <h2 id="contact-title">{e(CT["title"])}</h2>
-      <p>{e(CT["text"])}</p>
-    </div>
-    <div class="contact-links">
-      <a class="btn btn-primary" href="{choose}" target="_blank" rel="noopener">{e(CT["telegram"])}</a>
-      <small>@{handle}</small>
-      <a class="btn btn-ghost" href="https://wa.me/{META['whatsapp']}" target="_blank" rel="noopener">{e(CT["whatsapp"])}</a>
-      <small>{e(META['whatsappHuman'])}</small>
-    </div>
-  </div>
-</section>
+{render_contact(src, inline, choose, handle)}
 
 <footer class="wrap">
   <span>Андрей Баранов · авторские путешествия · 2026–2027. Места и цены на {e(META.get('updated', ''))}.</span>
@@ -691,6 +765,8 @@ def build(inline_out=None):
 
     style = f"<style>{FONT_FACES}{CSS}\n{image_css(src)}\n</style>"
     fonts = "".join(f'<link rel="preload" href="fonts/{f}.woff2" as="font" type="font/woff2" crossorigin>' for f in PRELOAD)
+    # первая полоса первого экрана: фон из CSS браузер находит поздно, поэтому заранее
+    fonts += f'<link rel="preload" href="{src(variant(TOURS[0]["id"], 800))}" as="image" fetchpriority="high">'
 
     site = META["siteUrl"].rstrip("/")
     # Версия в адресе картинки: Telegram кэширует превью, новая картинка получит новый адрес.
