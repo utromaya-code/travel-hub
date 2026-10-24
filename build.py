@@ -158,6 +158,35 @@ a{color:inherit}
 .micro{margin:0;font-size:.82rem;line-height:1.45;color:var(--ink-soft);text-align:center}
 .domain{margin:.15rem 0 0;text-align:center;font:400 .78rem/1.3 var(--f-mono);color:var(--ink-soft)}
 
+/* о нас */
+.about{padding-block:clamp(3.5rem,8vw,6rem);border-top:1px solid var(--line);display:grid;gap:clamp(2.5rem,6vw,4.5rem)}
+.about-head{display:grid;gap:1.5rem 4rem}
+@media (min-width:980px){.about-head{grid-template-columns:auto minmax(0,1fr);align-items:start}}
+.year{margin:0;display:grid;gap:.4rem}
+.year b{font:600 clamp(5.5rem,17vw,12.5rem)/.82 var(--f-display);letter-spacing:-.05em;color:var(--stamp)}
+.year span{font:500 .78rem/1.3 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+.about-text{display:grid;gap:1rem;min-width:0}
+.about-text h2{margin:0 0 .25rem;font:600 clamp(1.6rem,3.8vw,2.7rem)/1.08 var(--f-display);letter-spacing:-.02em;text-wrap:balance;max-width:20ch}
+.about-text p{margin:0;max-width:62ch;font-size:clamp(1.03rem,1.4vw,1.15rem);line-height:1.65}
+.places{margin:.5rem 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:.45rem}
+.places li{font:500 .78rem/1 var(--f-mono);letter-spacing:.04em;padding:.5rem .65rem;border:1px solid var(--line);border-radius:4px}
+.sub{margin:0 0 1.25rem;font:500 .78rem/1.3 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--stamp)}
+.past{display:grid;gap:clamp(6px,1vw,12px);grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (min-width:760px){.past{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.past figure{margin:0;display:grid;gap:.45rem;min-width:0}
+.past img{display:block;width:100%;height:auto;max-width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:4px;background:var(--line)}
+.past figcaption{font:400 .78rem/1.35 var(--f-mono);color:var(--ink-soft)}
+.team{display:grid;gap:2rem clamp(1rem,2.5vw,2rem);grid-template-columns:repeat(auto-fit,minmax(min(100%,14.5rem),1fr))}
+.person{display:grid;gap:.55rem;align-content:start;min-width:0}
+.person img{display:block;width:100%;height:auto;max-width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:4px;background:var(--line);margin-bottom:.35rem}
+.person h3{margin:0;font:600 1.15rem/1.25 var(--f-body)}
+.person .role{margin:0;font:500 .74rem/1.3 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--stamp)}
+.person p:last-child{margin:0;color:var(--ink-soft);font-size:.95rem;line-height:1.55}
+.guests{margin:1.75rem 0 0;max-width:72ch;padding-top:1.25rem;border-top:1px solid var(--line);color:var(--ink-soft)}
+.trust{font-size:.9rem;color:var(--ink-soft)}
+.trust a{color:var(--stamp);font-weight:500}
+.top nav{display:flex;gap:.5rem}
+
 /* как мы ездим */
 .how{padding-block:clamp(3rem,7vw,5rem);border-top:1px solid var(--line)}
 .how h2,.contact h2{margin:0 0 1.75rem;font:600 clamp(1.5rem,3.6vw,2.4rem)/1.1 var(--f-display);letter-spacing:-.015em;text-wrap:balance}
@@ -254,7 +283,41 @@ def render_ladder(t):
     return f'<p class="aside-label">Стоимость</p><ol class="ladder">{"".join(rows)}</ol>'
 
 
-def render_body():
+def render_about(img_src):
+    a = C.get("about")
+    if not a:
+        return ""
+    paras = "".join(f"<p>{e(p)}</p>" for p in a["paragraphs"])
+    places = "".join(f"<li>{e(x)}</li>" for x in a["places"])
+    past = "".join(
+        f'<figure><img src="{img_src(x["img"])}" alt="{e(x["cap"])}" width="600" height="600" loading="lazy" decoding="async">'
+        f'<figcaption>{e(x["cap"])}</figcaption></figure>' for x in a["past"])
+    team = "".join(
+        f'<article class="person"><img src="{img_src(x["img"])}" alt="{e(x["name"])}" width="480" height="600" loading="lazy" decoding="async">'
+        f'<h3>{e(x["name"])}</h3><p class="role">{e(x["role"])}</p><p>{e(x["bio"])}</p></article>' for x in a["team"])
+    return f"""<section class="wrap about" id="about" aria-labelledby="about-title">
+  <div class="about-head">
+    <p class="year"><b>{e(a["since"])}</b><span>с этого года мы в пути</span></p>
+    <div class="about-text">
+      <p class="sub">О нас</p>
+      <h2 id="about-title">{e(a["title"])}</h2>
+      {paras}
+      <ul class="places" aria-label="Где мы бывали">{places}</ul>
+    </div>
+  </div>
+  <div>
+    <p class="sub">Как это было</p>
+    <div class="past">{past}</div>
+  </div>
+  <div>
+    <p class="sub">Команда</p>
+    <div class="team">{team}</div>
+    <p class="guests">{e(a["guests"])}</p>
+  </div>
+</section>"""
+
+
+def render_body(img_src):
     spines = "\n".join(
         f'    <a class="spine t-{t["id"]}" href="#{t["id"]}" aria-label="{e(t["name"])}, {e(t["dates"])}'
         + (f', осталось {t["seats"]["left"]} {seats_word(t["seats"]["left"])}' if t.get("seats") and not t["seats"].get("of") else "")
@@ -315,7 +378,7 @@ def render_body():
     return f"""
 <div class="wrap top">
   <span class="brand">Авторские путешествия <b>· сезон 26/27</b></span>
-  <a href="https://t.me/{handle}" target="_blank" rel="noopener">@{handle}</a>
+  <nav aria-label="Разделы"><a href="#about">О нас</a><a href="https://t.me/{handle}" target="_blank" rel="noopener">@{handle}</a></nav>
 </div>
 
 <div class="wrap intro">
@@ -327,6 +390,7 @@ def render_body():
       <a class="btn btn-primary" href="{e(tg('Здравствуйте! Помогите выбрать поездку.'))}" target="_blank" rel="noopener">Помочь с выбором</a>
       <span>Расскажем про сложность и группу в Telegram</span>
     </div>
+    <p class="trust">Возим группы с 2009 года. <a href="#about">Кто мы</a></p>
   </header>
 
   <section class="hot" aria-labelledby="hot-title">
@@ -347,6 +411,8 @@ def render_body():
 
 <main class="wrap trips">{''.join(trips)}
 </main>
+
+{render_about(img_src)}
 
 <section class="how" aria-labelledby="how-title">
   <div class="wrap">
@@ -395,7 +461,7 @@ def build(inline_out=None):
     fonts = (f'<link rel="preconnect" href="https://fonts.googleapis.com">'
              f'<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
              f'<link rel="stylesheet" href="{FONTS}">')
-    body = render_body()
+    body = render_body(img_src)
     script = f"<script>{JS}</script>"
 
     if inline_out:

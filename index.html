@@ -146,6 +146,35 @@ a{color:inherit}
 .micro{margin:0;font-size:.82rem;line-height:1.45;color:var(--ink-soft);text-align:center}
 .domain{margin:.15rem 0 0;text-align:center;font:400 .78rem/1.3 var(--f-mono);color:var(--ink-soft)}
 
+/* о нас */
+.about{padding-block:clamp(3.5rem,8vw,6rem);border-top:1px solid var(--line);display:grid;gap:clamp(2.5rem,6vw,4.5rem)}
+.about-head{display:grid;gap:1.5rem 4rem}
+@media (min-width:980px){.about-head{grid-template-columns:auto minmax(0,1fr);align-items:start}}
+.year{margin:0;display:grid;gap:.4rem}
+.year b{font:600 clamp(5.5rem,17vw,12.5rem)/.82 var(--f-display);letter-spacing:-.05em;color:var(--stamp)}
+.year span{font:500 .78rem/1.3 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+.about-text{display:grid;gap:1rem;min-width:0}
+.about-text h2{margin:0 0 .25rem;font:600 clamp(1.6rem,3.8vw,2.7rem)/1.08 var(--f-display);letter-spacing:-.02em;text-wrap:balance;max-width:20ch}
+.about-text p{margin:0;max-width:62ch;font-size:clamp(1.03rem,1.4vw,1.15rem);line-height:1.65}
+.places{margin:.5rem 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:.45rem}
+.places li{font:500 .78rem/1 var(--f-mono);letter-spacing:.04em;padding:.5rem .65rem;border:1px solid var(--line);border-radius:4px}
+.sub{margin:0 0 1.25rem;font:500 .78rem/1.3 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--stamp)}
+.past{display:grid;gap:clamp(6px,1vw,12px);grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (min-width:760px){.past{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.past figure{margin:0;display:grid;gap:.45rem;min-width:0}
+.past img{display:block;width:100%;height:auto;max-width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:4px;background:var(--line)}
+.past figcaption{font:400 .78rem/1.35 var(--f-mono);color:var(--ink-soft)}
+.team{display:grid;gap:2rem clamp(1rem,2.5vw,2rem);grid-template-columns:repeat(auto-fit,minmax(min(100%,14.5rem),1fr))}
+.person{display:grid;gap:.55rem;align-content:start;min-width:0}
+.person img{display:block;width:100%;height:auto;max-width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:4px;background:var(--line);margin-bottom:.35rem}
+.person h3{margin:0;font:600 1.15rem/1.25 var(--f-body)}
+.person .role{margin:0;font:500 .74rem/1.3 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--stamp)}
+.person p:last-child{margin:0;color:var(--ink-soft);font-size:.95rem;line-height:1.55}
+.guests{margin:1.75rem 0 0;max-width:72ch;padding-top:1.25rem;border-top:1px solid var(--line);color:var(--ink-soft)}
+.trust{font-size:.9rem;color:var(--ink-soft)}
+.trust a{color:var(--stamp);font-weight:500}
+.top nav{display:flex;gap:.5rem}
+
 /* как мы ездим */
 .how{padding-block:clamp(3rem,7vw,5rem);border-top:1px solid var(--line)}
 .how h2,.contact h2{margin:0 0 1.75rem;font:600 clamp(1.5rem,3.6vw,2.4rem)/1.1 var(--f-display);letter-spacing:-.015em;text-wrap:balance}
@@ -184,7 +213,7 @@ footer a{color:var(--ink-soft)}
 
 <div class="wrap top">
   <span class="brand">Авторские путешествия <b>· сезон 26/27</b></span>
-  <a href="https://t.me/vsemaya" target="_blank" rel="noopener">@vsemaya</a>
+  <nav aria-label="Разделы"><a href="#about">О нас</a><a href="https://t.me/vsemaya" target="_blank" rel="noopener">@vsemaya</a></nav>
 </div>
 
 <div class="wrap intro">
@@ -196,6 +225,7 @@ footer a{color:var(--ink-soft)}
       <a class="btn btn-primary" href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%9F%D0%BE%D0%BC%D0%BE%D0%B3%D0%B8%D1%82%D0%B5%20%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D0%BF%D0%BE%D0%B5%D0%B7%D0%B4%D0%BA%D1%83." target="_blank" rel="noopener">Помочь с выбором</a>
       <span>Расскажем про сложность и группу в Telegram</span>
     </div>
+    <p class="trust">Возим группы с 2009 года. <a href="#about">Кто мы</a></p>
   </header>
 
   <section class="hot" aria-labelledby="hot-title">
@@ -416,6 +446,27 @@ footer a{color:var(--ink-soft)}
     </div>
   </article>
 </main>
+
+<section class="wrap about" id="about" aria-labelledby="about-title">
+  <div class="about-head">
+    <p class="year"><b>2009</b><span>с этого года мы в пути</span></p>
+    <div class="about-text">
+      <p class="sub">О нас</p>
+      <h2 id="about-title">Собираем маршруты сами и едем вместе с группой</h2>
+      <p>Мы команда организаторов и преподавателей практик из Санкт-Петербурга. С 2009 года собираем авторские путешествия: прошли кору вокруг Кайласа, проехали Бутан на мотоциклах, практиковали тайцзи у даосских храмов в горах Удан, возили группы в Японию, Индию и Патагонию. Летом проводим Йогафест на Ладоге.</p><p>Каждый маршрут мы собираем сами. Выбираем места, договариваемся с проверенными местными гидами и едем вместе с группой от первого до последнего дня. Во многих поездках практики встроены в дорогу: утром цигун или йога, днём горы и храмы, вечером общий стол.</p>
+      <ul class="places" aria-label="Где мы бывали"><li>Тибет и Кайлас</li><li>Бутан</li><li>Китай</li><li>Япония</li><li>Индия</li><li>Патагония</li><li>Красное море</li><li>Ладога</li></ul>
+    </div>
+  </div>
+  <div>
+    <p class="sub">Как это было</p>
+    <div class="past"><figure><img src="img/past-bhutan-dochula.jpg" alt="Мототур по Бутану · перевал Дочула" width="600" height="600" loading="lazy" decoding="async"><figcaption>Мототур по Бутану · перевал Дочула</figcaption></figure><figure><img src="img/past-china-gate.jpg" alt="Дао-тур по Китаю · 2026" width="600" height="600" loading="lazy" decoding="async"><figcaption>Дао-тур по Китаю · 2026</figcaption></figure><figure><img src="img/past-himalaya-group.jpg" alt="Гималаи · группа у снежных вершин" width="600" height="600" loading="lazy" decoding="async"><figcaption>Гималаи · группа у снежных вершин</figcaption></figure><figure><img src="img/past-bhutan-morning.jpg" alt="Бутан · утро перед выездом" width="600" height="600" loading="lazy" decoding="async"><figcaption>Бутан · утро перед выездом</figcaption></figure><figure><img src="img/past-china-taiji.jpg" alt="Тайцзи у храма Пурпурного облака · Удан" width="600" height="600" loading="lazy" decoding="async"><figcaption>Тайцзи у храма Пурпурного облака · Удан</figcaption></figure><figure><img src="img/past-himalaya-flags.jpg" alt="Перевал в молитвенных флагах" width="600" height="600" loading="lazy" decoding="async"><figcaption>Перевал в молитвенных флагах</figcaption></figure></div>
+  </div>
+  <div>
+    <p class="sub">Команда</p>
+    <div class="team"><article class="person"><img src="img/team-andrey.jpg" alt="Андрей Баранов" width="480" height="600" loading="lazy" decoding="async"><h3>Андрей Баранов</h3><p class="role">Маршрут и логистика</p><p>Организует путешествия с 2009 года: Тибет и кора вокруг Кайласа, Бутан, Китай, Япония, Индия, Патагония. Проводит Йогафест на Ладоге. Следит, чтобы дорога, отели и местная команда работали, а вы думали о горах и море.</p></article><article class="person"><img src="img/team-ilya.jpg" alt="Илья Баринов" width="480" height="600" loading="lazy" decoding="async"><h3>Илья Баринов</h3><p class="role">Движение и дыхание</p><p>Больше 20 лет в телесных и восточных практиках, 14 лет преподаёт. Трёхкратный чемпион Европы по тайцзи-цюань, реабилитолог и кинезиолог, выпускник Академии Русского балета имени Вагановой. Если утром кто-то расстилает коврик у реки, обычно это он.</p></article><article class="person"><img src="img/team-leonid.jpg" alt="Леонид Кутузов" width="480" height="600" loading="lazy" decoding="async"><h3>Леонид Кутузов</h3><p class="role">Медитация и мозг</p><p>Президент Федерации йоги Санкт-Петербурга, основатель проекта Neuro-Universe. Практикует йогу с 1998 года, преподаёт с 2000-го, больше 15 лет водит выездные ретриты. Ведёт медитацию, дыхание и лекции о том, что практики делают с мозгом.</p></article><article class="person"><img src="img/team-elena.jpg" alt="Елена Бакина" width="480" height="600" loading="lazy" decoding="async"><h3>Елена Бакина</h3><p class="role">Азия изнутри</p><p>10 лет в Азии, 5 из них в Китае. Организует ретриты и путешествия по Азии, преподаёт цигун и ян-шэн. Знает, чем место, куда возят всех, отличается от места, куда стоит доехать.</p></article></div>
+    <p class="guests">В отдельных поездках с нами Вита Бузик (йога-нидра и звук, Бали), альпинистка Ксения Абрамова, основатель Eversummit Club, которая поднималась на Эверест и Манаслу, экспедиционный фотограф Симона Малиренко (обе в Тибете) и непальский гид Манки, с которым мы прошли кору вокруг Кайласа.</p>
+  </div>
+</section>
 
 <section class="how" aria-labelledby="how-title">
   <div class="wrap">
