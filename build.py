@@ -8,8 +8,12 @@
   seats   {"left": осталось, "total": всего или null, "of": "по ранней цене" или ""}
   tiers   ступени цены, state: sold (продано) / now (сейчас) / next (потом) / option (вариант)
   urgency надпись на фото, hot + hotOrder строка в блоке «Места заканчиваются»
+
+WebP-версии фото, иконки и img/og.jpg готовит python3 images.py (нужен Pillow).
+Если WebP для поездки ещё нет, страница возьмёт исходный img/<id>.jpg.
 """
 import base64
+import hashlib
 import html
 import json
 import sys
@@ -17,6 +21,7 @@ from pathlib import Path
 from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parent
+IMG = ROOT / "img"
 C = json.loads((ROOT / "content.json").read_text(encoding="utf-8"))
 META, TOURS = C["meta"], C["tours"]
 
@@ -105,7 +110,7 @@ a{color:inherit}
 .trip-photo{position:relative;display:block;overflow:hidden;border-radius:6px;aspect-ratio:4/5;max-width:100%;color:var(--on-photo);text-decoration:none;background:#2a3133}
 @media (min-width:600px){.trip-photo{aspect-ratio:3/2}}
 @media (min-width:1000px){.trip-photo{aspect-ratio:21/9}}
-.photo{position:absolute;inset:0;background:var(--img) var(--pos)/cover no-repeat;transition:transform 1.4s cubic-bezier(.2,.7,.2,1)}
+.photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--pos);transition:transform 1.4s cubic-bezier(.2,.7,.2,1)}
 .trip-photo:hover .photo{transform:scale(1.035)}
 .trip-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,var(--scrim) 0%,rgba(6,10,12,.5) 36%,rgba(6,10,12,0) 66%)}
 .cap{position:absolute;z-index:1;left:0;right:0;bottom:0;padding:clamp(1rem,3.5vw,2.5rem);display:grid;gap:.35rem;text-shadow:0 1px 14px rgba(0,0,0,.35)}
@@ -269,8 +274,40 @@ def tg_book(t):
     return tg(f"Здравствуйте! Хочу забронировать место: {t['name']}, «{t['project']}», {t['dates']}.")
 
 
-def image_css(img_src):
-    return "\n".join(f'.t-{t["id"]}{{--img:url("{img_src(t["id"])}");--pos:{t["pos"]}}}' for t in TOURS)
+def variant(i, size):
+    """WebP-версия фото поездки из images.py, а если её нет, исходный JPEG."""
+    name = f"{i}-{size}.webp"
+    return name if (IMG / name).exists() else f"{i}.jpg"
+
+
+def picture(src, name, attrs):
+    """<img> из img/<name>.jpg с WebP-версией рядом, если она есть."""
+    webp = f"{name}.webp"
+    img = f'<img src="{src(name + ".jpg")}" {attrs}>'
+    if not (IMG / webp).exists():
+        return img
+    return f'<picture><source srcset="{src(webp)}" type="image/webp">{img}</picture>'
+
+
+def image_css(src):
+    return "\n".join(f'.t-{t["id"]}{{--img:url("{src(variant(t["id"], 800))}");--pos:{t["pos"]}}}' for t in TOURS)
+
+
+def render_photo(t, src, inline, first):
+    # Первая глава грузится сразу, остальные по мере прокрутки.
+    # На узком экране вертикальный кадр 800, тот же файл, что у карточки в ленте.
+    i = t["id"]
+    load = 'loading="eager"' if first else 'loading="lazy"'
+    attrs = f'class="photo" alt="{e(t["alt"])}" {load} decoding="async"'
+    small, big = variant(i, 800), variant(i, 1440)
+    if inline:
+        return f'<img src="{src(big)}" {attrs}>'
+    sources = ""
+    if small.endswith(".webp"):
+        sources += f'<source media="(max-width:599px)" srcset="{src(small)}" type="image/webp">'
+    if big.endswith(".webp"):
+        sources += f'<source srcset="{src(big)}" type="image/webp">'
+    return f'<picture>{sources}<img src="{src(i + ".jpg")}" {attrs}></picture>'
 
 
 def render_seats(t):
@@ -322,17 +359,20 @@ def render_faq():
 </section>"""
 
 
-def render_about(img_src):
+def render_about(src):
     a = C.get("about")
     if not a:
         return ""
+    def photo(name, alt, w, h):
+        return picture(src, name, f'alt="{e(alt)}" width="{w}" height="{h}" loading="lazy" decoding="async"')
+
     paras = "".join(f"<p>{e(p)}</p>" for p in a["paragraphs"])
     places = "".join(f"<li>{e(x)}</li>" for x in a["places"])
     past = "".join(
-        f'<figure><img src="{img_src(x["img"])}" alt="{e(x["cap"])}" width="600" height="600" loading="lazy" decoding="async">'
+        f'<figure>{photo(x["img"], x["cap"], 600, 600)}'
         f'<figcaption>{e(x["cap"])}</figcaption></figure>' for x in a["past"])
     team = "".join(
-        f'<article class="person"><img src="{img_src(x["img"])}" alt="{e(x["name"])}" width="480" height="600" loading="lazy" decoding="async">'
+        f'<article class="person">{photo(x["img"], x["name"], 480, 600)}'
         f'<h3>{e(x["name"])}</h3><p class="role">{e(x["role"])}</p><p>{e(x["bio"])}</p></article>' for x in a["team"])
     return f"""<section class="wrap about" id="about" aria-labelledby="about-title">
   <div class="about-head">
@@ -356,7 +396,7 @@ def render_about(img_src):
 </section>"""
 
 
-def render_body(img_src):
+def render_body(src, inline=False):
     spines = "\n".join(
         f'    <a class="spine t-{t["id"]}" href="#{t["id"]}" aria-label="{e(t["name"])}, {e(t["dates"])}'
         + (f', осталось {t["seats"]["left"]} {seats_word(t["seats"]["left"])}' if t.get("seats") and not t["seats"].get("of") else "")
@@ -371,7 +411,7 @@ def render_body(img_src):
         f'<span class="hot-what">{e(t["hot"])}</span></a></li>' for t in hot)
 
     trips = []
-    for t in TOURS:
+    for n, t in enumerate(TOURS):
         facts = [("Даты", e(t["dates"])), ("Длительность", e(t["days"])), ("Ведут", e(t["leaders"]))]
         if t["group"]:
             facts.append(("Группа", e(t["group"])))
@@ -382,7 +422,7 @@ def render_body(img_src):
         trips.append(f"""
   <article class="trip t-{t['id']}" id="{t['id']}" data-start="{t['start']}" data-end="{t['end']}">
     <a class="trip-photo" href="{e(t['url'])}" target="_blank" rel="noopener" aria-label="{e(t['name'])}: открыть сайт поездки">
-      <span class="photo" role="img" aria-label="{e(t['alt'])}"></span>
+      {render_photo(t, src, inline, n == 0)}
       <span class="stamp">{e(t['dates'])}</span>
       <span class="chips">{flag}<span class="status" hidden></span></span>
       <div class="cap">
@@ -453,7 +493,7 @@ def render_body(img_src):
 <main class="wrap trips">{''.join(trips)}
 </main>
 
-{render_about(img_src)}
+{render_about(src)}
 
 {render_faq()}
 
@@ -481,18 +521,18 @@ def render_body(img_src):
 
 def build(inline_out=None):
     if inline_out:
-        def img_src(i):
-            b = base64.b64encode((ROOT / "img" / f"{i}.jpg").read_bytes()).decode()
-            return f"data:image/jpeg;base64,{b}"
+        def src(name):
+            mime = "image/webp" if name.endswith(".webp") else "image/jpeg"
+            return f"data:{mime};base64,{base64.b64encode((IMG / name).read_bytes()).decode()}"
     else:
-        def img_src(i):
-            return f"img/{i}.jpg"
+        def src(name):
+            return f"img/{name}"
 
-    style = f"<style>{CSS}\n{image_css(img_src)}\n</style>"
+    style = f"<style>{CSS}\n{image_css(src)}\n</style>"
     fonts = (f'<link rel="preconnect" href="https://fonts.googleapis.com">'
              f'<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
              f'<link rel="stylesheet" href="{FONTS}">')
-    body = render_body(img_src)
+    body = render_body(src, inline=bool(inline_out))
     script = f"<script>{JS}</script>"
 
     if inline_out:
@@ -501,7 +541,9 @@ def build(inline_out=None):
         return
 
     site = META["siteUrl"].rstrip("/")
-    og_img = f"{site}/img/og.jpg" if site else "img/og.jpg"
+    # Версия в адресе картинки: Telegram кэширует превью, новая картинка получит новый адрес.
+    og_ver = hashlib.sha1((IMG / "og.jpg").read_bytes()).hexdigest()[:8]
+    og_img = f"{site}/img/og.jpg?v={og_ver}" if site else "img/og.jpg"
     head = f"""<!doctype html>
 <html lang="ru">
 <head>
@@ -509,10 +551,21 @@ def build(inline_out=None):
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{e(META['title'])}</title>
 <meta name="description" content="{e(META['description'])}">
+<link rel="canonical" href="{site}/">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#F0F3F2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0B1011" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="{site}/">
 <meta property="og:title" content="{e(META['title'])}">
 <meta property="og:description" content="{e(META['description'])}">
 <meta property="og:image" content="{og_img}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{e(C['og']['alt'])}">
 <meta name="twitter:card" content="summary_large_image">
 {fonts}
 {style}

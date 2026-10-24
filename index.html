@@ -5,10 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Путешествия 2026–2027</title>
 <meta name="description" content="Авторские путешествия с 2009 года: особые места, практики в дороге и небольшие группы. Дахаб, Патагония, Бали, Камбоджа, Китай, Канченджанга и Тибет в сезоне 2026–2027.">
+<link rel="canonical" href="https://utromaya-code.github.io/travel-hub/">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#F0F3F2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0B1011" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://utromaya-code.github.io/travel-hub/">
 <meta property="og:title" content="Путешествия 2026–2027">
 <meta property="og:description" content="Авторские путешествия с 2009 года: особые места, практики в дороге и небольшие группы. Дахаб, Патагония, Бали, Камбоджа, Китай, Канченджанга и Тибет в сезоне 2026–2027.">
-<meta property="og:image" content="https://utromaya-code.github.io/travel-hub/img/og.jpg">
+<meta property="og:image" content="https://utromaya-code.github.io/travel-hub/img/og.jpg?v=543f845a">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Семь фото-полос поездок сезона и заголовок «Путешествия 2026–2027»">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Onest:wght@400;500;600&family=Unbounded:wght@500;600&display=swap">
 <style>
@@ -93,7 +104,7 @@ a{color:inherit}
 .trip-photo{position:relative;display:block;overflow:hidden;border-radius:6px;aspect-ratio:4/5;max-width:100%;color:var(--on-photo);text-decoration:none;background:#2a3133}
 @media (min-width:600px){.trip-photo{aspect-ratio:3/2}}
 @media (min-width:1000px){.trip-photo{aspect-ratio:21/9}}
-.photo{position:absolute;inset:0;background:var(--img) var(--pos)/cover no-repeat;transition:transform 1.4s cubic-bezier(.2,.7,.2,1)}
+.photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--pos);transition:transform 1.4s cubic-bezier(.2,.7,.2,1)}
 .trip-photo:hover .photo{transform:scale(1.035)}
 .trip-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,var(--scrim) 0%,rgba(6,10,12,.5) 36%,rgba(6,10,12,0) 66%)}
 .cap{position:absolute;z-index:1;left:0;right:0;bottom:0;padding:clamp(1rem,3.5vw,2.5rem);display:grid;gap:.35rem;text-shadow:0 1px 14px rgba(0,0,0,.35)}
@@ -217,13 +228,13 @@ footer a{color:var(--ink-soft)}
   .trip-photo:hover .photo{transform:none}
 }
 
-.t-dahab{--img:url("img/dahab.jpg");--pos:62% 50%}
-.t-patagonia{--img:url("img/patagonia.jpg");--pos:30% 50%}
-.t-bali{--img:url("img/bali.jpg");--pos:50% 55%}
-.t-cambodia{--img:url("img/cambodia.jpg");--pos:50% 55%}
-.t-china{--img:url("img/china.jpg");--pos:50% 50%}
-.t-kanchenjunga{--img:url("img/kanchenjunga.jpg");--pos:72% 40%}
-.t-tibet{--img:url("img/tibet.jpg");--pos:50% 35%}
+.t-dahab{--img:url("img/dahab-800.webp");--pos:62% 50%}
+.t-patagonia{--img:url("img/patagonia-800.webp");--pos:30% 50%}
+.t-bali{--img:url("img/bali-800.webp");--pos:50% 55%}
+.t-cambodia{--img:url("img/cambodia-800.webp");--pos:50% 55%}
+.t-china{--img:url("img/china-800.webp");--pos:50% 50%}
+.t-kanchenjunga{--img:url("img/kanchenjunga-800.webp");--pos:72% 40%}
+.t-tibet{--img:url("img/tibet-800.webp");--pos:50% 35%}
 </style>
 </head>
 <body>
@@ -280,7 +291,7 @@ footer a{color:var(--ink-soft)}
 <main class="wrap trips">
   <article class="trip t-dahab" id="dahab" data-start="2026-11-11" data-end="2026-11-21">
     <a class="trip-photo" href="https://dahab-camp.ru/dahab-yoga-camp.html" target="_blank" rel="noopener" aria-label="Дахаб: открыть сайт поездки">
-      <span class="photo" role="img" aria-label="Дайвер и стая жёлтых рыб у рифа Красного моря"></span>
+      <picture><source media="(max-width:599px)" srcset="img/dahab-800.webp" type="image/webp"><source srcset="img/dahab-1440.webp" type="image/webp"><img src="img/dahab.jpg" class="photo" alt="Дайвер и стая жёлтых рыб у рифа Красного моря" loading="eager" decoding="async"></picture>
       <span class="stamp">11–21 ноября 2026</span>
       <span class="chips"><span class="flag">Последнее место</span><span class="status" hidden></span></span>
       <div class="cap">
@@ -307,7 +318,7 @@ footer a{color:var(--ink-soft)}
   </article>
   <article class="trip t-patagonia" id="patagonia" data-start="2027-01-03" data-end="2027-01-15">
     <a class="trip-photo" href="https://patagonya.ru" target="_blank" rel="noopener" aria-label="Патагония: открыть сайт поездки">
-      <span class="photo" role="img" aria-label="Рассвет над Фицроем и его отражение в горном озере"></span>
+      <picture><source media="(max-width:599px)" srcset="img/patagonia-800.webp" type="image/webp"><source srcset="img/patagonia-1440.webp" type="image/webp"><img src="img/patagonia.jpg" class="photo" alt="Рассвет над Фицроем и его отражение в горном озере" loading="lazy" decoding="async"></picture>
       <span class="stamp">3–15 января 2027</span>
       <span class="chips"><span class="flag">Последнее место</span><span class="status" hidden></span></span>
       <div class="cap">
@@ -334,7 +345,7 @@ footer a{color:var(--ink-soft)}
   </article>
   <article class="trip t-bali" id="bali" data-start="2027-02-12" data-end="2027-02-22">
     <a class="trip-photo" href="https://bali-soul.ru" target="_blank" rel="noopener" aria-label="Бали: открыть сайт поездки">
-      <span class="photo" role="img" aria-label="Рисовые террасы Джатилувих у подножия гор"></span>
+      <picture><source media="(max-width:599px)" srcset="img/bali-800.webp" type="image/webp"><source srcset="img/bali-1440.webp" type="image/webp"><img src="img/bali.jpg" class="photo" alt="Рисовые террасы Джатилувих у подножия гор" loading="lazy" decoding="async"></picture>
       <span class="stamp">12–22 февраля 2027</span>
       <span class="chips"><span class="status" hidden></span></span>
       <div class="cap">
@@ -361,7 +372,7 @@ footer a{color:var(--ink-soft)}
   </article>
   <article class="trip t-cambodia" id="cambodia" data-start="2027-02-26" data-end="2027-03-08">
     <a class="trip-photo" href="https://cambodiamoto.ru" target="_blank" rel="noopener" aria-label="Камбоджа: открыть сайт поездки">
-      <span class="photo" role="img" aria-label="Колонна мотоциклов на пыльной дороге, на горизонте башни храма"></span>
+      <picture><source media="(max-width:599px)" srcset="img/cambodia-800.webp" type="image/webp"><source srcset="img/cambodia-1440.webp" type="image/webp"><img src="img/cambodia.jpg" class="photo" alt="Колонна мотоциклов на пыльной дороге, на горизонте башни храма" loading="lazy" decoding="async"></picture>
       <span class="stamp">26 февраля – 8 марта 2027</span>
       <span class="chips"><span class="flag">Осталось 5 мест</span><span class="status" hidden></span></span>
       <div class="cap">
@@ -388,7 +399,7 @@ footer a{color:var(--ink-soft)}
   </article>
   <article class="trip t-china" id="china" data-start="2027-03-23" data-end="2027-04-02">
     <a class="trip-photo" href="https://shangrila-trip.ru" target="_blank" rel="noopener" aria-label="Китай: открыть сайт поездки">
-      <span class="photo" role="img" aria-label="Карстовые горы Яншо на закате"></span>
+      <picture><source media="(max-width:599px)" srcset="img/china-800.webp" type="image/webp"><source srcset="img/china-1440.webp" type="image/webp"><img src="img/china.jpg" class="photo" alt="Карстовые горы Яншо на закате" loading="lazy" decoding="async"></picture>
       <span class="stamp">23 марта – 2 апреля 2027</span>
       <span class="chips"><span class="flag">Ранняя цена заканчивается</span><span class="status" hidden></span></span>
       <div class="cap">
@@ -415,7 +426,7 @@ footer a{color:var(--ink-soft)}
   </article>
   <article class="trip t-kanchenjunga" id="kanchenjunga" data-start="2027-04-05" data-end="2027-04-20">
     <a class="trip-photo" href="https://kanchenjunga.ru" target="_blank" rel="noopener" aria-label="Канченджанга: открыть сайт поездки">
-      <span class="photo" role="img" aria-label="Канченджанга в огненном свете заката"></span>
+      <picture><source media="(max-width:599px)" srcset="img/kanchenjunga-800.webp" type="image/webp"><source srcset="img/kanchenjunga-1440.webp" type="image/webp"><img src="img/kanchenjunga.jpg" class="photo" alt="Канченджанга в огненном свете заката" loading="lazy" decoding="async"></picture>
       <span class="stamp">5–20 апреля 2027</span>
       <span class="chips"><span class="flag">3 места по ранней цене</span><span class="status" hidden></span></span>
       <div class="cap">
@@ -442,7 +453,7 @@ footer a{color:var(--ink-soft)}
   </article>
   <article class="trip t-tibet" id="tibet" data-start="2027-08-12" data-end="2027-08-29">
     <a class="trip-photo" href="https://tibet2027.ru" target="_blank" rel="noopener" aria-label="Тибет: открыть сайт поездки">
-      <span class="photo" role="img" aria-label="Кайлас под синим небом"></span>
+      <picture><source media="(max-width:599px)" srcset="img/tibet-800.webp" type="image/webp"><source srcset="img/tibet-1440.webp" type="image/webp"><img src="img/tibet.jpg" class="photo" alt="Кайлас под синим небом" loading="lazy" decoding="async"></picture>
       <span class="stamp">12–29 августа 2027</span>
       <span class="chips"><span class="flag">Ранняя цена заканчивается</span><span class="status" hidden></span></span>
       <div class="cap">
@@ -481,11 +492,11 @@ footer a{color:var(--ink-soft)}
   </div>
   <div>
     <p class="sub">Как это было</p>
-    <div class="past"><figure><img src="img/past-bhutan-dochula.jpg" alt="Мототур по Бутану · перевал Дочула" width="600" height="600" loading="lazy" decoding="async"><figcaption>Мототур по Бутану · перевал Дочула</figcaption></figure><figure><img src="img/past-china-gate.jpg" alt="Дао-тур по Китаю · 2026" width="600" height="600" loading="lazy" decoding="async"><figcaption>Дао-тур по Китаю · 2026</figcaption></figure><figure><img src="img/past-himalaya-group.jpg" alt="Гималаи · группа у снежных вершин" width="600" height="600" loading="lazy" decoding="async"><figcaption>Гималаи · группа у снежных вершин</figcaption></figure><figure><img src="img/past-bhutan-morning.jpg" alt="Бутан · утро перед выездом" width="600" height="600" loading="lazy" decoding="async"><figcaption>Бутан · утро перед выездом</figcaption></figure><figure><img src="img/past-china-taiji.jpg" alt="Тайцзи у храма Пурпурного облака · Удан" width="600" height="600" loading="lazy" decoding="async"><figcaption>Тайцзи у храма Пурпурного облака · Удан</figcaption></figure><figure><img src="img/past-himalaya-flags.jpg" alt="Перевал в молитвенных флагах" width="600" height="600" loading="lazy" decoding="async"><figcaption>Перевал в молитвенных флагах</figcaption></figure></div>
+    <div class="past"><figure><picture><source srcset="img/past-bhutan-dochula.webp" type="image/webp"><img src="img/past-bhutan-dochula.jpg" alt="Мототур по Бутану · перевал Дочула" width="600" height="600" loading="lazy" decoding="async"></picture><figcaption>Мототур по Бутану · перевал Дочула</figcaption></figure><figure><picture><source srcset="img/past-china-gate.webp" type="image/webp"><img src="img/past-china-gate.jpg" alt="Дао-тур по Китаю · 2026" width="600" height="600" loading="lazy" decoding="async"></picture><figcaption>Дао-тур по Китаю · 2026</figcaption></figure><figure><picture><source srcset="img/past-himalaya-group.webp" type="image/webp"><img src="img/past-himalaya-group.jpg" alt="Гималаи · группа у снежных вершин" width="600" height="600" loading="lazy" decoding="async"></picture><figcaption>Гималаи · группа у снежных вершин</figcaption></figure><figure><picture><source srcset="img/past-bhutan-morning.webp" type="image/webp"><img src="img/past-bhutan-morning.jpg" alt="Бутан · утро перед выездом" width="600" height="600" loading="lazy" decoding="async"></picture><figcaption>Бутан · утро перед выездом</figcaption></figure><figure><picture><source srcset="img/past-china-taiji.webp" type="image/webp"><img src="img/past-china-taiji.jpg" alt="Тайцзи у храма Пурпурного облака · Удан" width="600" height="600" loading="lazy" decoding="async"></picture><figcaption>Тайцзи у храма Пурпурного облака · Удан</figcaption></figure><figure><picture><source srcset="img/past-himalaya-flags.webp" type="image/webp"><img src="img/past-himalaya-flags.jpg" alt="Перевал в молитвенных флагах" width="600" height="600" loading="lazy" decoding="async"></picture><figcaption>Перевал в молитвенных флагах</figcaption></figure></div>
   </div>
   <div>
     <p class="sub">Команда</p>
-    <div class="team"><article class="person"><img src="img/team-andrey.jpg" alt="Андрей Баранов" width="480" height="600" loading="lazy" decoding="async"><h3>Андрей Баранов</h3><p class="role">Маршрут и логистика</p><p>Организует путешествия с 2009 года: Тибет и кора вокруг Кайласа, Бутан, Китай, Япония, Индия, Патагония. Проводит Йогафест на Ладоге. Следит, чтобы дорога, отели и местная команда работали, а вы думали о горах и море.</p></article><article class="person"><img src="img/team-ilya.jpg" alt="Илья Баринов" width="480" height="600" loading="lazy" decoding="async"><h3>Илья Баринов</h3><p class="role">Движение и дыхание</p><p>Больше 20 лет в телесных и восточных практиках, 14 лет преподаёт. Трёхкратный чемпион Европы по тайцзи-цюань, реабилитолог и кинезиолог, выпускник Академии Русского балета имени Вагановой. Если утром кто-то расстилает коврик у реки, обычно это он.</p></article><article class="person"><img src="img/team-leonid.jpg" alt="Леонид Кутузов" width="480" height="600" loading="lazy" decoding="async"><h3>Леонид Кутузов</h3><p class="role">Медитация и мозг</p><p>Президент Федерации йоги Санкт-Петербурга, основатель проекта Neuro-Universe. Практикует йогу с 1998 года, преподаёт с 2000-го, больше 15 лет водит выездные ретриты. Ведёт медитацию, дыхание и лекции о том, что практики делают с мозгом.</p></article><article class="person"><img src="img/team-elena.jpg" alt="Елена Бакина" width="480" height="600" loading="lazy" decoding="async"><h3>Елена Бакина</h3><p class="role">Азия изнутри</p><p>10 лет в Азии, 5 из них в Китае. Организует ретриты и путешествия по Азии, преподаёт цигун и ян-шэн. Знает, чем место, куда возят всех, отличается от места, куда стоит доехать.</p></article></div>
+    <div class="team"><article class="person"><picture><source srcset="img/team-andrey.webp" type="image/webp"><img src="img/team-andrey.jpg" alt="Андрей Баранов" width="480" height="600" loading="lazy" decoding="async"></picture><h3>Андрей Баранов</h3><p class="role">Маршрут и логистика</p><p>Организует путешествия с 2009 года: Тибет и кора вокруг Кайласа, Бутан, Китай, Япония, Индия, Патагония. Проводит Йогафест на Ладоге. Следит, чтобы дорога, отели и местная команда работали, а вы думали о горах и море.</p></article><article class="person"><picture><source srcset="img/team-ilya.webp" type="image/webp"><img src="img/team-ilya.jpg" alt="Илья Баринов" width="480" height="600" loading="lazy" decoding="async"></picture><h3>Илья Баринов</h3><p class="role">Движение и дыхание</p><p>Больше 20 лет в телесных и восточных практиках, 14 лет преподаёт. Трёхкратный чемпион Европы по тайцзи-цюань, реабилитолог и кинезиолог, выпускник Академии Русского балета имени Вагановой. Если утром кто-то расстилает коврик у реки, обычно это он.</p></article><article class="person"><picture><source srcset="img/team-leonid.webp" type="image/webp"><img src="img/team-leonid.jpg" alt="Леонид Кутузов" width="480" height="600" loading="lazy" decoding="async"></picture><h3>Леонид Кутузов</h3><p class="role">Медитация и мозг</p><p>Президент Федерации йоги Санкт-Петербурга, основатель проекта Neuro-Universe. Практикует йогу с 1998 года, преподаёт с 2000-го, больше 15 лет водит выездные ретриты. Ведёт медитацию, дыхание и лекции о том, что практики делают с мозгом.</p></article><article class="person"><picture><source srcset="img/team-elena.webp" type="image/webp"><img src="img/team-elena.jpg" alt="Елена Бакина" width="480" height="600" loading="lazy" decoding="async"></picture><h3>Елена Бакина</h3><p class="role">Азия изнутри</p><p>10 лет в Азии, 5 из них в Китае. Организует ретриты и путешествия по Азии, преподаёт цигун и ян-шэн. Знает, чем место, куда возят всех, отличается от места, куда стоит доехать.</p></article></div>
     <p class="guests">В отдельных поездках с нами Вита Бузик (йога-нидра и звук, Бали), альпинистка Ксения Абрамова, основатель Eversummit Club, которая поднималась на Эверест и Манаслу, экспедиционный фотограф Симона Малиренко (обе в Тибете) и непальский гид Манки, с которым мы прошли кору вокруг Кайласа.</p>
   </div>
 </section>
