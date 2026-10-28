@@ -7,6 +7,8 @@
 Места, цены и ранние тарифы меняются в content.json:
   seats   {"left": осталось, "total": всего или null, "of": "по ранней цене" или ""}
   tiers   ступени цены, state: sold (продано) / now (сейчас) / next (потом) / option (вариант)
+  callout {"title", "text"} плашка в правой колонке, когда мест не знаем (например, ранняя регистрация)
+          при seats.left = 1 колонка, флажок на фото и строка в «Места заканчиваются» выделены как последнее место
   urgency надпись на фото, hot + hotOrder строка в блоке «Места заканчиваются»
   pos     точка кадра для фото поездки; spinePos (необязательно) то же для узкой полосы на первом экране
   reviews отзывы {"name", "trip", "text", "photo": имя файла в img/ без расширения или пусто};
@@ -104,9 +106,6 @@ picture{display:contents}
 .hero-cta{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.25rem;padding-top:.6rem}
 .hero-cta .btn{min-width:min(100%,15rem)}
 .hero-cta span{font-size:.9rem;color:var(--on-night-soft)}
-.spines-note{margin:0;font:400 .8rem/1.45 var(--f-mono);color:var(--on-night-soft)}
-.trust{margin:0;font-size:.9rem;color:var(--on-night-soft)}
-.trust a{color:var(--night-accent);font-weight:500}
 
 /* горящие места */
 .hot{padding-block:clamp(3rem,7vw,5rem) 0;min-width:0}
@@ -119,6 +118,7 @@ picture{display:contents}
 .hot-name{font:600 1rem/1.3 var(--f-body)}
 .hot-name small{font:400 .78rem/1 var(--f-mono);color:var(--ink-soft);margin-left:.2rem;letter-spacing:.04em}
 .hot-what{margin-left:auto;font:500 .8rem/1.3 var(--f-mono);color:var(--stamp);text-align:right}
+.hot li.is-last .hot-what{padding:.3rem .5rem;border-radius:3px;background:var(--stamp);color:var(--on-stamp)}
 @media (min-width:980px){
   .hot{display:grid;grid-template-columns:minmax(0,18.5rem) minmax(0,1fr);column-gap:clamp(2.5rem,4.5vw,4rem);align-items:start}
 }
@@ -133,15 +133,13 @@ picture{display:contents}
 .spine-name{position:absolute;z-index:1;left:50%;bottom:3rem;writing-mode:vertical-rl;transform:translateX(-50%) rotate(180deg);
   font:600 clamp(.92rem,2.1vw,1.45rem)/1 var(--f-display);white-space:nowrap;letter-spacing:.01em}
 .spine-month{position:absolute;z-index:1;left:0;right:0;bottom:.9rem;text-align:center;font:500 .72rem/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;opacity:.9}
-.spine-seats{position:absolute;z-index:1;top:.6rem;left:50%;transform:translateX(-50%);display:grid;place-items:center;
-  width:1.7rem;height:1.7rem;border-radius:50%;background:var(--chip-bg);color:var(--chip-ink);font:600 .82rem/1 var(--f-mono)}
 .spine.is-past{filter:grayscale(.85) brightness(.8)}
 @media (hover:hover) and (min-width:760px){
   .spines:hover .spine{flex-grow:.75}
   .spines .spine:hover,.spines .spine:focus-visible{flex-grow:3.2}
 }
 @media (min-width:760px){.spine{background-position:var(--spine-pos,var(--pos))}}
-@media (min-width:980px){.spine-seats{top:1.1rem}.spine-name{bottom:3.4rem}.spine-month{bottom:1.2rem}}
+@media (min-width:980px){.spine-name{bottom:3.4rem}.spine-month{bottom:1.2rem}}
 /* широкий экран: текст слева, полосы справа во всю высоту экрана до края */
 @media (min-width:980px){
   .masthead{display:grid;grid-template-rows:auto 1fr;min-height:min(100svh,58rem)}
@@ -162,15 +160,12 @@ picture{display:contents}
   .spine::after{background:linear-gradient(to top,rgba(6,10,12,.82) 0%,rgba(6,10,12,.3) 38%,rgba(6,10,12,0) 62%)}
   .spine-name{left:1rem;right:1rem;bottom:2.5rem;writing-mode:horizontal-tb;transform:none;font-size:1.45rem;white-space:normal}
   .spine-month{left:1rem;right:auto;bottom:1rem;text-align:left}
-  .spine-seats{top:.75rem;left:auto;right:.75rem;transform:none;width:2rem;height:2rem;font-size:.9rem}
   /* фото сразу под заголовком и кнопкой, длинный абзац после ленты */
   .intro{row-gap:1.2rem}
   .hero{display:contents}
   .hero-cta{order:1;padding-top:0}
   .spines-nav{order:2;margin-top:.8rem}
-  .spines-note{order:3}
-  .lead{order:4;margin-top:1rem}
-  .trust{order:5}
+  .lead{order:3;margin-top:1rem}
 }
 
 /* строка поездок: появляется, пока на экране главы */
@@ -208,6 +203,7 @@ picture{display:contents}
 .chips{flex:0 1 auto;min-width:0;display:grid;gap:.35rem;justify-items:end}
 .flag,.status{border-radius:4px;padding:.4rem .6rem;font:500 .75rem/1.2 var(--f-mono);letter-spacing:.04em;text-align:right}
 .flag{background:var(--stamp);color:var(--on-stamp)}
+.flag.is-last{padding:.55rem .85rem;font:600 1rem/1.2 var(--f-body);letter-spacing:0}
 .status{background:var(--chip-bg);color:#111A1C}
 
 /* под фото: маршрут на всю ширину, ниже описание и правая колонка начинаются на одной линии */
@@ -225,6 +221,13 @@ picture{display:contents}
 .aside-label{margin:0;font:500 .7rem/1.4 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
 .seats{display:grid;gap:.45rem;padding:.9rem 1rem;border-radius:4px;background:var(--stamp-wash)}
 .seats strong{font:600 1.05rem/1.3 var(--f-body);color:var(--stamp)}
+.seats-note{font-size:.92rem;color:var(--ink-soft)}
+/* последнее место: сплошной акцентный блок, самый заметный элемент колонки */
+.seats.is-last{background:var(--stamp);color:var(--on-stamp)}
+.seats.is-last strong{font-size:1.45rem;line-height:1.15;color:var(--on-stamp)}
+.seats.is-last .seats-note{color:var(--on-stamp);opacity:.85}
+.seats.is-last .dot{background:var(--on-stamp);opacity:.3}
+.seats.is-last .dot.free{background:var(--on-stamp);opacity:1}
 .dots{display:flex;flex-wrap:wrap;gap:5px}
 .dot{width:11px;height:11px;border-radius:50%;background:var(--ink-soft);opacity:.28}
 .dot.free{background:var(--stamp);opacity:1}
@@ -472,10 +475,21 @@ def render_photo(t, src, inline, first):
     return f'<picture>{sources}<img src="{src(i + ".jpg")}" {attrs}></picture>'
 
 
+LAST = ' class="is-last"'
+
+
+def is_last(t):
+    s = t.get("seats")
+    return bool(s) and s["left"] == 1 and not s.get("of")
+
+
 def render_seats(t):
     s = t.get("seats")
     if not s:
-        return ""
+        c = t.get("callout")
+        if not c:
+            return ""
+        return f'<div class="seats"><strong>{e(c["title"])}</strong><span class="seats-note">{e(c["text"])}</span></div>'
     left, total, of = s["left"], s.get("total"), s.get("of", "")
     word = seats_word(left)
     if total:
@@ -486,6 +500,8 @@ def render_seats(t):
     else:
         label = f"Осталось {left} {word}"
         meter = ""
+    if is_last(t):
+        return f'<div class="seats is-last">{meter}<strong>Последнее место</strong><span class="seats-note">{e(label)}</span></div>'
     return f'<div class="seats">{meter}<strong>{e(label)}</strong></div>'
 
 
@@ -573,7 +589,7 @@ def render_about(src, inline):
                     f'<p class="role">{e(x["role"])}</p><p>{e(x["bio"])}</p></article>')
     return f"""<section class="wrap about" id="about" aria-labelledby="about-title">
   <div class="about-head">
-    <p class="year"><b>{e(a["since"])}</b><span>с этого года мы в пути</span></p>
+    <p class="year"><b>{e(a["since"])}</b><span>{e(a.get("sinceLabel", ""))}</span></p>
     <div class="about-text">
       <p class="sub">О нас</p>
       <h2 id="about-title">{e(a["title"])}</h2>
@@ -617,16 +633,13 @@ def render_body(src, inline=False):
     H, HOT = C["hero"], C["hot"]
     spines = "\n".join(
         f'      <a class="spine t-{t["id"]}" href="#{t["id"]}">'
-        + (f'<span class="spine-seats" aria-hidden="true">{t["seats"]["left"]}</span>' if t.get("seats") and not t["seats"].get("of") else "")
-        + f'<span class="spine-name">{e(t["name"])}</span> <span class="spine-month">{e(t["month"])}</span>'
-        + f'<span class="sr">{e(t["dates"])}'
-        + (f', осталось {t["seats"]["left"]} {seats_word(t["seats"]["left"])}' if t.get("seats") and not t["seats"].get("of") else "")
-        + '</span></a>'
+        f'<span class="spine-name">{e(t["name"])}</span> <span class="spine-month">{e(t["month"])}</span>'
+        f'<span class="sr">{e(t["dates"])}</span></a>'
         for t in TOURS)
 
     hot = sorted((t for t in TOURS if t.get("hot")), key=lambda t: t["hotOrder"])
     hot_rows = "\n".join(
-        f'    <li><a href="#{t["id"]}"><span class="hot-name">{e(t["name"])} <small>{e(t["monthFull"])}</small></span>'
+        f'    <li{LAST if is_last(t) else ""}><a href="#{t["id"]}"><span class="hot-name">{e(t["name"])} <small>{e(t["monthFull"])}</small></span>'
         f'<span class="hot-what">{e(t["hot"])}</span></a></li>' for t in hot)
 
     nav_links = "".join(f'<a href="#{t["id"]}"><small>{e(t["month"])}</small> {e(t["name"])}</a>' for t in TOURS)
@@ -637,7 +650,8 @@ def render_body(src, inline=False):
         if t["group"]:
             facts.append(("Группа", e(t["group"])))
         dl = "".join(f"<dt>{k}</dt><dd>{v}</dd>" for k, v in facts)
-        flag = f'<span class="flag">{e(t["urgency"])}</span>' if t.get("urgency") else ""
+        flag = (f'<span class="flag{" is-last" if is_last(t) else ""}">{e(t["urgency"])}</span>'
+                if t.get("urgency") else "")
         micro = ("Заявка ни к чему не обязывает. " +
                  (f"Место закрепляет предоплата {t['deposit']}." if t.get("deposit") else "Место закрепляет предоплата."))
         trips.append(f"""
@@ -691,8 +705,6 @@ def render_body(src, inline=False):
         <a class="btn btn-primary" href="{choose}" target="_blank" rel="noopener">{e(H["cta"])}</a>
         <span>{e(H["ctaNote"])}</span>
       </div>
-      <p class="trust"><a href="#moments">Как это было</a> · <a href="#about">Кто мы</a> · <a href="#faq">Частые сомнения</a></p>
-      <p class="spines-note">{e(C["spinesNote"])}</p>
     </header>
 
     <nav class="spines-nav" aria-label="Все поездки сезона">

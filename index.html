@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Путешествия 2026–2027</title>
-<meta name="description" content="Авторские путешествия с 2009 года: особые места, практики в дороге и небольшие группы. Дахаб, Патагония, Бали, Камбоджа, Китай, Канченджанга и Тибет в сезоне 2026–2027.">
+<meta name="description" content="Авторские путешествия, 20 лет опыта: особые места, практики в дороге и небольшие группы. Дахаб, Патагония, Бали, Камбоджа, Китай, Канченджанга и Тибет в сезоне 2026–2027.">
 <link rel="canonical" href="https://utromaya-code.github.io/travel-hub/">
 <link rel="icon" href="favicon.ico" sizes="32x32">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -15,8 +15,8 @@
 <meta property="og:locale" content="ru_RU">
 <meta property="og:url" content="https://utromaya-code.github.io/travel-hub/">
 <meta property="og:title" content="Путешествия 2026–2027">
-<meta property="og:description" content="Авторские путешествия с 2009 года: особые места, практики в дороге и небольшие группы. Дахаб, Патагония, Бали, Камбоджа, Китай, Канченджанга и Тибет в сезоне 2026–2027.">
-<meta property="og:image" content="https://utromaya-code.github.io/travel-hub/img/og.jpg?v=47253491">
+<meta property="og:description" content="Авторские путешествия, 20 лет опыта: особые места, практики в дороге и небольшие группы. Дахаб, Патагония, Бали, Камбоджа, Китай, Канченджанга и Тибет в сезоне 2026–2027.">
+<meta property="og:image" content="https://utromaya-code.github.io/travel-hub/img/og.jpg?v=982fd31d">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Семь фото-полос поездок сезона и заголовок «Путешествия 2026–2027»">
@@ -89,9 +89,6 @@ picture{display:contents}
 .hero-cta{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.25rem;padding-top:.6rem}
 .hero-cta .btn{min-width:min(100%,15rem)}
 .hero-cta span{font-size:.9rem;color:var(--on-night-soft)}
-.spines-note{margin:0;font:400 .8rem/1.45 var(--f-mono);color:var(--on-night-soft)}
-.trust{margin:0;font-size:.9rem;color:var(--on-night-soft)}
-.trust a{color:var(--night-accent);font-weight:500}
 
 /* горящие места */
 .hot{padding-block:clamp(3rem,7vw,5rem) 0;min-width:0}
@@ -104,6 +101,7 @@ picture{display:contents}
 .hot-name{font:600 1rem/1.3 var(--f-body)}
 .hot-name small{font:400 .78rem/1 var(--f-mono);color:var(--ink-soft);margin-left:.2rem;letter-spacing:.04em}
 .hot-what{margin-left:auto;font:500 .8rem/1.3 var(--f-mono);color:var(--stamp);text-align:right}
+.hot li.is-last .hot-what{padding:.3rem .5rem;border-radius:3px;background:var(--stamp);color:var(--on-stamp)}
 @media (min-width:980px){
   .hot{display:grid;grid-template-columns:minmax(0,18.5rem) minmax(0,1fr);column-gap:clamp(2.5rem,4.5vw,4rem);align-items:start}
 }
@@ -118,15 +116,13 @@ picture{display:contents}
 .spine-name{position:absolute;z-index:1;left:50%;bottom:3rem;writing-mode:vertical-rl;transform:translateX(-50%) rotate(180deg);
   font:600 clamp(.92rem,2.1vw,1.45rem)/1 var(--f-display);white-space:nowrap;letter-spacing:.01em}
 .spine-month{position:absolute;z-index:1;left:0;right:0;bottom:.9rem;text-align:center;font:500 .72rem/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;opacity:.9}
-.spine-seats{position:absolute;z-index:1;top:.6rem;left:50%;transform:translateX(-50%);display:grid;place-items:center;
-  width:1.7rem;height:1.7rem;border-radius:50%;background:var(--chip-bg);color:var(--chip-ink);font:600 .82rem/1 var(--f-mono)}
 .spine.is-past{filter:grayscale(.85) brightness(.8)}
 @media (hover:hover) and (min-width:760px){
   .spines:hover .spine{flex-grow:.75}
   .spines .spine:hover,.spines .spine:focus-visible{flex-grow:3.2}
 }
 @media (min-width:760px){.spine{background-position:var(--spine-pos,var(--pos))}}
-@media (min-width:980px){.spine-seats{top:1.1rem}.spine-name{bottom:3.4rem}.spine-month{bottom:1.2rem}}
+@media (min-width:980px){.spine-name{bottom:3.4rem}.spine-month{bottom:1.2rem}}
 /* широкий экран: текст слева, полосы справа во всю высоту экрана до края */
 @media (min-width:980px){
   .masthead{display:grid;grid-template-rows:auto 1fr;min-height:min(100svh,58rem)}
@@ -147,15 +143,12 @@ picture{display:contents}
   .spine::after{background:linear-gradient(to top,rgba(6,10,12,.82) 0%,rgba(6,10,12,.3) 38%,rgba(6,10,12,0) 62%)}
   .spine-name{left:1rem;right:1rem;bottom:2.5rem;writing-mode:horizontal-tb;transform:none;font-size:1.45rem;white-space:normal}
   .spine-month{left:1rem;right:auto;bottom:1rem;text-align:left}
-  .spine-seats{top:.75rem;left:auto;right:.75rem;transform:none;width:2rem;height:2rem;font-size:.9rem}
   /* фото сразу под заголовком и кнопкой, длинный абзац после ленты */
   .intro{row-gap:1.2rem}
   .hero{display:contents}
   .hero-cta{order:1;padding-top:0}
   .spines-nav{order:2;margin-top:.8rem}
-  .spines-note{order:3}
-  .lead{order:4;margin-top:1rem}
-  .trust{order:5}
+  .lead{order:3;margin-top:1rem}
 }
 
 /* строка поездок: появляется, пока на экране главы */
@@ -193,6 +186,7 @@ picture{display:contents}
 .chips{flex:0 1 auto;min-width:0;display:grid;gap:.35rem;justify-items:end}
 .flag,.status{border-radius:4px;padding:.4rem .6rem;font:500 .75rem/1.2 var(--f-mono);letter-spacing:.04em;text-align:right}
 .flag{background:var(--stamp);color:var(--on-stamp)}
+.flag.is-last{padding:.55rem .85rem;font:600 1rem/1.2 var(--f-body);letter-spacing:0}
 .status{background:var(--chip-bg);color:#111A1C}
 
 /* под фото: маршрут на всю ширину, ниже описание и правая колонка начинаются на одной линии */
@@ -210,6 +204,13 @@ picture{display:contents}
 .aside-label{margin:0;font:500 .7rem/1.4 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
 .seats{display:grid;gap:.45rem;padding:.9rem 1rem;border-radius:4px;background:var(--stamp-wash)}
 .seats strong{font:600 1.05rem/1.3 var(--f-body);color:var(--stamp)}
+.seats-note{font-size:.92rem;color:var(--ink-soft)}
+/* последнее место: сплошной акцентный блок, самый заметный элемент колонки */
+.seats.is-last{background:var(--stamp);color:var(--on-stamp)}
+.seats.is-last strong{font-size:1.45rem;line-height:1.15;color:var(--on-stamp)}
+.seats.is-last .seats-note{color:var(--on-stamp);opacity:.85}
+.seats.is-last .dot{background:var(--on-stamp);opacity:.3}
+.seats.is-last .dot.free{background:var(--on-stamp);opacity:1}
 .dots{display:flex;flex-wrap:wrap;gap:5px}
 .dot{width:11px;height:11px;border-radius:50%;background:var(--ink-soft);opacity:.28}
 .dot.free{background:var(--stamp);opacity:1}
@@ -352,21 +353,19 @@ footer a{color:var(--ink-soft)}
     <header class="hero">
       <p class="eyebrow">Сезон 2026–2027 · семь путешествий</p>
       <h1>Комфорт забывается.<br>Впечатления остаются.</h1>
-      <p class="lead">С 2009 года мы ищем особые места и собираем маршруты, ради которых стоит лететь через полмира: утренняя пуджа в тибетском монастыре, рассвет над облаками на вулкане, кора вокруг Кайласа. Добавляем йогу, цигун и медитацию, чтобы поездка давала силы телу и голове. И едем небольшой компанией, в которую легко влиться.</p>
+      <p class="lead">Уже 20 лет мы ищем особые места и собираем маршруты, ради которых стоит лететь через полмира: утренняя пуджа в тибетском монастыре, рассвет над облаками на вулкане, кора вокруг Кайласа. Добавляем йогу, цигун и медитацию, чтобы поездка давала силы телу и голове. И едем небольшой компанией, в которую легко влиться.</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%9F%D0%BE%D0%BC%D0%BE%D0%B3%D0%B8%D1%82%D0%B5%20%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D0%BF%D0%BE%D0%B5%D0%B7%D0%B4%D0%BA%D1%83." target="_blank" rel="noopener">Помочь с выбором</a>
         <span>Расскажем про сложность и группу в Telegram</span>
       </div>
-      <p class="trust"><a href="#moments">Как это было</a> · <a href="#about">Кто мы</a> · <a href="#faq">Частые сомнения</a></p>
-      <p class="spines-note">Семь поездок по порядку дат. Цифра в кружке: сколько мест осталось.</p>
     </header>
 
     <nav class="spines-nav" aria-label="Все поездки сезона">
       <div class="spines">
-      <a class="spine t-dahab" href="#dahab"><span class="spine-seats" aria-hidden="true">1</span><span class="spine-name">Дахаб</span> <span class="spine-month">ноя</span><span class="sr">11–21 ноября 2026, осталось 1 место</span></a>
-      <a class="spine t-patagonia" href="#patagonia"><span class="spine-seats" aria-hidden="true">1</span><span class="spine-name">Патагония</span> <span class="spine-month">янв</span><span class="sr">3–15 января 2027, осталось 1 место</span></a>
+      <a class="spine t-dahab" href="#dahab"><span class="spine-name">Дахаб</span> <span class="spine-month">ноя</span><span class="sr">11–21 ноября 2026</span></a>
+      <a class="spine t-patagonia" href="#patagonia"><span class="spine-name">Патагония</span> <span class="spine-month">янв</span><span class="sr">3–15 января 2027</span></a>
       <a class="spine t-bali" href="#bali"><span class="spine-name">Бали</span> <span class="spine-month">фев</span><span class="sr">12–22 февраля 2027</span></a>
-      <a class="spine t-cambodia" href="#cambodia"><span class="spine-seats" aria-hidden="true">5</span><span class="spine-name">Камбоджа</span> <span class="spine-month">фев</span><span class="sr">26 февраля – 8 марта 2027, осталось 5 мест</span></a>
+      <a class="spine t-cambodia" href="#cambodia"><span class="spine-name">Камбоджа</span> <span class="spine-month">фев</span><span class="sr">26 февраля – 8 марта 2027</span></a>
       <a class="spine t-china" href="#china"><span class="spine-name">Китай</span> <span class="spine-month">мар</span><span class="sr">23 марта – 2 апреля 2027</span></a>
       <a class="spine t-kanchenjunga" href="#kanchenjunga"><span class="spine-name">Канченджанга</span> <span class="spine-month">апр</span><span class="sr">5–20 апреля 2027</span></a>
       <a class="spine t-tibet" href="#tibet"><span class="spine-name">Тибет</span> <span class="spine-month">авг</span><span class="sr">12–29 августа 2027</span></a>
@@ -381,12 +380,13 @@ footer a{color:var(--ink-soft)}
     <p>Группы маленькие, а цена растёт по мере записи. Первые места всегда дешевле.</p>
   </div>
   <ul>
-    <li><a href="#dahab"><span class="hot-name">Дахаб <small>ноябрь</small></span><span class="hot-what">Осталось 1 место</span></a></li>
-    <li><a href="#patagonia"><span class="hot-name">Патагония <small>январь</small></span><span class="hot-what">Осталось 1 место</span></a></li>
+    <li class="is-last"><a href="#dahab"><span class="hot-name">Дахаб <small>ноябрь</small></span><span class="hot-what">Последнее место</span></a></li>
+    <li class="is-last"><a href="#patagonia"><span class="hot-name">Патагония <small>январь</small></span><span class="hot-what">Последнее место</span></a></li>
     <li><a href="#cambodia"><span class="hot-name">Камбоджа <small>февраль</small></span><span class="hot-what">Осталось 5 мест</span></a></li>
     <li><a href="#kanchenjunga"><span class="hot-name">Канченджанга <small>апрель</small></span><span class="hot-what">3 места по ранней цене</span></a></li>
-    <li><a href="#china"><span class="hot-name">Китай <small>март</small></span><span class="hot-what">Ранняя цена заканчивается</span></a></li>
-    <li><a href="#tibet"><span class="hot-name">Тибет <small>август</small></span><span class="hot-what">Ранняя цена заканчивается</span></a></li>
+    <li><a href="#bali"><span class="hot-name">Бали <small>февраль</small></span><span class="hot-what">Регистрация по ранней цене</span></a></li>
+    <li><a href="#china"><span class="hot-name">Китай <small>март</small></span><span class="hot-what">Регистрация по ранней цене</span></a></li>
+    <li><a href="#tibet"><span class="hot-name">Тибет <small>август</small></span><span class="hot-what">Регистрация по ранней цене</span></a></li>
   </ul>
 </section>
 
@@ -396,7 +396,7 @@ footer a{color:var(--ink-soft)}
   <article class="trip t-dahab" id="dahab" data-start="2026-11-11" data-end="2026-11-21">
     <a class="trip-photo" href="https://dahab-camp.ru/dahab-yoga-camp.html" target="_blank" rel="noopener" aria-label="Дахаб: открыть сайт поездки">
       <picture><source media="(max-width:599px)" srcset="img/dahab-800.webp" type="image/webp"><source srcset="img/dahab-1440.webp" type="image/webp"><img src="img/dahab.jpg" class="photo" alt="Фридайверы у троса, сверху сквозь воду бьёт солнце" loading="eager" decoding="async"></picture>
-      <span class="badges"><span class="stamp">11–21 ноября 2026</span><span class="chips"><span class="flag">Последнее место</span><span class="status" hidden></span></span></span>
+      <span class="badges"><span class="stamp">11–21 ноября 2026</span><span class="chips"><span class="flag is-last">Последнее место</span><span class="status" hidden></span></span></span>
       <div class="cap">
         <span class="kicker">Йога-кэмп</span>
         <h2>Дахаб</h2>
@@ -406,11 +406,11 @@ footer a{color:var(--ink-soft)}
     <div class="wrap trip-body">
       <p class="route">Дахаб · каньон · Абу-Галум · риф</p>
       <div class="trip-main">
-        <p class="trip-text">Цигун на рассвете, днём риф и маска, вечером йога, пока песок ещё тёплый. По желанию фридайвинг с инструктором: Blue Hole в нескольких минутах от отеля. Между практиками каньон, темаскаль-баня и бухта Абу-Галум. Живём в отеле с завтраками.</p>
-        <dl class="facts"><dt>Даты</dt><dd>11–21 ноября 2026</dd><dt>Длительность</dt><dd>11 дней</dd><dt>Ведут</dt><dd>Илья Баринов</dd><dt>Группа</dt><dd>до 15 человек</dd></dl>
+        <p class="trip-text">Йога утром и вечером, днём риф и маска. Красное море в ста метрах от отеля, по желанию фридайвинг с инструктором. Между практиками каньон, темаскаль-баня и бухта Абу-Галум. Живём в красивом отеле с завтраками и бассейном.</p>
+        <dl class="facts"><dt>Даты</dt><dd>11–21 ноября 2026</dd><dt>Длительность</dt><dd>11 дней</dd><dt>Ведут</dt><dd>Илья Баринов, Андрей Баранов</dd><dt>Группа</dt><dd>до 15 человек</dd></dl>
       </div>
       <div class="aside">
-        <div class="seats"><span class="dots" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot free"></span></span><strong>Осталось 1 место из 15</strong></div>
+        <div class="seats is-last"><span class="dots" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot free"></span></span><strong>Последнее место</strong><span class="seats-note">Осталось 1 место из 15</span></div>
         <p class="aside-label">Стоимость</p><ol class="ladder"><li class="tier is-sold"><span class="tier-price">99 000 ₽</span><span class="tier-label">Первые 5 мест</span><span class="tier-state">продано</span></li><li class="tier is-sold"><span class="tier-price">109 000 ₽</span><span class="tier-label">Следующие 5</span><span class="tier-state">продано</span></li><li class="tier is-now"><span class="tier-price">119 000 ₽</span><span class="tier-label">Последние 5</span><span class="tier-state">сейчас</span></li></ol>
         <a class="btn btn-primary" href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%B1%D1%80%D0%BE%D0%BD%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C%20%D0%BC%D0%B5%D1%81%D1%82%D0%BE%3A%20%D0%94%D0%B0%D1%85%D0%B0%D0%B1%2C%20%C2%AB%D0%99%D0%BE%D0%B3%D0%B0%20%D1%83%20%D0%9A%D1%80%D0%B0%D1%81%D0%BD%D0%BE%D0%B3%D0%BE%20%D0%BC%D0%BE%D1%80%D1%8F%C2%BB%2C%2011%E2%80%9321%20%D0%BD%D0%BE%D1%8F%D0%B1%D1%80%D1%8F%202026." target="_blank" rel="noopener">Забронировать место</a>
         <p class="micro">Заявка ни к чему не обязывает. Место закрепляет предоплата 40 000 ₽.</p>
@@ -422,7 +422,7 @@ footer a{color:var(--ink-soft)}
   <article class="trip t-patagonia" id="patagonia" data-start="2027-01-03" data-end="2027-01-15">
     <a class="trip-photo" href="https://patagonya.ru" target="_blank" rel="noopener" aria-label="Патагония: открыть сайт поездки">
       <picture><source media="(max-width:599px)" srcset="img/patagonia-800.webp" type="image/webp"><source srcset="img/patagonia-1440.webp" type="image/webp"><img src="img/patagonia.jpg" class="photo" alt="Рассвет над Фицроем и его отражение в горном озере" loading="lazy" decoding="async"></picture>
-      <span class="badges"><span class="stamp">3–15 января 2027</span><span class="chips"><span class="flag">Последнее место</span><span class="status" hidden></span></span></span>
+      <span class="badges"><span class="stamp">3–15 января 2027</span><span class="chips"><span class="flag is-last">Последнее место</span><span class="status" hidden></span></span></span>
       <div class="cap">
         <span class="kicker">Треккинг</span>
         <h2>Патагония</h2>
@@ -436,7 +436,7 @@ footer a{color:var(--ink-soft)}
         <dl class="facts"><dt>Даты</dt><dd>3–15 января 2027</dd><dt>Длительность</dt><dd>12 дней</dd><dt>Ведут</dt><dd>Леонид Кутузов, Андрей Баранов</dd></dl>
       </div>
       <div class="aside">
-        <div class="seats"><strong>Осталось 1 место</strong></div>
+        <div class="seats is-last"><strong>Последнее место</strong><span class="seats-note">Осталось 1 место</span></div>
         <p class="aside-label">Стоимость</p><ol class="ladder"><li class="tier is-now"><span class="tier-price">4 500 €</span><span class="tier-label">Двухместное размещение</span><span class="tier-state">сейчас</span></li></ol>
         <a class="btn btn-primary" href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%B1%D1%80%D0%BE%D0%BD%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C%20%D0%BC%D0%B5%D1%81%D1%82%D0%BE%3A%20%D0%9F%D0%B0%D1%82%D0%B0%D0%B3%D0%BE%D0%BD%D0%B8%D1%8F%2C%20%C2%AB%D0%9A%D1%80%D0%B0%D0%B9%20%D0%B7%D0%B5%D0%BC%D0%BB%D0%B8%C2%BB%2C%203%E2%80%9315%20%D1%8F%D0%BD%D0%B2%D0%B0%D1%80%D1%8F%202027." target="_blank" rel="noopener">Забронировать место</a>
         <p class="micro">Заявка ни к чему не обязывает. Место закрепляет предоплата 2 000 €.</p>
@@ -448,7 +448,7 @@ footer a{color:var(--ink-soft)}
   <article class="trip t-bali" id="bali" data-start="2027-02-12" data-end="2027-02-22">
     <a class="trip-photo" href="https://bali-soul.ru" target="_blank" rel="noopener" aria-label="Бали: открыть сайт поездки">
       <picture><source media="(max-width:599px)" srcset="img/bali-800.webp" type="image/webp"><source srcset="img/bali-1440.webp" type="image/webp"><img src="img/bali.jpg" class="photo" alt="Рисовые террасы Джатилувих у подножия гор" loading="lazy" decoding="async"></picture>
-      <span class="badges"><span class="stamp">12–22 февраля 2027</span><span class="chips"><span class="status" hidden></span></span></span>
+      <span class="badges"><span class="stamp">12–22 февраля 2027</span><span class="chips"><span class="flag">Регистрация по ранней цене</span><span class="status" hidden></span></span></span>
       <div class="cap">
         <span class="kicker">Путешествие-практика</span>
         <h2>Бали</h2>
@@ -459,10 +459,10 @@ footer a{color:var(--ink-soft)}
       <p class="route">Баланган → Убуд → Гили Мено → Санур</p>
       <div class="trip-main">
         <p class="trip-text">Цигун на рассвете и поющие чаши на закате. Ночной подъём на вулкан Батур к рассвету над облаками, рисовые террасы Джатилувих, вилла среди полей Убуда и два тихих дня на Гили Мено, где слышно только море.</p>
-        <dl class="facts"><dt>Даты</dt><dd>12–22 февраля 2027</dd><dt>Длительность</dt><dd>11 дней</dd><dt>Ведут</dt><dd>Илья Баринов, Вита Бузик</dd></dl>
+        <dl class="facts"><dt>Даты</dt><dd>12–22 февраля 2027</dd><dt>Длительность</dt><dd>11 дней</dd><dt>Ведут</dt><dd>Илья Баринов, Вита Бузик, Андрей Баранов</dd></dl>
       </div>
       <div class="aside">
-        
+        <div class="seats"><strong>Регистрация по ранней цене</strong><span class="seats-note">Займите своё место.</span></div>
         <p class="aside-label">Стоимость</p><ol class="ladder"><li class="tier is-now"><span class="tier-price">2 400 €</span><span class="tier-label">Первые 5 участников</span><span class="tier-state">сейчас</span></li><li class="tier is-next"><span class="tier-price">2 700 €</span><span class="tier-label">Следующие места</span><span class="tier-state">потом</span></li></ol>
         <a class="btn btn-primary" href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%B1%D1%80%D0%BE%D0%BD%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C%20%D0%BC%D0%B5%D1%81%D1%82%D0%BE%3A%20%D0%91%D0%B0%D0%BB%D0%B8%2C%20%C2%AB%D0%A1%D0%BE%D0%BB%D1%8C.%20%D0%A0%D0%B8%D1%81.%20%D0%A2%D0%B8%D1%88%D0%B8%D0%BD%D0%B0.%C2%BB%2C%2012%E2%80%9322%20%D1%84%D0%B5%D0%B2%D1%80%D0%B0%D0%BB%D1%8F%202027." target="_blank" rel="noopener">Забронировать место</a>
         <p class="micro">Заявка ни к чему не обязывает. Место закрепляет предоплата.</p>
@@ -500,7 +500,7 @@ footer a{color:var(--ink-soft)}
   <article class="trip t-china" id="china" data-start="2027-03-23" data-end="2027-04-02">
     <a class="trip-photo" href="https://shangrila-trip.ru" target="_blank" rel="noopener" aria-label="Китай: открыть сайт поездки">
       <picture><source media="(max-width:599px)" srcset="img/china-800.webp" type="image/webp"><source srcset="img/china-1440.webp" type="image/webp"><img src="img/china.jpg" class="photo" alt="Карстовые горы Яншо на закате" loading="lazy" decoding="async"></picture>
-      <span class="badges"><span class="stamp">23 марта – 2 апреля 2027</span><span class="chips"><span class="flag">Ранняя цена заканчивается</span><span class="status" hidden></span></span></span>
+      <span class="badges"><span class="stamp">23 марта – 2 апреля 2027</span><span class="chips"><span class="flag">Регистрация по ранней цене</span><span class="status" hidden></span></span></span>
       <div class="cap">
         <span class="kicker">Авторское путешествие</span>
         <h2>Китай</h2>
@@ -514,7 +514,7 @@ footer a{color:var(--ink-soft)}
         <dl class="facts"><dt>Даты</dt><dd>23 марта – 2 апреля 2027</dd><dt>Длительность</dt><dd>11 дней</dd><dt>Ведут</dt><dd>Илья Баринов, Андрей Баранов, Елена Бакина</dd><dt>Группа</dt><dd>до 20 человек</dd></dl>
       </div>
       <div class="aside">
-        
+        <div class="seats"><strong>Регистрация по ранней цене</strong><span class="seats-note">Займите своё место.</span></div>
         <p class="aside-label">Стоимость</p><ol class="ladder"><li class="tier is-now"><span class="tier-price">2 000 €</span><span class="tier-label">Первые 5 участников</span><span class="tier-state">сейчас</span></li><li class="tier is-next"><span class="tier-price">2 300 €</span><span class="tier-label">Следующие места</span><span class="tier-state">потом</span></li></ol>
         <a class="btn btn-primary" href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%B1%D1%80%D0%BE%D0%BD%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C%20%D0%BC%D0%B5%D1%81%D1%82%D0%BE%3A%20%D0%9A%D0%B8%D1%82%D0%B0%D0%B9%2C%20%C2%AB%D0%9F%D1%83%D1%82%D1%8C%20%D0%B2%20%D0%A8%D0%B0%D0%BD%D0%B3%D1%80%D0%B8-%D0%9B%D0%B0%C2%BB%2C%2023%20%D0%BC%D0%B0%D1%80%D1%82%D0%B0%20%E2%80%93%202%20%D0%B0%D0%BF%D1%80%D0%B5%D0%BB%D1%8F%202027." target="_blank" rel="noopener">Забронировать место</a>
         <p class="micro">Заявка ни к чему не обязывает. Место закрепляет предоплата 1 000 €.</p>
@@ -536,7 +536,7 @@ footer a{color:var(--ink-soft)}
     <div class="wrap trip-body">
       <p class="route">Илам → Гунса → Пангпема, 5143 м → перевал Селе Ла</p>
       <div class="trip-main">
-        <p class="trip-text">Восточный Непал, куда пускают только по спецпермиту. Чайные холмы, цветущие рододендроны, стена Жанну и северный базовый лагерь третьей вершины мира. Обратно другой долиной, через перевал Селе Ла. Практики Ильи каждый день, под высоту и нагрузку.</p>
+        <p class="trip-text">Восточный Непал, куда пускают только по спецпермиту. Чайные холмы, цветущие рододендроны, деревни лимбу и шерпов, караваны яков и стена Жанну. Трек до северного базового лагеря третьей вершины мира, по дороге гомпы горных деревень и монастырь Таши Чолинг в Гунсе. Обратно другой долиной, через перевал Селе Ла.</p>
         <dl class="facts"><dt>Даты</dt><dd>5–20 апреля 2027</dd><dt>Длительность</dt><dd>16 дней</dd><dt>Ведут</dt><dd>Илья Баринов, Андрей Баранов, непальский гид Манки</dd><dt>Группа</dt><dd>до 15 человек</dd></dl>
       </div>
       <div class="aside">
@@ -552,7 +552,7 @@ footer a{color:var(--ink-soft)}
   <article class="trip t-tibet" id="tibet" data-start="2027-08-12" data-end="2027-08-29">
     <a class="trip-photo" href="https://tibet2027.ru" target="_blank" rel="noopener" aria-label="Тибет: открыть сайт поездки">
       <picture><source media="(max-width:599px)" srcset="img/tibet-800.webp" type="image/webp"><source srcset="img/tibet-1440.webp" type="image/webp"><img src="img/tibet.jpg" class="photo" alt="Кайлас под синим небом" loading="lazy" decoding="async"></picture>
-      <span class="badges"><span class="stamp">12–29 августа 2027</span><span class="chips"><span class="flag">Ранняя цена заканчивается</span><span class="status" hidden></span></span></span>
+      <span class="badges"><span class="stamp">12–29 августа 2027</span><span class="chips"><span class="flag">Регистрация по ранней цене</span><span class="status" hidden></span></span></span>
       <div class="cap">
         <span class="kicker">Паломничество</span>
         <h2>Тибет</h2>
@@ -562,11 +562,11 @@ footer a{color:var(--ink-soft)}
     <div class="wrap trip-body">
       <p class="route">Лхаса → Эверест → Гуге → Кайлас</p>
       <div class="trip-main">
-        <p class="trip-text">Лхаса и её монастыри, базовый лагерь Эвереста, руины царства Гуге и трёхдневная кора вокруг Кайласа. С группой едет экспедиционный фотограф, съёмка уже в стоимости.</p>
+        <p class="trip-text">Уникальный расширенный маршрут: Лхаса и её монастыри, базовый лагерь Эвереста, руины царства Гуге и трёхдневная кора вокруг Кайласа. Сильная команда: Леонид Кутузов, альпинистка Ксения Абрамова и Андрей Баранов. С группой едет экспедиционный фотограф и оператор Симона Малиренко, снимает фото и видео всего путешествия. Фотосъёмка уже в стоимости.</p>
         <dl class="facts"><dt>Даты</dt><dd>12–29 августа 2027</dd><dt>Длительность</dt><dd>18 дней</dd><dt>Ведут</dt><dd>Леонид Кутузов, Ксения Абрамова, Андрей Баранов, фотограф Симона Малиренко</dd></dl>
       </div>
       <div class="aside">
-        
+        <div class="seats"><strong>Регистрация по ранней цене</strong><span class="seats-note">Займите своё место.</span></div>
         <p class="aside-label">Стоимость</p><ol class="ladder"><li class="tier is-sold"><span class="tier-price">3 900 €</span><span class="tier-label">Первые 5 мест</span><span class="tier-state">продано</span></li><li class="tier is-now"><span class="tier-price">4 100 €</span><span class="tier-label">Вторые 5 мест</span><span class="tier-state">сейчас</span></li><li class="tier is-next"><span class="tier-price">4 500 €</span><span class="tier-label">Следующие места</span><span class="tier-state">потом</span></li></ol>
         <a class="btn btn-primary" href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%B1%D1%80%D0%BE%D0%BD%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C%20%D0%BC%D0%B5%D1%81%D1%82%D0%BE%3A%20%D0%A2%D0%B8%D0%B1%D0%B5%D1%82%2C%20%C2%AB%D0%9F%D1%83%D1%82%D1%8C%20%D0%BA%20%D0%9A%D0%B0%D0%B9%D0%BB%D0%B0%D1%81%D1%83%C2%BB%2C%2012%E2%80%9329%20%D0%B0%D0%B2%D0%B3%D1%83%D1%81%D1%82%D0%B0%202027." target="_blank" rel="noopener">Забронировать место</a>
         <p class="micro">Заявка ни к чему не обязывает. Место закрепляет предоплата 2 000 €.</p>
@@ -586,24 +586,24 @@ footer a{color:var(--ink-soft)}
 
 <section class="wrap about" id="about" aria-labelledby="about-title">
   <div class="about-head">
-    <p class="year"><b>2009</b><span>с этого года мы в пути</span></p>
+    <p class="year"><b>20</b><span>лет организуем путешествия</span></p>
     <div class="about-text">
       <p class="sub">О нас</p>
       <h2 id="about-title">Собираем маршруты сами и едем вместе с группой</h2>
-      <p>Мы команда организаторов и преподавателей практик из Санкт-Петербурга. С 2009 года собираем авторские путешествия: прошли кору вокруг Кайласа, проехали Бутан на мотоциклах, практиковали тайцзи у даосских храмов в горах Удан, возили группы в Японию, Индию и Патагонию. Летом проводим Йогафест на Ладоге.</p><p>Каждый маршрут мы собираем сами. Выбираем места, договариваемся с проверенными местными гидами и едем вместе с группой от первого до последнего дня. За эти годы вокруг нас собралась компания людей, которые ездят с нами снова и снова. Присоединяйтесь.</p>
-      <ul class="places" aria-label="Где мы бывали"><li>Тибет и Кайлас</li><li>Бутан</li><li>Китай</li><li>Япония</li><li>Индия</li><li>Патагония</li><li>Красное море</li><li>Ладога</li></ul>
+      <p>Мы команда организаторов и преподавателей практик из Санкт-Петербурга. 20 лет собираем авторские путешествия: прошли кору вокруг Кайласа, проехали Бутан на мотоциклах, практиковали тайцзи у даосских храмов в горах Удан, возили группы на Алтай, в Японию, Индию и Патагонию. Летом проводим Йогафест на Ладоге.</p><p>Каждый маршрут мы собираем сами. Выбираем места, договариваемся с проверенными местными гидами и едем вместе с группой от первого до последнего дня. За эти годы вокруг нас собралась компания людей, которые ездят с нами снова и снова. Присоединяйтесь.</p>
+      <ul class="places" aria-label="Где мы бывали"><li>Тибет и Кайлас</li><li>Бутан</li><li>Китай</li><li>Япония</li><li>Индия</li><li>Патагония</li><li>Красное море</li><li>Алтай</li><li>Ладога</li></ul>
     </div>
   </div>
   <div>
     <p class="sub">Команда</p>
-    <div class="team"><article class="person"><picture><source srcset="img/team-andrey-400.webp 400w, img/team-andrey-800.webp 800w" sizes="(max-width:599px) 100vw, (max-width:979px) 50vw, 380px" type="image/webp"><img src="img/team-andrey.jpg" alt="Андрей Баранов" width="800" height="1000" loading="lazy" decoding="async"></picture><h3>Андрей Баранов</h3><p class="role">Маршрут и логистика</p><p>Организует путешествия с 2009 года: Тибет и кора вокруг Кайласа, Бутан, Китай, Япония, Индия, Патагония. Проводит Йогафест на Ладоге. Следит, чтобы дорога, отели и местная команда работали, а вы думали о горах и море.</p></article><article class="person"><picture><source srcset="img/team-ilya-400.webp 400w, img/team-ilya-800.webp 800w" sizes="(max-width:599px) 100vw, (max-width:979px) 50vw, 380px" type="image/webp"><img src="img/team-ilya.jpg" alt="Илья Баринов" width="800" height="1000" loading="lazy" decoding="async"></picture><h3>Илья Баринов</h3><p class="role">Движение и дыхание</p><p>Больше 20 лет в телесных и восточных практиках, 14 лет преподаёт. Трёхкратный чемпион Европы по тайцзи-цюань, реабилитолог и кинезиолог, выпускник Академии Русского балета имени Вагановой. Если утром кто-то расстилает коврик у реки, обычно это он.</p></article><article class="person"><picture><source srcset="img/team-leonid-400.webp 400w, img/team-leonid-800.webp 800w" sizes="(max-width:599px) 100vw, (max-width:979px) 50vw, 380px" type="image/webp"><img src="img/team-leonid.jpg" alt="Леонид Кутузов" width="800" height="1000" loading="lazy" decoding="async"></picture><h3>Леонид Кутузов</h3><p class="role">Медитация и мозг</p><p>Президент Федерации йоги Санкт-Петербурга, основатель проекта Neuro-Universe. Практикует йогу с 1998 года, преподаёт с 2000-го, больше 15 лет водит выездные ретриты. Ведёт медитацию, дыхание и лекции о том, что практики делают с мозгом.</p></article></div>
+    <div class="team"><article class="person"><picture><source srcset="img/team-andrey-400.webp 400w, img/team-andrey-800.webp 800w" sizes="(max-width:599px) 100vw, (max-width:979px) 50vw, 380px" type="image/webp"><img src="img/team-andrey.jpg" alt="Андрей Баранов" width="800" height="1000" loading="lazy" decoding="async"></picture><h3>Андрей Баранов</h3><p class="role">Маршрут и логистика</p><p>Организует путешествия 20 лет: Алтай, Тибет и кора вокруг Кайласа, Бутан, Китай, Япония, Индия, Патагония. Проводит Йогафест на Ладоге. Следит, чтобы дорога, отели и местная команда работали, а вы думали о горах и море.</p></article><article class="person"><picture><source srcset="img/team-ilya-400.webp 400w, img/team-ilya-800.webp 800w" sizes="(max-width:599px) 100vw, (max-width:979px) 50vw, 380px" type="image/webp"><img src="img/team-ilya.jpg" alt="Илья Баринов" width="800" height="1000" loading="lazy" decoding="async"></picture><h3>Илья Баринов</h3><p class="role">Движение и дыхание</p><p>Больше 20 лет в телесных и восточных практиках, 14 лет преподаёт. Трёхкратный чемпион Европы по тайцзи-цюань, реабилитолог и кинезиолог, выпускник Академии Русского балета имени Вагановой. Если утром кто-то расстилает коврик у реки, обычно это он.</p></article><article class="person"><picture><source srcset="img/team-leonid-400.webp 400w, img/team-leonid-800.webp 800w" sizes="(max-width:599px) 100vw, (max-width:979px) 50vw, 380px" type="image/webp"><img src="img/team-leonid.jpg" alt="Леонид Кутузов" width="800" height="1000" loading="lazy" decoding="async"></picture><h3>Леонид Кутузов</h3><p class="role">Медитация и мозг</p><p>Президент Федерации йоги Санкт-Петербурга, основатель проекта Neuro-Universe. Практикует йогу с 1998 года, преподаёт с 2000-го, больше 15 лет водит выездные ретриты. Ведёт медитацию, дыхание и лекции о том, что практики делают с мозгом.</p></article></div>
     <p class="guests">В отдельных поездках с нами Вита Бузик (йога-нидра и звук, Бали), альпинистка Ксения Абрамова, основатель Eversummit Club, которая поднималась на Эверест и Манаслу, экспедиционный фотограф Симона Малиренко (обе в Тибете) и непальский гид Манки, с которым мы прошли кору вокруг Кайласа.</p>
   </div>
 </section>
 
 <section class="wrap why" id="why" aria-labelledby="why-title">
   <h2 id="why-title">Почему с нами</h2>
-  <div class="why-grid"><div class="why-item"><h3>Небанальные места</h3><p>Ищем локации, куда не возят автобусы: монастырь, где пускают на утреннюю пуджу, перевал с видом на пол-Гималаев, остров, где слышно только море. Маршрут строим так, чтобы такие моменты случались каждый день.</p></div><div class="why-item"><h3>Практики в дороге</h3><p>Утром йога, цигун или медитация, днём горы, храмы и море. Поездка даёт и этнографию, и пользу телу и голове. Все практики по желанию и под любой уровень.</p></div><div class="why-item"><h3>Опыт с 2009 года</h3><p>Знаем тонкости: где оформить разрешения, как пройти высоту без спешки, где ночевать, чтобы утром успеть к рассвету. Маршруты проверены, местные команды тоже.</p></div><div class="why-item"><h3>Команда</h3><p>Преподаватели практик, организаторы и свои люди на местах: гиды, водители, хозяева отелей. Ведущие едут с вами от первого дня до последнего.</p></div><div class="why-item"><h3>Люди</h3><p>Мы соединяем разных людей. После поездок остаются друзья, общие планы и даже пары. У нас сложился костяк постоянных участников, и в эту компанию легко влиться.</p></div><div class="why-item"><h3>Сервис</h3><p>Поможем с билетами, дополнительными ночами, трансферами и программой до или после поездки. Андрей на связи с момента заявки.</p></div></div>
+  <div class="why-grid"><div class="why-item"><h3>Небанальные места</h3><p>Ищем локации, куда не возят автобусы: монастырь, где пускают на утреннюю пуджу, перевал с видом на пол-Гималаев, остров, где слышно только море. Маршрут строим так, чтобы такие моменты случались каждый день.</p></div><div class="why-item"><h3>Практики в дороге</h3><p>Утром йога, цигун или медитация, днём горы, храмы и море. Поездка даёт и этнографию, и пользу телу и голове. Все практики по желанию и под любой уровень.</p></div><div class="why-item"><h3>20 лет опыта</h3><p>Знаем тонкости: где оформить разрешения, как пройти высоту без спешки, где ночевать, чтобы утром успеть к рассвету. Маршруты проверены, местные команды тоже.</p></div><div class="why-item"><h3>Команда</h3><p>Преподаватели практик, организаторы и свои люди на местах: гиды, водители, хозяева отелей. Ведущие едут с вами от первого дня до последнего.</p></div><div class="why-item"><h3>Люди</h3><p>Мы соединяем разных людей. После поездок остаются друзья, общие планы и даже пары. У нас сложился костяк постоянных участников, и в эту компанию легко влиться.</p></div><div class="why-item"><h3>Сервис</h3><p>Поможем с билетами, дополнительными ночами, трансферами и программой до или после поездки. Андрей на связи с момента заявки.</p></div></div>
 </section>
 
 
@@ -630,7 +630,7 @@ footer a{color:var(--ink-soft)}
 </section>
 
 <footer class="wrap">
-  <span>Андрей Баранов · авторские путешествия · 2026–2027. Места и цены на 13 октября 2026.</span>
+  <span>Андрей Баранов · авторские путешествия · 2026–2027. Места и цены на 28 октября 2026.</span>
   <span>Фото с Wikimedia Commons, кадрировано: Бали: <a href="https://commons.wikimedia.org/w/index.php?curid=60538665" target="_blank" rel="noopener">Putu Andika Panendra</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>; Яншо: <a href="https://commons.wikimedia.org/w/index.php?curid=17072137" target="_blank" rel="noopener">chensiyuan</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>; Кайлас: <a href="https://commons.wikimedia.org/wiki/File:Kailash-Tibet-27-Sept-2018.jpg" target="_blank" rel="noopener">Tibetissimo</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>. Остальные снимки из материалов поездок.</span>
 </footer>
 
