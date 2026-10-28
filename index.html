@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Путешествия 2026–2027</title>
-<meta name="description" content="Авторские путешествия, 20 лет опыта: особые места, практики в дороге и небольшие группы. Дахаб, Патагония, Бали, Камбоджа, Китай, Канченджанга и Тибет в сезоне 2026–2027.">
+<meta name="description" content="Авторские путешествия, 20 лет опыта: особые места, практики в дороге и небольшие группы. Дахаб, Патагония, Бали, Камбоджа, ретрит на Ко Ронге, Китай, Канченджанга и Тибет в сезоне 2026–2027.">
 <link rel="canonical" href="https://utromaya-code.github.io/travel-hub/">
 <link rel="icon" href="favicon.ico" sizes="32x32">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -15,11 +15,11 @@
 <meta property="og:locale" content="ru_RU">
 <meta property="og:url" content="https://utromaya-code.github.io/travel-hub/">
 <meta property="og:title" content="Путешествия 2026–2027">
-<meta property="og:description" content="Авторские путешествия, 20 лет опыта: особые места, практики в дороге и небольшие группы. Дахаб, Патагония, Бали, Камбоджа, Китай, Канченджанга и Тибет в сезоне 2026–2027.">
-<meta property="og:image" content="https://utromaya-code.github.io/travel-hub/img/og.jpg?v=982fd31d">
+<meta property="og:description" content="Авторские путешествия, 20 лет опыта: особые места, практики в дороге и небольшие группы. Дахаб, Патагония, Бали, Камбоджа, ретрит на Ко Ронге, Китай, Канченджанга и Тибет в сезоне 2026–2027.">
+<meta property="og:image" content="https://utromaya-code.github.io/travel-hub/img/og.jpg?v=454901f4">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Семь фото-полос поездок сезона и заголовок «Путешествия 2026–2027»">
+<meta property="og:image:alt" content="Восемь фото-полос поездок сезона и заголовок «Путешествия 2026–2027»">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preload" href="fonts/unbounded-cyrillic.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="fonts/onest-cyrillic.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="fonts/onest-latin.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="img/dahab-800.webp" as="image" fetchpriority="high">
 <style>
@@ -38,7 +38,7 @@
 @font-face{font-family:"Unbounded";font-style:normal;font-weight:500 600;font-display:swap;src:url(fonts/unbounded-latin-ext.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
 @font-face{font-family:"Unbounded";font-style:normal;font-weight:500 600;font-display:swap;src:url(fonts/unbounded-latin.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 
-/* Витрина сезона: тёмный первый экран с семью фото-полосами, горящие места, главы-поездки на всю ширину, снимки прошлых поездок. */
+/* Витрина сезона: тёмный первый экран с фото-полосами всех поездок, горящие места, главы-поездки на всю ширину, снимки прошлых поездок. */
 :root{
   --paper:#F0F3F2; --surface:#FFFFFF; --ink:#111A1C; --ink-soft:#4C5A5D; --line:#D2DAD9;
   --stamp:#1D3EC4; --on-stamp:#FFFFFF; --stamp-wash:rgba(29,62,196,.08);
@@ -336,6 +336,7 @@ footer a{color:var(--ink-soft)}
 .t-patagonia{--img:url("img/patagonia-800.webp");--pos:30% 50%}
 .t-bali{--img:url("img/bali-800.webp");--pos:50% 55%}
 .t-cambodia{--img:url("img/cambodia-800.webp");--pos:50% 55%}
+.t-kohrong{--img:url("img/kohrong-800.webp");--pos:30% 50%}
 .t-china{--img:url("img/china-800.webp");--pos:50% 50%}
 .t-kanchenjunga{--img:url("img/kanchenjunga-800.webp");--pos:72% 40%}
 .t-tibet{--img:url("img/tibet-800.webp");--pos:50% 35%}
@@ -351,7 +352,7 @@ footer a{color:var(--ink-soft)}
 
   <div class="intro">
     <header class="hero">
-      <p class="eyebrow">Сезон 2026–2027 · семь путешествий</p>
+      <p class="eyebrow">Сезон 2026–2027 · восемь поездок</p>
       <h1>Комфорт забывается.<br>Впечатления остаются.</h1>
       <p class="lead">Уже 20 лет мы ищем особые места и собираем маршруты, ради которых стоит лететь через полмира: утренняя пуджа в тибетском монастыре, рассвет над облаками на вулкане, кора вокруг Кайласа. Добавляем йогу, цигун и медитацию, чтобы поездка давала силы телу и голове. И едем небольшой компанией, в которую легко влиться.</p>
       <div class="hero-cta">
@@ -366,6 +367,7 @@ footer a{color:var(--ink-soft)}
       <a class="spine t-patagonia" href="#patagonia"><span class="spine-name">Патагония</span> <span class="spine-month">янв</span><span class="sr">3–15 января 2027</span></a>
       <a class="spine t-bali" href="#bali"><span class="spine-name">Бали</span> <span class="spine-month">фев</span><span class="sr">12–22 февраля 2027</span></a>
       <a class="spine t-cambodia" href="#cambodia"><span class="spine-name">Камбоджа</span> <span class="spine-month">фев</span><span class="sr">26 февраля – 8 марта 2027</span></a>
+      <a class="spine t-kohrong" href="#kohrong"><span class="spine-name">Ко Ронг</span> <span class="spine-month">мар</span><span class="sr">8–15 марта 2027</span></a>
       <a class="spine t-china" href="#china"><span class="spine-name">Китай</span> <span class="spine-month">мар</span><span class="sr">23 марта – 2 апреля 2027</span></a>
       <a class="spine t-kanchenjunga" href="#kanchenjunga"><span class="spine-name">Канченджанга</span> <span class="spine-month">апр</span><span class="sr">5–20 апреля 2027</span></a>
       <a class="spine t-tibet" href="#tibet"><span class="spine-name">Тибет</span> <span class="spine-month">авг</span><span class="sr">12–29 августа 2027</span></a>
@@ -390,7 +392,7 @@ footer a{color:var(--ink-soft)}
   </ul>
 </section>
 
-<nav class="tripnav" aria-label="Поездки сезона"><div class="wrap tripnav-in"><a href="#dahab"><small>ноя</small> Дахаб</a><a href="#patagonia"><small>янв</small> Патагония</a><a href="#bali"><small>фев</small> Бали</a><a href="#cambodia"><small>фев</small> Камбоджа</a><a href="#china"><small>мар</small> Китай</a><a href="#kanchenjunga"><small>апр</small> Канченджанга</a><a href="#tibet"><small>авг</small> Тибет</a></div></nav>
+<nav class="tripnav" aria-label="Поездки сезона"><div class="wrap tripnav-in"><a href="#dahab"><small>ноя</small> Дахаб</a><a href="#patagonia"><small>янв</small> Патагония</a><a href="#bali"><small>фев</small> Бали</a><a href="#cambodia"><small>фев</small> Камбоджа</a><a href="#kohrong"><small>мар</small> Ко Ронг</a><a href="#china"><small>мар</small> Китай</a><a href="#kanchenjunga"><small>апр</small> Канченджанга</a><a href="#tibet"><small>авг</small> Тибет</a></div></nav>
 
 <main class="trips">
   <article class="trip t-dahab" id="dahab" data-start="2026-11-11" data-end="2026-11-21">
@@ -494,6 +496,32 @@ footer a{color:var(--ink-soft)}
         <p class="micro">Заявка ни к чему не обязывает. Место закрепляет предоплата 1 000 €.</p>
         <a class="btn btn-ghost" href="https://cambodiamoto.ru" target="_blank" rel="noopener">Подробнее о поездке ↗</a>
         <p class="domain">cambodiamoto.ru</p>
+      </div>
+    </div>
+  </article>
+  <article class="trip t-kohrong" id="kohrong" data-start="2027-03-08" data-end="2027-03-15">
+    <a class="trip-photo" href="https://cambodiamoto.ru/retreat/" target="_blank" rel="noopener" aria-label="Ко Ронг: открыть сайт поездки">
+      <picture><source media="(max-width:599px)" srcset="img/kohrong-800.webp" type="image/webp"><source srcset="img/kohrong-1440.webp" type="image/webp"><img src="img/kohrong.jpg" class="photo" alt="Прозрачная зелёная вода у пляжа Ко Ронга, на берегу деревья" loading="lazy" decoding="async"></picture>
+      <span class="badges"><span class="stamp">8–15 марта 2027</span><span class="chips"><span class="status" hidden></span></span></span>
+      <div class="cap">
+        <span class="kicker">Ретрит</span>
+        <h2>Ко Ронг</h2>
+        <span class="project">«Ретрит на острове»</span>
+      </div>
+    </a>
+    <div class="wrap trip-body">
+      <p class="route">Сиануквиль → лодка → Ко Ронг</p>
+      <div class="trip-main">
+        <p class="trip-text">Неделя на острове в Сиамском заливе: сразу после мототура по Камбодже или отдельно от него. Йога, цигун и медитация утром и вечером, между ними море и свободное время. Белые пляжи, джунгли и почти нет дорог, остров так и не стал курортом. Живём в отеле 4★ у самого моря, с бассейном и завтраками. Подходит для любого уровня.</p>
+        <dl class="facts"><dt>Даты</dt><dd>8–15 марта 2027</dd><dt>Длительность</dt><dd>7 дней</dd><dt>Ведут</dt><dd>Илья Баринов, Леонид Кутузов</dd><dt>Группа</dt><dd>до 20 человек</dd></dl>
+      </div>
+      <div class="aside">
+        
+        <p class="aside-label">Стоимость</p><ol class="ladder"><li class="tier is-now"><span class="tier-price">1 000 €</span><span class="tier-label">Двухместное размещение</span><span class="tier-state">сейчас</span></li></ol>
+        <a class="btn btn-primary" href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%B1%D1%80%D0%BE%D0%BD%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C%20%D0%BC%D0%B5%D1%81%D1%82%D0%BE%3A%20%D0%9A%D0%BE%20%D0%A0%D0%BE%D0%BD%D0%B3%2C%20%C2%AB%D0%A0%D0%B5%D1%82%D1%80%D0%B8%D1%82%20%D0%BD%D0%B0%20%D0%BE%D1%81%D1%82%D1%80%D0%BE%D0%B2%D0%B5%C2%BB%2C%208%E2%80%9315%20%D0%BC%D0%B0%D1%80%D1%82%D0%B0%202027." target="_blank" rel="noopener">Забронировать место</a>
+        <p class="micro">Заявка ни к чему не обязывает. Место закрепляет предоплата 1 000 €.</p>
+        <a class="btn btn-ghost" href="https://cambodiamoto.ru/retreat/" target="_blank" rel="noopener">Подробнее о поездке ↗</a>
+        <p class="domain">cambodiamoto.ru/retreat</p>
       </div>
     </div>
   </article>
@@ -630,7 +658,7 @@ footer a{color:var(--ink-soft)}
 
 <footer class="wrap">
   <span>Андрей Баранов · авторские путешествия · 2026–2027. Места и цены на 28 октября 2026.</span>
-  <span>Фото с Wikimedia Commons, кадрировано: Бали: <a href="https://commons.wikimedia.org/w/index.php?curid=60538665" target="_blank" rel="noopener">Putu Andika Panendra</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>; Яншо: <a href="https://commons.wikimedia.org/w/index.php?curid=17072137" target="_blank" rel="noopener">chensiyuan</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>; Кайлас: <a href="https://commons.wikimedia.org/wiki/File:Kailash-Tibet-27-Sept-2018.jpg" target="_blank" rel="noopener">Tibetissimo</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>. Остальные снимки из материалов поездок.</span>
+  <span>Фото с Wikimedia Commons, кадрировано: Бали: <a href="https://commons.wikimedia.org/w/index.php?curid=60538665" target="_blank" rel="noopener">Putu Andika Panendra</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>; Яншо: <a href="https://commons.wikimedia.org/w/index.php?curid=17072137" target="_blank" rel="noopener">chensiyuan</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>; Кайлас: <a href="https://commons.wikimedia.org/wiki/File:Kailash-Tibet-27-Sept-2018.jpg" target="_blank" rel="noopener">Tibetissimo</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>; Ко Ронг: <a href="https://commons.wikimedia.org/wiki/File:Koh_Rong_-_Cambodia_(50925115453).jpg" target="_blank" rel="noopener">Rômulo Gama Ferreira</a>, <a href="https://creativecommons.org/licenses/by/2.0/" target="_blank" rel="noopener">CC BY 2.0</a>. Остальные снимки из материалов поездок.</span>
 </footer>
 
 <div class="dock">

@@ -73,5 +73,5 @@
 ## Откуда данные
 
 Даты, цены, ведущие и ссылки взяты с сайтов поездок на 13.10.2026, цены сверены ещё раз 28.10.2026:
-dahab-camp.ru, patagonya.ru, bali-soul.ru, cambodiamoto.ru, shangrila-trip.ru, kanchenjunga.ru, tibet2027.ru.
+dahab-camp.ru, patagonya.ru, bali-soul.ru, cambodiamoto.ru (и cambodiamoto.ru/retreat для ретрита на Ко Ронге), shangrila-trip.ru, kanchenjunga.ru, tibet2027.ru.
 Цена Канченджанги ($2 200 / $2 500) взята из решения по туру: на kanchenjunga.ru цифры в тексте страницы не найдены.
