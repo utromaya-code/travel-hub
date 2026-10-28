@@ -587,6 +587,7 @@ def render_about(src, inline):
         pic = variants(src, x["img"], (400, 800), "(max-width:599px) 100vw, (max-width:979px) 50vw, 380px", attrs, inline)
         team.append(f'<article class="person">{pic}<h3>{e(x["name"])}</h3>'
                     f'<p class="role">{e(x["role"])}</p><p>{e(x["bio"])}</p></article>')
+    guests = f'\n    <p class="guests">{e(a["guests"])}</p>' if a.get("guests") else ""
     return f"""<section class="wrap about" id="about" aria-labelledby="about-title">
   <div class="about-head">
     <p class="year"><b>{e(a["since"])}</b><span>{e(a.get("sinceLabel", ""))}</span></p>
@@ -599,8 +600,7 @@ def render_about(src, inline):
   </div>
   <div>
     <p class="sub">Команда</p>
-    <div class="team">{"".join(team)}</div>
-    <p class="guests">{e(a["guests"])}</p>
+    <div class="team">{"".join(team)}</div>{guests}
   </div>
 </section>"""
 
