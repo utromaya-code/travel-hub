@@ -138,7 +138,11 @@ picture{display:contents}
   .spines:hover .spine{flex-grow:.75}
   .spines .spine:hover,.spines .spine:focus-visible{flex-grow:3.2}
 }
-@media (min-width:760px){.spine{background-position:var(--spine-pos,var(--pos))}}
+@media (min-width:760px){
+  .spine{background-position:var(--spine-pos,var(--pos))}
+  /* полоса на широком экране выше карточки, на плотном экране берём кадр 1200 */
+  .spine{background-image:image-set(var(--img) 1x,var(--img2,var(--img)) 2x)}
+}
 @media (min-width:980px){.spine-name{bottom:3.4rem}.spine-month{bottom:1.2rem}}
 /* широкий экран: текст слева, полосы справа во всю высоту экрана до края */
 @media (min-width:980px){
@@ -453,25 +457,37 @@ def variants(src, name, widths, sizes, attrs, inline=False, jpg=None):
 
 
 def image_css(src):
-    # spinePos: какую часть кадра показывает узкая полоса на широком экране, если не ту же, что pos
-    return "\n".join(f'.t-{t["id"]}{{--img:url("{src(variant(t["id"], 800))}");--pos:{t["pos"]}'
-                     + (f';--spine-pos:{t["spinePos"]}' if t.get("spinePos") else "") + "}" for t in TOURS)
+    # spinePos: какую часть кадра показывает узкая полоса на широком экране, если не ту же, что pos.
+    # --img2: вертикальный кадр 1200 для полос на плотных экранах.
+    rules = []
+    for t in TOURS:
+        i = t["id"]
+        r = f'.t-{i}{{--img:url("{src(variant(i, 800))}");--pos:{t["pos"]}'
+        if (IMG / f"{i}-1200.webp").exists():
+            r += f';--img2:url("{src(i + "-1200.webp")}")'
+        if t.get("spinePos"):
+            r += f';--spine-pos:{t["spinePos"]}'
+        rules.append(r + "}")
+    return "\n".join(rules)
 
 
-def render_photo(t, src, inline, first):
-    # Первая глава грузится сразу, остальные по мере прокрутки.
-    # На узком экране вертикальный кадр 800, тот же файл, что у карточки в ленте.
+def render_photo(t, src, inline):
+    # Все главы ниже первого экрана, поэтому грузятся по мере прокрутки.
+    # На узком экране вертикальный кадр 800/1200, на широком полное фото 1440/2400: браузер берёт по плотности экрана.
     i = t["id"]
-    load = 'loading="eager"' if first else 'loading="lazy"'
-    attrs = f'class="photo" alt="{e(t["alt"])}" {load} decoding="async"'
-    small, big = variant(i, 800), variant(i, 1440)
+    attrs = f'class="photo" alt="{e(t["alt"])}" loading="lazy" decoding="async"'
     if inline:
-        return f'<img src="{src(big)}" {attrs}>'
+        return f'<img src="{src(variant(i, 1440))}" {attrs}>'
+
+    def srcset(widths):
+        return ", ".join(f"{src(f'{i}-{w}.webp')} {w}w" for w in widths if (IMG / f"{i}-{w}.webp").exists())
+
     sources = ""
-    if small.endswith(".webp"):
-        sources += f'<source media="(max-width:599px)" srcset="{src(small)}" type="image/webp">'
-    if big.endswith(".webp"):
-        sources += f'<source srcset="{src(big)}" type="image/webp">'
+    tall, wide = srcset((800, 1200)), srcset((1440, 2400))
+    if tall:
+        sources += f'<source media="(max-width:599px)" srcset="{tall}" sizes="100vw" type="image/webp">'
+    if wide:
+        sources += f'<source srcset="{wide}" sizes="100vw" type="image/webp">'
     return f'<picture>{sources}<img src="{src(i + ".jpg")}" {attrs}></picture>'
 
 
@@ -645,7 +661,7 @@ def render_body(src, inline=False):
     nav_links = "".join(f'<a href="#{t["id"]}"><small>{e(t["month"])}</small> {e(t["name"])}</a>' for t in TOURS)
 
     trips = []
-    for n, t in enumerate(TOURS):
+    for t in TOURS:
         facts = [("Даты", e(t["dates"])), ("Длительность", e(t["days"])), ("Ведут", e(t["leaders"]))]
         if t["group"]:
             facts.append(("Группа", e(t["group"])))
@@ -657,7 +673,7 @@ def render_body(src, inline=False):
         trips.append(f"""
   <article class="trip t-{t['id']}" id="{t['id']}" data-start="{t['start']}" data-end="{t['end']}">
     <a class="trip-photo" href="{e(t['url'])}" target="_blank" rel="noopener" aria-label="{e(t['name'])}: открыть сайт поездки">
-      {render_photo(t, src, inline, n == 0)}
+      {render_photo(t, src, inline)}
       <span class="badges"><span class="stamp">{e(t['dates'])}</span><span class="chips">{flag}<span class="status" hidden></span></span></span>
       <div class="cap">
         <span class="kicker">{e(t['kicker'])}</span>

@@ -16,7 +16,7 @@
 <meta property="og:url" content="https://utromaya-code.github.io/travel-hub/">
 <meta property="og:title" content="Путешествия 2026–2027">
 <meta property="og:description" content="Авторские путешествия, 20 лет опыта: особые места, практики в дороге и небольшие группы. Дахаб, Патагония, Бали, Камбоджа, ретрит на Ко Ронге, Китай, Канченджанга и Тибет в сезоне 2026–2027.">
-<meta property="og:image" content="https://utromaya-code.github.io/travel-hub/img/og.jpg?v=454901f4">
+<meta property="og:image" content="https://utromaya-code.github.io/travel-hub/img/og.jpg?v=2a89f9d3">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Восемь фото-полос поездок сезона и заголовок «Путешествия 2026–2027»">
@@ -121,7 +121,11 @@ picture{display:contents}
   .spines:hover .spine{flex-grow:.75}
   .spines .spine:hover,.spines .spine:focus-visible{flex-grow:3.2}
 }
-@media (min-width:760px){.spine{background-position:var(--spine-pos,var(--pos))}}
+@media (min-width:760px){
+  .spine{background-position:var(--spine-pos,var(--pos))}
+  /* полоса на широком экране выше карточки, на плотном экране берём кадр 1200 */
+  .spine{background-image:image-set(var(--img) 1x,var(--img2,var(--img)) 2x)}
+}
 @media (min-width:980px){.spine-name{bottom:3.4rem}.spine-month{bottom:1.2rem}}
 /* широкий экран: текст слева, полосы справа во всю высоту экрана до края */
 @media (min-width:980px){
@@ -333,13 +337,13 @@ footer a{color:var(--ink-soft)}
 }
 
 .t-dahab{--img:url("img/dahab-800.webp");--pos:50% 50%;--spine-pos:16% 50%}
-.t-patagonia{--img:url("img/patagonia-800.webp");--pos:30% 50%}
+.t-patagonia{--img:url("img/patagonia-800.webp");--pos:30% 50%;--img2:url("img/patagonia-1200.webp")}
 .t-bali{--img:url("img/bali-800.webp");--pos:50% 55%}
 .t-cambodia{--img:url("img/cambodia-800.webp");--pos:50% 55%}
-.t-kohrong{--img:url("img/kohrong-800.webp");--pos:30% 50%}
-.t-china{--img:url("img/china-800.webp");--pos:50% 50%}
-.t-kanchenjunga{--img:url("img/kanchenjunga-800.webp");--pos:72% 40%}
-.t-tibet{--img:url("img/tibet-800.webp");--pos:50% 35%}
+.t-kohrong{--img:url("img/kohrong-800.webp");--pos:30% 50%;--img2:url("img/kohrong-1200.webp")}
+.t-china{--img:url("img/china-800.webp");--pos:50% 50%;--img2:url("img/china-1200.webp")}
+.t-kanchenjunga{--img:url("img/kanchenjunga-800.webp");--pos:72% 40%;--img2:url("img/kanchenjunga-1200.webp")}
+.t-tibet{--img:url("img/tibet-800.webp");--pos:50% 35%;--img2:url("img/tibet-1200.webp")}
 </style>
 </head>
 <body>
@@ -397,7 +401,7 @@ footer a{color:var(--ink-soft)}
 <main class="trips">
   <article class="trip t-dahab" id="dahab" data-start="2026-11-11" data-end="2026-11-21">
     <a class="trip-photo" href="https://dahab-camp.ru/dahab-yoga-camp.html" target="_blank" rel="noopener" aria-label="Дахаб: открыть сайт поездки">
-      <picture><source media="(max-width:599px)" srcset="img/dahab-800.webp" type="image/webp"><source srcset="img/dahab-1440.webp" type="image/webp"><img src="img/dahab.jpg" class="photo" alt="Фридайверы у троса, сверху сквозь воду бьёт солнце" loading="eager" decoding="async"></picture>
+      <picture><source media="(max-width:599px)" srcset="img/dahab-800.webp 800w" sizes="100vw" type="image/webp"><source srcset="img/dahab-1440.webp 1440w" sizes="100vw" type="image/webp"><img src="img/dahab.jpg" class="photo" alt="Фридайверы у троса, сверху сквозь воду бьёт солнце" loading="lazy" decoding="async"></picture>
       <span class="badges"><span class="stamp">11–21 ноября 2026</span><span class="chips"><span class="flag is-last">Последнее место</span><span class="status" hidden></span></span></span>
       <div class="cap">
         <span class="kicker">Йога-кэмп</span>
@@ -423,7 +427,7 @@ footer a{color:var(--ink-soft)}
   </article>
   <article class="trip t-patagonia" id="patagonia" data-start="2027-01-03" data-end="2027-01-15">
     <a class="trip-photo" href="https://patagonya.ru" target="_blank" rel="noopener" aria-label="Патагония: открыть сайт поездки">
-      <picture><source media="(max-width:599px)" srcset="img/patagonia-800.webp" type="image/webp"><source srcset="img/patagonia-1440.webp" type="image/webp"><img src="img/patagonia.jpg" class="photo" alt="Рассвет над Фицроем и его отражение в горном озере" loading="lazy" decoding="async"></picture>
+      <picture><source media="(max-width:599px)" srcset="img/patagonia-800.webp 800w, img/patagonia-1200.webp 1200w" sizes="100vw" type="image/webp"><source srcset="img/patagonia-1440.webp 1440w, img/patagonia-2400.webp 2400w" sizes="100vw" type="image/webp"><img src="img/patagonia.jpg" class="photo" alt="Рассвет над Фицроем и его отражение в горном озере" loading="lazy" decoding="async"></picture>
       <span class="badges"><span class="stamp">3–15 января 2027</span><span class="chips"><span class="flag is-last">Последнее место</span><span class="status" hidden></span></span></span>
       <div class="cap">
         <span class="kicker">Треккинг</span>
@@ -449,7 +453,7 @@ footer a{color:var(--ink-soft)}
   </article>
   <article class="trip t-bali" id="bali" data-start="2027-02-12" data-end="2027-02-22">
     <a class="trip-photo" href="https://bali-soul.ru" target="_blank" rel="noopener" aria-label="Бали: открыть сайт поездки">
-      <picture><source media="(max-width:599px)" srcset="img/bali-800.webp" type="image/webp"><source srcset="img/bali-1440.webp" type="image/webp"><img src="img/bali.jpg" class="photo" alt="Рисовые террасы Джатилувих у подножия гор" loading="lazy" decoding="async"></picture>
+      <picture><source media="(max-width:599px)" srcset="img/bali-800.webp 800w" sizes="100vw" type="image/webp"><source srcset="img/bali-1440.webp 1440w, img/bali-2400.webp 2400w" sizes="100vw" type="image/webp"><img src="img/bali.jpg" class="photo" alt="Рисовые террасы Джатилувих у подножия гор" loading="lazy" decoding="async"></picture>
       <span class="badges"><span class="stamp">12–22 февраля 2027</span><span class="chips"><span class="flag">Регистрация по ранней цене</span><span class="status" hidden></span></span></span>
       <div class="cap">
         <span class="kicker">Путешествие-практика</span>
@@ -475,7 +479,7 @@ footer a{color:var(--ink-soft)}
   </article>
   <article class="trip t-cambodia" id="cambodia" data-start="2027-02-26" data-end="2027-03-08">
     <a class="trip-photo" href="https://cambodiamoto.ru" target="_blank" rel="noopener" aria-label="Камбоджа: открыть сайт поездки">
-      <picture><source media="(max-width:599px)" srcset="img/cambodia-800.webp" type="image/webp"><source srcset="img/cambodia-1440.webp" type="image/webp"><img src="img/cambodia.jpg" class="photo" alt="Колонна мотоциклов на пыльной дороге, на горизонте башни храма" loading="lazy" decoding="async"></picture>
+      <picture><source media="(max-width:599px)" srcset="img/cambodia-800.webp 800w" sizes="100vw" type="image/webp"><source srcset="img/cambodia-1440.webp 1440w" sizes="100vw" type="image/webp"><img src="img/cambodia.jpg" class="photo" alt="Колонна мотоциклов на пыльной дороге, на горизонте башни храма" loading="lazy" decoding="async"></picture>
       <span class="badges"><span class="stamp">26 февраля – 8 марта 2027</span><span class="chips"><span class="flag">Осталось 5 мест</span><span class="status" hidden></span></span></span>
       <div class="cap">
         <span class="kicker">Мототур</span>
@@ -501,7 +505,7 @@ footer a{color:var(--ink-soft)}
   </article>
   <article class="trip t-kohrong" id="kohrong" data-start="2027-03-08" data-end="2027-03-15">
     <a class="trip-photo" href="https://cambodiamoto.ru/retreat/" target="_blank" rel="noopener" aria-label="Ко Ронг: открыть сайт поездки">
-      <picture><source media="(max-width:599px)" srcset="img/kohrong-800.webp" type="image/webp"><source srcset="img/kohrong-1440.webp" type="image/webp"><img src="img/kohrong.jpg" class="photo" alt="Прозрачная зелёная вода у пляжа Ко Ронга, на берегу деревья" loading="lazy" decoding="async"></picture>
+      <picture><source media="(max-width:599px)" srcset="img/kohrong-800.webp 800w, img/kohrong-1200.webp 1200w" sizes="100vw" type="image/webp"><source srcset="img/kohrong-1440.webp 1440w, img/kohrong-2400.webp 2400w" sizes="100vw" type="image/webp"><img src="img/kohrong.jpg" class="photo" alt="Прозрачная зелёная вода у пляжа Ко Ронга, на берегу деревья" loading="lazy" decoding="async"></picture>
       <span class="badges"><span class="stamp">8–15 марта 2027</span><span class="chips"><span class="status" hidden></span></span></span>
       <div class="cap">
         <span class="kicker">Ретрит</span>
@@ -527,7 +531,7 @@ footer a{color:var(--ink-soft)}
   </article>
   <article class="trip t-china" id="china" data-start="2027-03-23" data-end="2027-04-02">
     <a class="trip-photo" href="https://shangrila-trip.ru" target="_blank" rel="noopener" aria-label="Китай: открыть сайт поездки">
-      <picture><source media="(max-width:599px)" srcset="img/china-800.webp" type="image/webp"><source srcset="img/china-1440.webp" type="image/webp"><img src="img/china.jpg" class="photo" alt="Карстовые горы Яншо на закате" loading="lazy" decoding="async"></picture>
+      <picture><source media="(max-width:599px)" srcset="img/china-800.webp 800w, img/china-1200.webp 1200w" sizes="100vw" type="image/webp"><source srcset="img/china-1440.webp 1440w, img/china-2400.webp 2400w" sizes="100vw" type="image/webp"><img src="img/china.jpg" class="photo" alt="Карстовые горы Яншо на закате" loading="lazy" decoding="async"></picture>
       <span class="badges"><span class="stamp">23 марта – 2 апреля 2027</span><span class="chips"><span class="flag">Регистрация по ранней цене</span><span class="status" hidden></span></span></span>
       <div class="cap">
         <span class="kicker">Авторское путешествие</span>
@@ -553,7 +557,7 @@ footer a{color:var(--ink-soft)}
   </article>
   <article class="trip t-kanchenjunga" id="kanchenjunga" data-start="2027-04-05" data-end="2027-04-20">
     <a class="trip-photo" href="https://kanchenjunga.ru" target="_blank" rel="noopener" aria-label="Канченджанга: открыть сайт поездки">
-      <picture><source media="(max-width:599px)" srcset="img/kanchenjunga-800.webp" type="image/webp"><source srcset="img/kanchenjunga-1440.webp" type="image/webp"><img src="img/kanchenjunga.jpg" class="photo" alt="Канченджанга в огненном свете заката" loading="lazy" decoding="async"></picture>
+      <picture><source media="(max-width:599px)" srcset="img/kanchenjunga-800.webp 800w, img/kanchenjunga-1200.webp 1200w" sizes="100vw" type="image/webp"><source srcset="img/kanchenjunga-1440.webp 1440w, img/kanchenjunga-2400.webp 2400w" sizes="100vw" type="image/webp"><img src="img/kanchenjunga.jpg" class="photo" alt="Канченджанга в огненном свете заката" loading="lazy" decoding="async"></picture>
       <span class="badges"><span class="stamp">5–20 апреля 2027</span><span class="chips"><span class="flag">3 места по ранней цене</span><span class="status" hidden></span></span></span>
       <div class="cap">
         <span class="kicker">Высокогорный трек</span>
@@ -579,7 +583,7 @@ footer a{color:var(--ink-soft)}
   </article>
   <article class="trip t-tibet" id="tibet" data-start="2027-08-12" data-end="2027-08-29">
     <a class="trip-photo" href="https://tibet2027.ru" target="_blank" rel="noopener" aria-label="Тибет: открыть сайт поездки">
-      <picture><source media="(max-width:599px)" srcset="img/tibet-800.webp" type="image/webp"><source srcset="img/tibet-1440.webp" type="image/webp"><img src="img/tibet.jpg" class="photo" alt="Кайлас под синим небом" loading="lazy" decoding="async"></picture>
+      <picture><source media="(max-width:599px)" srcset="img/tibet-800.webp 800w, img/tibet-1200.webp 1200w" sizes="100vw" type="image/webp"><source srcset="img/tibet-1440.webp 1440w, img/tibet-2400.webp 2400w" sizes="100vw" type="image/webp"><img src="img/tibet.jpg" class="photo" alt="Кайлас под синим небом" loading="lazy" decoding="async"></picture>
       <span class="badges"><span class="stamp">12–29 августа 2027</span><span class="chips"><span class="flag">Регистрация по ранней цене</span><span class="status" hidden></span></span></span>
       <div class="cap">
         <span class="kicker">Паломничество</span>

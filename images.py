@@ -3,8 +3,9 @@
 
     python3 images.py
 
-  img/<id>.jpg (фото поездки, 1440 px)  -> img/<id>-1440.webp  для широких экранов
-                                         -> img/<id>-800.webp   вертикальный кадр 4:5 по точке pos
+  img/<id>.jpg (фото поездки, до 2400 px) -> img/<id>-1440.webp, -2400.webp  для широких экранов
+                                            (2400 только если исходник от 1800 px)
+                                          -> img/<id>-800.webp, -1200.webp  вертикальный кадр 4:5 по точке pos
                                             из content.json: фото-полосы и главы на телефоне
   gallery.items: img/<img>.jpg           -> img/<img>-360/640/960.webp в пропорции ratio по точке pos
   about.team:    img/<img>.jpg           -> img/<img>-400.webp, -800.webp, кадр 4:5 по точке pos
@@ -34,9 +35,13 @@ def pos(item):
     return [float(v.rstrip("%")) / 100 for v in item.get("pos", "50% 50%").split()]
 
 
-def webp(im, out, q, budget=None):
-    """WebP; если файл тяжелее budget КБ (шумные снимки с телефона), качество снижается до 50."""
+def webp(im, out, q, budget=None, smooth=False):
+    """WebP; если файл тяжелее budget КБ, сначала (при smooth) лёгкое шумоподавление,
+    потом качество снижается до 50."""
     im.save(out, "WEBP", quality=q, method=6)
+    if smooth and budget and out.stat().st_size > budget * 1024:
+        im = im.filter(ImageFilter.MedianFilter(3))
+        im.save(out, "WEBP", quality=q, method=6)
     while budget and out.stat().st_size > budget * 1024 and q > 50:
         q -= 4
         im.save(out, "WEBP", quality=q, method=6)
@@ -81,18 +86,29 @@ def sized(im, width):
 
 def tour_images():
     for t in C["tours"]:
-        im = sized(source(t["id"]), 1440)
-        out = IMG / f"{t['id']}-1440.webp"
-        im.save(out, "WEBP", quality=70, method=6)
-        if out.stat().st_size > 200 * 1024:
+        base = sized(source(t["id"]), 2400)
+        # soften: у пересвеченного по резкости исходника ореолы вокруг мелких деталей,
+        # лёгкое размытие убирает их; тогда шумоподавление широких версий не нужно, а запас по весу больше
+        soft = t.get("soften")
+        if soft:
+            base = base.filter(ImageFilter.GaussianBlur(soft))
+        # Широкие версии: 1440 для обычных экранов, 2400 для ретины, если исходник это позволяет
+        for w, q, budget in ((1440, 70, 200), (2400, 68, 420)):
+            out = IMG / f"{t['id']}-{w}.webp"
+            if w == 2400 and base.width < 1800:
+                continue
             # шумный кадр: лёгкое шумоподавление вместо грубого сжатия, на экране разница не видна
-            im = im.filter(ImageFilter.MedianFilter(3))
-        webp(im, out, 70, 200)
+            webp(sized(base, w), out, q, (budget * 3 // 2) if soft else budget, smooth=not soft)
         # Кадр 4:5 режется там же, где его показал бы background-position: pos,
         # поэтому то же значение pos даёт на нём ту же картинку, что и на полном фото.
-        cw = min(im.width, round(im.height * 4 / 5))
-        left = round((im.width - cw) * pos(t)[0])
-        webp(sized(im.crop((left, 0, left + cw, im.height)), 800), IMG / f"{t['id']}-800.webp", 66, 90)
+        # 800 для полос и карточек, 1200 для телефонов с плотным экраном, если высоты исходника хватает.
+        cw = min(base.width, round(base.height * 4 / 5))
+        left = round((base.width - cw) * pos(t)[0])
+        tall = base.crop((left, 0, left + cw, base.height))
+        for w, budget in ((800, 90), (1200, 160)):
+            if w == 1200 and tall.width < 1000:
+                continue
+            webp(sized(tall, w), IMG / f"{t['id']}-{w}.webp", 66, budget, smooth=True)
 
 
 def gallery_images():
