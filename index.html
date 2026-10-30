@@ -45,6 +45,7 @@
   --stamp:#1D3EC4; --on-stamp:#FFFFFF; --stamp-wash:rgba(29,62,196,.08);
   --night:#0B1011; --on-night:#F0F3F2; --on-night-soft:rgba(240,243,242,.72); --night-line:rgba(240,243,242,.2); --night-accent:#8CA1FF;
   --on-photo:#FFFFFF; --scrim:rgba(6,10,12,.78); --chip-bg:rgba(255,255,255,.93); --chip-ink:#1D3EC4;
+  --fill:#1D3EC4; --on-fill:#FFFFFF;
   --f-display:"Unbounded","Arial Black",system-ui,sans-serif;
   --f-body:"Onest","Segoe UI",system-ui,-apple-system,sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -69,7 +70,7 @@ body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--f
 a{color:inherit}
 p{text-wrap:pretty}
 /* ссылка «к поездкам» для клавиатуры: видна только в фокусе */
-.skip{position:absolute;z-index:30;left:var(--gutter);top:.75rem;padding:.6rem .9rem;border-radius:4px;background:var(--stamp);color:var(--on-stamp);
+.skip{position:absolute;z-index:30;left:var(--gutter);top:.75rem;padding:.6rem .9rem;border-radius:4px;background:var(--fill);color:var(--on-fill);
   font:600 .95rem/1.2 var(--f-body);text-decoration:none;transform:translateY(-200%)}
 .skip:focus{transform:none}
 /* появление при прокрутке: только когда работает JS, один раз; --d задаёт небольшую очередь внутри ряда */
@@ -83,17 +84,17 @@ picture{display:contents}
 /* первый экран: тёмный, справа полосы во всю высоту */
 .masthead{background:var(--night);color:var(--on-night)}
 .top{display:flex;align-items:center;justify-content:space-between;gap:1rem;width:100%;padding-block:1.1rem}
-.brand{font:500 .78rem/1.2 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
+.brand{font:600 1rem/1.2 var(--f-body);white-space:nowrap}
 .brand b{font-weight:500;color:var(--on-night-soft)}
-.top a{font:500 .85rem/1 var(--f-mono);text-decoration:none;padding:.55rem .8rem;border:1px solid var(--night-line);border-radius:4px;transition:border-color .3s var(--ease)}
-.top a:hover{border-color:var(--on-night)}
-.top nav{display:flex;gap:.5rem;flex-shrink:0}
+.top a{font:500 .95rem/1 var(--f-body);color:var(--on-night-soft);text-decoration:none;padding:.65rem .1rem;transition:color .3s var(--ease)}
+.top a:hover{color:var(--on-night)}
+.top nav{display:flex;gap:1.25rem;flex-shrink:0}
 .top nav a{white-space:nowrap}
 @media (max-width:520px){.brand b{display:none}}
-@media (max-width:420px){.top{gap:.6rem}.brand{font-size:.72rem;letter-spacing:.08em}.top nav{gap:.3rem}.top a{font-size:.8rem;padding:.55rem .55rem}}
+@media (max-width:420px){.top{gap:.75rem}.brand{font-size:.95rem}.top nav{gap:1rem}.top a{font-size:.9rem}}
 .intro{display:grid;gap:clamp(2rem,5vw,3rem);max-width:1240px;margin-inline:auto;padding:clamp(1.25rem,4vw,2.5rem) var(--gutter) clamp(2.5rem,7vw,4rem)}
 .hero{display:grid;gap:1.2rem;align-content:start;min-width:0}
-.eyebrow{margin:0;font:500 .78rem/1.3 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--night-accent)}
+.eyebrow{margin:0;font:500 .95rem/1.4 var(--f-body);color:var(--night-accent)}
 .hero h1{margin:0;font:600 clamp(2rem,5.6vw,4.3rem)/1.05 var(--f-display);letter-spacing:-.02em;text-wrap:balance;max-width:17ch}
 .lead{margin:0;max-width:58ch;font-size:clamp(1.02rem,1.6vw,1.2rem);color:var(--on-night-soft)}
 .hero-cta{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.25rem;padding-top:.6rem}
@@ -116,8 +117,8 @@ picture{display:contents}
 .hot a:hover .hot-name{color:var(--stamp)}
 .hot-name{font:600 1rem/1.3 var(--f-body)}
 .hot-name small{font:400 .78rem/1 var(--f-mono);color:var(--ink-soft);margin-left:.2rem;letter-spacing:.04em}
-.hot-what{margin-left:auto;font:500 .8rem/1.3 var(--f-mono);color:var(--stamp);text-align:right}
-.hot li.is-last .hot-what{padding:.3rem .5rem;border-radius:3px;background:var(--stamp);color:var(--on-stamp)}
+.hot-what{margin-left:auto;font:500 .9rem/1.3 var(--f-body);color:var(--stamp);text-align:right}
+.hot li.is-last .hot-what{padding:.3rem .5rem;border-radius:3px;background:var(--fill);color:var(--on-fill)}
 @media (min-width:980px){
   .hot{display:grid;grid-template-columns:minmax(0,18.5rem) minmax(0,1fr);column-gap:clamp(2.5rem,4.5vw,4rem);align-items:start}
 }
@@ -129,9 +130,11 @@ picture{display:contents}
 .spine{position:relative;flex:1 1 0;min-width:0;overflow:hidden;border-radius:4px;text-decoration:none;color:var(--on-photo);
   background:#2a3133 var(--img) var(--pos)/cover no-repeat;transition:flex-grow .6s var(--ease)}
 .spine::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(6,10,12,.82) 0%,rgba(6,10,12,.15) 55%,rgba(6,10,12,.05) 100%)}
-.spine-name{position:absolute;z-index:1;left:50%;bottom:3rem;writing-mode:vertical-rl;transform:translateX(-50%) rotate(180deg);
-  font:600 clamp(.92rem,2.1vw,1.45rem)/1 var(--f-display);white-space:nowrap;letter-spacing:.01em}
-.spine-month{position:absolute;z-index:1;left:0;right:0;bottom:.9rem;text-align:center;font:500 .72rem/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;opacity:.9}
+/* название и месяц одной вертикальной строкой снизу вверх: месяц никогда не шире полосы */
+.spine-label{position:absolute;z-index:1;left:50%;bottom:1.2rem;display:flex;align-items:center;gap:.6rem;white-space:nowrap;
+  writing-mode:vertical-rl;transform:translateX(-50%) rotate(180deg)}
+.spine-name{font:600 clamp(.92rem,2.1vw,1.45rem)/1 var(--f-display);letter-spacing:.01em}
+.spine-month{font:500 .8rem/1 var(--f-body);opacity:.8}
 .spine.is-past{filter:grayscale(.85) brightness(.8)}
 @media (hover:hover) and (min-width:760px){
   .spines:hover .spine{flex-grow:.75}
@@ -142,7 +145,7 @@ picture{display:contents}
   /* полоса на широком экране выше карточки, на плотном экране берём кадр 1200 */
   .spine{background-image:image-set(var(--img) 1x,var(--img2,var(--img)) 2x)}
 }
-@media (min-width:980px){.spine-name{bottom:3.4rem}.spine-month{bottom:1.2rem}}
+@media (min-width:980px){.spine-label{bottom:1.5rem}}
 /* широкий экран: текст слева, полосы справа во всю высоту экрана до края */
 @media (min-width:980px){
   .masthead{display:grid;grid-template-rows:auto 1fr;min-height:min(100svh,58rem)}
@@ -161,8 +164,9 @@ picture{display:contents}
   .spines::-webkit-scrollbar{display:none}
   .spine{flex:0 0 min(70vw,22rem);aspect-ratio:4/5;border-radius:4px;scroll-snap-align:start}
   .spine::after{background:linear-gradient(to top,rgba(6,10,12,.82) 0%,rgba(6,10,12,.3) 38%,rgba(6,10,12,0) 62%)}
-  .spine-name{left:1rem;right:1rem;bottom:2.5rem;writing-mode:horizontal-tb;transform:none;font-size:1.45rem;white-space:normal}
-  .spine-month{left:1rem;right:auto;bottom:1rem;text-align:left}
+  .spine-label{left:1rem;right:1rem;bottom:1rem;display:grid;justify-items:start;gap:.4rem;white-space:normal;
+    writing-mode:horizontal-tb;transform:none}
+  .spine-name{font-size:1.45rem}
   /* фото сразу под заголовком и кнопкой, длинный абзац после ленты */
   .intro{row-gap:1.2rem}
   .hero{display:contents}
@@ -179,7 +183,7 @@ picture{display:contents}
 .tripnav-in::-webkit-scrollbar{display:none}
 .tripnav a{display:flex;align-items:center;gap:.45rem;flex-shrink:0;padding-top:2px;border-bottom:2px solid transparent;
   text-decoration:none;font:600 .9rem/1 var(--f-body);color:var(--ink-soft);white-space:nowrap}
-.tripnav small{font:500 .68rem/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase}
+.tripnav small{font:400 .8rem/1 var(--f-body);color:var(--ink-soft)}
 .tripnav a:hover{color:var(--ink)}
 .tripnav a[aria-current]{color:var(--stamp);border-bottom-color:var(--stamp)}
 .tripnav a.is-past{opacity:.55}
@@ -194,7 +198,7 @@ picture{display:contents}
 .photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--pos)}
 .trip-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,var(--scrim) 0%,rgba(6,10,12,.45) 30%,rgba(6,10,12,0) 58%)}
 .cap{position:absolute;z-index:1;left:0;right:0;bottom:0;padding:0 var(--edge) clamp(1.5rem,4.5vw,3.5rem);display:grid;gap:.5rem;text-shadow:0 1px 14px rgba(0,0,0,.35)}
-.kicker{font:500 .75rem/1.2 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;opacity:.92}
+.kicker{font:500 1rem/1.3 var(--f-body);opacity:.9}
 .trip h2{margin:0;font:600 clamp(1.85rem,8.6vw,7.5rem)/.95 var(--f-display);letter-spacing:-.03em}
 .project{font:500 clamp(1.05rem,2vw,1.4rem)/1.3 var(--f-body)}
 /* даты слева, флажки справа: в одной строке, поэтому не наезжают друг на друга на любой ширине */
@@ -204,9 +208,9 @@ picture{display:contents}
   background:var(--chip-bg);color:var(--chip-ink);border:1.5px solid currentColor;outline:1px solid var(--chip-bg);border-radius:4px;
   padding:.4rem .6rem;font:500 .78rem/1.15 var(--f-mono);letter-spacing:.04em;font-variant-numeric:tabular-nums}
 .chips{flex:0 1 auto;min-width:0;display:grid;gap:.35rem;justify-items:end}
-.flag,.status{border-radius:4px;padding:.4rem .6rem;font:500 .75rem/1.2 var(--f-mono);letter-spacing:.04em;text-align:right}
-.flag{background:var(--stamp);color:var(--on-stamp)}
-.flag.is-last{padding:.55rem .85rem;font:600 1rem/1.2 var(--f-body);letter-spacing:0}
+.flag,.status{border-radius:4px;padding:.4rem .6rem;font:500 .85rem/1.2 var(--f-body);text-align:right}
+.flag{background:var(--fill);color:var(--on-fill)}
+.flag.is-last{padding:.55rem .85rem;font:600 1rem/1.2 var(--f-body)}
 .status{background:var(--chip-bg);color:#111A1C}
 
 /* под фото: маршрут на всю ширину, ниже описание и правая колонка начинаются на одной линии */
@@ -216,21 +220,21 @@ picture{display:contents}
 .route{margin:0 0 -.75rem;font:500 .82rem/1.5 var(--f-mono);color:var(--stamp);letter-spacing:.02em}
 .trip-text{margin:0;font-size:clamp(1.05rem,1.5vw,1.2rem);line-height:1.62;max-width:60ch}
 .facts{margin:0;display:grid;grid-template-columns:7.2rem minmax(0,1fr);gap:.55rem 1rem;padding-top:1rem;border-top:1px solid var(--line)}
-.facts dt{font:500 .7rem/1.9 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+.facts dt{font:400 .95rem/1.6 var(--f-body);color:var(--ink-soft)}
 .facts dd{margin:0;font-variant-numeric:tabular-nums}
 
 /* правая колонка: места, цена, действия */
 .aside{display:grid;gap:.7rem;align-content:start;min-width:0}
-.aside-label{margin:0;font:500 .7rem/1.4 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+.aside-label{margin:0;font:400 .95rem/1.4 var(--f-body);color:var(--ink-soft)}
 .seats{display:grid;gap:.45rem;padding:.9rem 1rem;border-radius:4px;background:var(--stamp-wash)}
 .seats strong{font:600 1.05rem/1.3 var(--f-body);color:var(--stamp)}
 .seats-note{font-size:.92rem;color:var(--ink-soft)}
 /* последнее место: сплошной акцентный блок, самый заметный элемент колонки */
-.seats.is-last{background:var(--stamp);color:var(--on-stamp)}
-.seats.is-last strong{font-size:1.45rem;line-height:1.15;color:var(--on-stamp)}
-.seats.is-last .seats-note{color:var(--on-stamp);opacity:.85}
-.seats.is-last .dot{background:var(--on-stamp);opacity:.3}
-.seats.is-last .dot.free{background:var(--on-stamp);opacity:1}
+.seats.is-last{background:var(--fill);color:var(--on-fill)}
+.seats.is-last strong{font-size:1.45rem;line-height:1.15;color:var(--on-fill)}
+.seats.is-last .seats-note{color:var(--on-fill);opacity:.85}
+.seats.is-last .dot{background:var(--on-fill);opacity:.3}
+.seats.is-last .dot.free{background:var(--on-fill);opacity:1}
 .dots{display:flex;flex-wrap:wrap;gap:5px}
 .dot{width:11px;height:11px;border-radius:50%;background:var(--ink-soft);opacity:.28}
 .dot.free{background:var(--stamp);opacity:1}
@@ -239,15 +243,15 @@ picture{display:contents}
 .tier:first-child{border-top:1px solid var(--line)}
 .tier-price{font:600 1.05rem/1.3 var(--f-body)}
 .tier-label{font-size:.9rem;color:var(--ink-soft)}
-.tier-state{font:500 .7rem/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
+.tier-state{font:500 .8rem/1 var(--f-body);color:var(--ink-soft)}
 .tier.is-sold .tier-price{text-decoration:line-through;text-decoration-thickness:1.5px;color:var(--ink-soft);font-weight:500}
 .tier.is-now .tier-price{font-size:1.25rem;color:var(--ink)}
-.tier.is-now .tier-state{background:var(--stamp);color:var(--on-stamp);padding:.3rem .45rem;border-radius:3px}
+.tier.is-now .tier-state{background:var(--fill);color:var(--on-fill);padding:.3rem .45rem;border-radius:3px}
 .tier.is-next .tier-price{color:var(--ink-soft);font-weight:500}
 .btn{display:flex;align-items:center;justify-content:center;gap:.5rem;min-height:3.1rem;padding:.6rem 1.2rem;border-radius:4px;
   font:600 1rem/1.2 var(--f-body);text-decoration:none;text-align:center;transition:background-color .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease),transform .3s var(--ease)}
 .btn:active{transform:translateY(1px)}
-.btn-primary{background:var(--stamp);color:var(--on-stamp);border:1.5px solid var(--stamp)}
+.btn-primary{background:var(--fill);color:var(--on-fill);border:1.5px solid var(--fill)}
 .btn-primary:hover{filter:brightness(1.08)}
 .btn-ghost{border:1.5px solid var(--ink);color:var(--ink)}
 .btn-ghost:hover{background:var(--ink);color:var(--paper)}
@@ -289,7 +293,7 @@ picture{display:contents}
 .person{display:grid;gap:.55rem;align-content:start;min-width:0}
 .person img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:2px;background:var(--line);margin-bottom:.5rem}
 .person h3{margin:0;font:600 1.25rem/1.25 var(--f-body)}
-.person .role{margin:0;font:500 .85rem/1.3 var(--f-mono);letter-spacing:.02em;color:var(--stamp)}
+.person .role{margin:0;font:500 .95rem/1.3 var(--f-body);color:var(--stamp)}
 .person p:last-child{margin:0;color:var(--ink-soft);font-size:.95rem;line-height:1.55}
 .guests{margin:2rem 0 0;max-width:72ch;padding-top:1.25rem;border-top:1px solid var(--line);color:var(--ink-soft)}
 
@@ -319,11 +323,11 @@ picture{display:contents}
 .manifesto-note{margin:1.75rem 0 0;font:500 .95rem/1.4 var(--f-mono);color:var(--stamp)}
 
 /* плашка на страницах для просмотра вариантов */
-.pv{background:var(--stamp);color:var(--on-stamp);font:500 .8rem/1.3 var(--f-mono)}
+.pv{background:var(--fill);color:var(--on-fill);font:500 .85rem/1.3 var(--f-body)}
 .pv-in{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.5rem 1rem;padding-block:.55rem}
 .pv nav{display:flex;flex-wrap:wrap;gap:.35rem}
 .pv a{padding:.3rem .55rem;border:1px solid currentColor;border-radius:4px;text-decoration:none}
-.pv a[aria-current]{background:var(--on-stamp);color:var(--stamp)}
+.pv a[aria-current]{background:var(--on-fill);color:var(--fill)}
 
 /* что говорят участники */
 .reviews{padding-block:clamp(3.5rem,8vw,6rem);border-top:1px solid var(--line)}
@@ -414,14 +418,14 @@ footer a{color:var(--ink-soft)}
 
     <nav class="spines-nav" aria-label="Все поездки сезона">
       <div class="spines">
-      <a class="spine t-dahab" href="#dahab"><span class="spine-name">Дахаб</span> <span class="spine-month">ноя</span><span class="sr">11–21 ноября 2026</span></a>
-      <a class="spine t-patagonia" href="#patagonia"><span class="spine-name">Патагония</span> <span class="spine-month">янв</span><span class="sr">3–15 января 2027</span></a>
-      <a class="spine t-bali" href="#bali"><span class="spine-name">Бали</span> <span class="spine-month">фев</span><span class="sr">12–22 февраля 2027</span></a>
-      <a class="spine t-cambodia" href="#cambodia"><span class="spine-name">Камбоджа</span> <span class="spine-month">фев</span><span class="sr">26 февраля – 8 марта 2027</span></a>
-      <a class="spine t-kohrong" href="#kohrong"><span class="spine-name">Ко Ронг</span> <span class="spine-month">мар</span><span class="sr">8–15 марта 2027</span></a>
-      <a class="spine t-china" href="#china"><span class="spine-name">Китай</span> <span class="spine-month">мар</span><span class="sr">23 марта – 2 апреля 2027</span></a>
-      <a class="spine t-kanchenjunga" href="#kanchenjunga"><span class="spine-name">Канченджанга</span> <span class="spine-month">апр</span><span class="sr">5–20 апреля 2027</span></a>
-      <a class="spine t-tibet" href="#tibet"><span class="spine-name">Тибет</span> <span class="spine-month">авг</span><span class="sr">12–29 августа 2027</span></a>
+      <a class="spine t-dahab" href="#dahab"><span class="spine-label"><span class="spine-name">Дахаб</span> <span class="spine-month">ноябрь</span></span><span class="sr">11–21 ноября 2026</span></a>
+      <a class="spine t-patagonia" href="#patagonia"><span class="spine-label"><span class="spine-name">Патагония</span> <span class="spine-month">январь</span></span><span class="sr">3–15 января 2027</span></a>
+      <a class="spine t-bali" href="#bali"><span class="spine-label"><span class="spine-name">Бали</span> <span class="spine-month">февраль</span></span><span class="sr">12–22 февраля 2027</span></a>
+      <a class="spine t-cambodia" href="#cambodia"><span class="spine-label"><span class="spine-name">Камбоджа</span> <span class="spine-month">февраль</span></span><span class="sr">26 февраля – 8 марта 2027</span></a>
+      <a class="spine t-kohrong" href="#kohrong"><span class="spine-label"><span class="spine-name">Ко Ронг</span> <span class="spine-month">март</span></span><span class="sr">8–15 марта 2027</span></a>
+      <a class="spine t-china" href="#china"><span class="spine-label"><span class="spine-name">Китай</span> <span class="spine-month">март</span></span><span class="sr">23 марта – 2 апреля 2027</span></a>
+      <a class="spine t-kanchenjunga" href="#kanchenjunga"><span class="spine-label"><span class="spine-name">Канченджанга</span> <span class="spine-month">апрель</span></span><span class="sr">5–20 апреля 2027</span></a>
+      <a class="spine t-tibet" href="#tibet"><span class="spine-label"><span class="spine-name">Тибет</span> <span class="spine-month">август</span></span><span class="sr">12–29 августа 2027</span></a>
       </div>
     </nav>
   </div>
@@ -443,7 +447,7 @@ footer a{color:var(--ink-soft)}
   </ul>
 </section>
 
-<nav class="tripnav" aria-label="Поездки сезона"><div class="wrap tripnav-in"><a href="#dahab"><small>ноя</small> Дахаб</a><a href="#patagonia"><small>янв</small> Патагония</a><a href="#bali"><small>фев</small> Бали</a><a href="#cambodia"><small>фев</small> Камбоджа</a><a href="#kohrong"><small>мар</small> Ко Ронг</a><a href="#china"><small>мар</small> Китай</a><a href="#kanchenjunga"><small>апр</small> Канченджанга</a><a href="#tibet"><small>авг</small> Тибет</a></div></nav>
+<nav class="tripnav" aria-label="Поездки сезона"><div class="wrap tripnav-in"><a href="#dahab">Дахаб <small>ноябрь</small></a><a href="#patagonia">Патагония <small>январь</small></a><a href="#bali">Бали <small>февраль</small></a><a href="#cambodia">Камбоджа <small>февраль</small></a><a href="#kohrong">Ко Ронг <small>март</small></a><a href="#china">Китай <small>март</small></a><a href="#kanchenjunga">Канченджанга <small>апрель</small></a><a href="#tibet">Тибет <small>август</small></a></div></nav>
 
 <main class="trips" id="trips">
   <article class="trip t-dahab" id="dahab" data-start="2026-11-11" data-end="2026-11-21">
