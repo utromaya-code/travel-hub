@@ -20,6 +20,7 @@ WebP-версии фото, иконки и img/og.jpg готовит python3 im
 Если WebP для поездки ещё нет, страница возьмёт исходный img/<id>.jpg.
 """
 import base64
+import copy
 import hashlib
 import html
 import json
@@ -88,6 +89,9 @@ p{text-wrap:pretty}
 .skip{position:absolute;z-index:30;left:var(--gutter);top:.75rem;padding:.6rem .9rem;border-radius:4px;background:var(--stamp);color:var(--on-stamp);
   font:600 .95rem/1.2 var(--f-body);text-decoration:none;transform:translateY(-200%)}
 .skip:focus{transform:none}
+/* появление при прокрутке: только когда работает JS, один раз; --d задаёт небольшую очередь внутри ряда */
+.js .rv{opacity:0;transform:translateY(2rem);transition:opacity .7s var(--ease),transform .7s var(--ease);transition-delay:var(--d,0s)}
+.js .rv.in{opacity:1;transform:none}
 :focus-visible{outline:2px solid var(--stamp);outline-offset:3px;border-radius:4px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .wrap{max-width:1240px;margin-inline:auto;padding-inline:var(--gutter)}
@@ -266,7 +270,10 @@ picture{display:contents}
 .btn-ghost:hover{background:var(--ink);color:var(--paper)}
 .aside .btn-primary{margin-top:.35rem}
 .micro{margin:0;font-size:.82rem;line-height:1.45;color:var(--ink-soft);text-align:center}
-.domain{margin:.15rem 0 0;text-align:center;font:400 .78rem/1.3 var(--f-mono);color:var(--ink-soft)}
+.more{justify-self:center;margin-top:.35rem;font:500 .95rem/1.4 var(--f-body);color:var(--ink);text-align:center;
+  text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.3em;text-decoration-color:var(--line);
+  transition:color .3s var(--ease),text-decoration-color .3s var(--ease)}
+.more:hover{color:var(--stamp);text-decoration-color:var(--stamp)}
 
 /* как это было: снимки прошлых поездок, одна серия */
 .gallery{background:var(--night);color:var(--on-night);padding-block:clamp(4rem,9vw,7rem)}
@@ -288,18 +295,18 @@ picture{display:contents}
 @media (min-width:980px){.about-head{grid-template-columns:auto minmax(0,1fr);align-items:start}}
 .year{margin:0;display:grid;gap:.4rem}
 .year b{font:600 clamp(5.5rem,17vw,12.5rem)/.82 var(--f-display);letter-spacing:-.05em;color:var(--stamp)}
-.year span{font:500 .78rem/1.3 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+.year span{font:500 .95rem/1.4 var(--f-body);color:var(--ink-soft)}
 .about-text{display:grid;gap:1rem;min-width:0}
 .about-text h2{margin:0 0 .25rem;font:600 clamp(1.6rem,3.8vw,2.7rem)/1.08 var(--f-display);letter-spacing:-.02em;text-wrap:balance;max-width:20ch}
 .about-text p{margin:0;max-width:62ch;font-size:clamp(1.03rem,1.4vw,1.15rem);line-height:1.65}
 .places{margin:.5rem 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:.45rem}
 .places li{font:500 .78rem/1 var(--f-mono);letter-spacing:.04em;padding:.5rem .65rem;border:1px solid var(--line);border-radius:4px}
-.sub{margin:0 0 1.25rem;font:500 .78rem/1.3 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--stamp)}
+.sub{margin:0 0 1.5rem;font:600 1.35rem/1.25 var(--f-display);letter-spacing:-.01em}
 .team{display:grid;gap:2.5rem clamp(1.25rem,3vw,2.5rem);grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr))}
 .person{display:grid;gap:.55rem;align-content:start;min-width:0}
 .person img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:2px;background:var(--line);margin-bottom:.5rem}
 .person h3{margin:0;font:600 1.25rem/1.25 var(--f-body)}
-.person .role{margin:0;font:500 .74rem/1.3 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--stamp)}
+.person .role{margin:0;font:500 .85rem/1.3 var(--f-mono);letter-spacing:.02em;color:var(--stamp)}
 .person p:last-child{margin:0;color:var(--ink-soft);font-size:.95rem;line-height:1.55}
 .guests{margin:2rem 0 0;max-width:72ch;padding-top:1.25rem;border-top:1px solid var(--line);color:var(--ink-soft)}
 
@@ -310,6 +317,30 @@ picture{display:contents}
 .why-item{display:grid;gap:.5rem;align-content:start;padding-top:1rem;border-top:2px solid var(--stamp);min-width:0}
 .why-item h3{margin:0;font:600 1.12rem/1.3 var(--f-body)}
 .why-item p{margin:0;color:var(--ink-soft);line-height:1.6}
+
+/* как мы путешествуем: принципы списком, без одинаковых карточек */
+.principles{padding-block:clamp(3.5rem,8vw,6rem);border-top:1px solid var(--line);display:grid;gap:1.5rem}
+@media (min-width:980px){.principles{grid-template-columns:minmax(0,22rem) minmax(0,1fr);column-gap:clamp(2.5rem,4.5vw,4rem);align-items:start}}
+.principles h2{margin:0;font:600 clamp(1.5rem,2.8vw,2.1rem)/1.1 var(--f-display);letter-spacing:-.015em;text-wrap:balance;overflow-wrap:anywhere}
+.principles ol{margin:0;padding:0;list-style:none;border-top:1px solid var(--ink)}
+.principles li{display:grid;gap:.5rem 2.5rem;padding-block:1.6rem;border-bottom:1px solid var(--line)}
+@media (min-width:760px) and (max-width:979px),(min-width:1200px){.principles li{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)}}
+.principles h3{margin:0;font:600 clamp(1.15rem,2vw,1.45rem)/1.25 var(--f-display);letter-spacing:-.01em;text-wrap:balance}
+.principles li p{margin:0;color:var(--ink-soft);line-height:1.6}
+
+/* фраза-манифест: слова проявляются по очереди при прокрутке */
+.manifesto{padding-block:clamp(5rem,12vw,9rem)}
+.manifesto-text{margin:0;max-width:22ch;font:600 clamp(2rem,5.4vw,4.3rem)/1.08 var(--f-display);letter-spacing:-.02em;text-wrap:balance}
+.js .manifesto .w{opacity:.28;transition:opacity .5s var(--ease)}
+.js .manifesto .w.on{opacity:1}
+.manifesto-note{margin:1.75rem 0 0;font:500 .95rem/1.4 var(--f-mono);color:var(--stamp)}
+
+/* плашка на страницах для просмотра вариантов */
+.pv{background:var(--stamp);color:var(--on-stamp);font:500 .8rem/1.3 var(--f-mono)}
+.pv-in{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.5rem 1rem;padding-block:.55rem}
+.pv nav{display:flex;flex-wrap:wrap;gap:.35rem}
+.pv a{padding:.3rem .55rem;border:1px solid currentColor;border-radius:4px;text-decoration:none}
+.pv a[aria-current]{background:var(--on-stamp);color:var(--stamp)}
 
 /* что говорят участники */
 .reviews{padding-block:clamp(3.5rem,8vw,6rem);border-top:1px solid var(--line)}
@@ -365,6 +396,7 @@ footer a{color:var(--ink-soft)}
   html{scroll-behavior:auto}
   .spine,.btn,.top a,.tripnav,.tripnav.is-on,.dock,.dock.is-on,.faq summary::after{transition:none}
   .btn:active{transform:none}
+  .js .rv{transform:none;transition:opacity .7s var(--ease)}
 }
 """
 
@@ -385,7 +417,21 @@ JS = r"""
     if(!nextFound){var d=Math.round((s-now)/DAY);badge.textContent='Старт через '+d+' '+plural(d);badge.hidden=false;nextFound=true;}
   });
 
-  if(!('IntersectionObserver' in window))return;
+  // появление блоков и слов манифеста при прокрутке, один раз
+  var rv=document.querySelectorAll('.rv'), words=document.querySelectorAll('.manifesto .w');
+  if(!('IntersectionObserver' in window)){
+    rv.forEach(function(el){el.classList.add('in');}); words.forEach(function(w){w.classList.add('on');}); return;
+  }
+  var rio=new IntersectionObserver(function(es){es.forEach(function(en){
+    if(en.isIntersecting){en.target.classList.add('in');rio.unobserve(en.target);}
+  });},{rootMargin:'0px 0px -8% 0px'});
+  rv.forEach(function(el){rio.observe(el);});
+  var wio=new IntersectionObserver(function(es){var k=0;es.forEach(function(en){
+    if(!en.isIntersecting)return;
+    en.target.style.transitionDelay=(k++*70)+'ms'; en.target.classList.add('on'); wio.unobserve(en.target);
+  });},{rootMargin:'0px 0px -35% 0px'});
+  words.forEach(function(w){wio.observe(w);});
+
   var smooth=!matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // строка поездок видна, пока главы пересекают верх экрана; текущая глава подсвечена
@@ -417,6 +463,8 @@ JS = r"""
 """
 
 e = html.escape
+# класс js на <html> до отрисовки: блоки, которые проявляются при прокрутке, прячутся только когда скрипт точно работает
+JS_FLAG = "<script>document.documentElement.classList.add('js')</script>"
 STATE = {"sold": "продано", "now": "сейчас", "next": "потом", "option": ""}
 
 
@@ -550,7 +598,7 @@ def render_gallery(src, inline):
     if not g or not g["items"]:
         return ""
     figs = []
-    for x in g["items"]:
+    for n, x in enumerate(g["items"]):
         w, h = (int(v) for v in x["ratio"].split(":"))
         r = w / h
         attrs = (f'alt="{e(x["alt"])}" width="960" height="{round(960 * h / w)}" '
@@ -558,10 +606,10 @@ def render_gallery(src, inline):
         # ширина снимка в ряду примерно r/2.5 экрана на планшете и r·1160/4.6 px на широком экране
         sizes = f"(max-width:759px) 50vw, (max-width:1099px) {round(r * 40)}vw, {round(r * 1160 / 4.6)}px"
         pic = variants(src, x["img"], (360, 640, 960), sizes, attrs, inline)
-        figs.append(f'<figure style="--r:{r:.3g}">{pic}<figcaption>{e(x["cap"])}</figcaption></figure>')
+        figs.append(f'<figure class="rv" style="--r:{r:.3g};--d:{n % 4 * 80}ms">{pic}<figcaption>{e(x["cap"])}</figcaption></figure>')
     return f"""<section class="gallery" id="moments" aria-labelledby="moments-title">
   <div class="wrap">
-    <h2 id="moments-title">{e(g["title"])}</h2>
+    <h2 id="moments-title" class="rv">{e(g["title"])}</h2>
     <div class="moments">{"".join(figs)}</div>
   </div>
 </section>"""
@@ -571,10 +619,35 @@ def render_why():
     w = C.get("why")
     if not w:
         return ""
-    items = "".join(f'<div class="why-item"><h3>{e(x["t"])}</h3><p>{e(x["d"])}</p></div>' for x in w["items"])
+    items = "".join(f'<div class="why-item rv" style="--d:{n % 3 * 80}ms"><h3>{e(x["t"])}</h3><p>{e(x["d"])}</p></div>'
+                    for n, x in enumerate(w["items"]))
     return f"""<section class="wrap why" id="why" aria-labelledby="why-title">
   <h2 id="why-title">{e(w["title"])}</h2>
   <div class="why-grid">{items}</div>
+</section>"""
+
+
+def render_principles():
+    p = C.get("principles")
+    if not p:
+        return ""
+    items = "".join(f'<li class="rv" style="--d:{n * 80}ms"><h3>{e(x["t"])}</h3><p>{e(x["d"])}</p></li>'
+                    for n, x in enumerate(p["items"]))
+    return f"""<section class="wrap principles" id="why" aria-labelledby="principles-title">
+  <h2 id="principles-title" class="rv">{e(p["title"])}</h2>
+  <ol>{items}</ol>
+</section>"""
+
+
+def render_manifesto():
+    m = C.get("manifesto")
+    if not m:
+        return ""
+    text = "<br>".join(" ".join(f'<span class="w">{e(w)}</span>' for w in line.split())
+                       for line in m["text"].split("\n"))
+    return f"""<section class="wrap manifesto">
+  <p class="manifesto-text">{text}</p>
+  <p class="manifesto-note rv">{e(m["note"])}</p>
 </section>"""
 
 
@@ -584,8 +657,8 @@ def render_faq():
         return ""
     items = "".join(f'<details><summary>{e(x["q"])}</summary><p>{e(x["a"])}</p></details>' for x in f["items"])
     return f"""<section class="wrap faq" id="faq" aria-labelledby="faq-title">
-  <div class="faq-head"><h2 id="faq-title">{e(f["title"])}</h2><p>{e(f["lead"])}</p></div>
-  <div class="faq-list">{items}</div>
+  <div class="faq-head rv"><h2 id="faq-title">{e(f["title"])}</h2><p>{e(f["lead"])}</p></div>
+  <div class="faq-list rv">{items}</div>
 </section>"""
 
 
@@ -597,7 +670,7 @@ def render_reviews(src):
     for r in items:
         photo = (picture(src, r["photo"], 'alt="" width="96" height="96" loading="lazy" decoding="async"')
                  if r.get("photo") else "")
-        cards.append(f'<figure class="review"><blockquote><p>{e(r["text"])}</p></blockquote>'
+        cards.append(f'<figure class="review rv"><blockquote><p>{e(r["text"])}</p></blockquote>'
                      f'<figcaption>{photo}<span><b>{e(r["name"])}</b><small>{e(r["trip"])}</small></span></figcaption></figure>')
     return f"""<section class="wrap reviews" id="reviews" aria-labelledby="reviews-title">
   <h2 id="reviews-title">{e(C.get("reviewsTitle", "Что говорят участники"))}</h2>
@@ -612,24 +685,23 @@ def render_about(src, inline):
     paras = "".join(f"<p>{e(p)}</p>" for p in a["paragraphs"])
     places = "".join(f"<li>{e(x)}</li>" for x in a["places"])
     team = []
-    for x in a["team"]:
+    for n, x in enumerate(a["team"]):
         attrs = f'alt="{e(x["name"])}" width="800" height="1000" loading="lazy" decoding="async"'
         pic = variants(src, x["img"], (400, 800), "(max-width:599px) 100vw, (max-width:979px) 50vw, 380px", attrs, inline)
-        team.append(f'<article class="person">{pic}<h3>{e(x["name"])}</h3>'
+        team.append(f'<article class="person rv" style="--d:{n * 100}ms">{pic}<h3>{e(x["name"])}</h3>'
                     f'<p class="role">{e(x["role"])}</p><p>{e(x["bio"])}</p></article>')
     guests = f'\n    <p class="guests">{e(a["guests"])}</p>' if a.get("guests") else ""
     return f"""<section class="wrap about" id="about" aria-labelledby="about-title">
-  <div class="about-head">
+  <div class="about-head rv">
     <p class="year"><b>{e(a["since"])}</b><span>{e(a.get("sinceLabel", ""))}</span></p>
     <div class="about-text">
-      <p class="sub">О нас</p>
       <h2 id="about-title">{e(a["title"])}</h2>
       {paras}
       <ul class="places" aria-label="Где мы бывали">{places}</ul>
     </div>
   </div>
   <div>
-    <p class="sub">Команда</p>
+    <h3 class="sub">Команда</h3>
     <div class="team">{"".join(team)}</div>{guests}
   </div>
 </section>"""
@@ -644,7 +716,7 @@ def render_contact(src, inline, choose, handle):
         bg = f'<div class="contact-bg" aria-hidden="true">{pic}</div>'
     return f"""<section class="contact" aria-labelledby="contact-title">
   {bg}
-  <div class="wrap">
+  <div class="wrap rv">
     <div>
       <h2 id="contact-title">{e(CT["title"])}</h2>
       <p>{e(CT["text"])}</p>
@@ -689,13 +761,13 @@ def render_body(src, inline=False):
     <a class="trip-photo" href="{e(t['url'])}" target="_blank" rel="noopener" aria-label="{e(t['name'])}: открыть сайт поездки">
       {render_photo(t, src, inline)}
       <span class="badges"><span class="stamp">{e(t['dates'])}</span><span class="chips">{flag}<span class="status" hidden></span></span></span>
-      <div class="cap">
+      <div class="cap rv">
         <span class="kicker">{e(t['kicker'])}</span>
         <h2>{e(t['name'])}</h2>
         <span class="project">«{e(t['project'])}»</span>
       </div>
     </a>
-    <div class="wrap trip-body">
+    <div class="wrap trip-body rv">
       <p class="route">{e(t['route'])}</p>
       <div class="trip-main">
         <p class="trip-text">{e(t['text'])}</p>
@@ -706,8 +778,7 @@ def render_body(src, inline=False):
         {render_ladder(t)}
         <a class="btn btn-primary" href="{e(tg_book(t))}" target="_blank" rel="noopener">Забронировать место</a>
         <p class="micro">{e(micro)}</p>
-        <a class="btn btn-ghost" href="{e(t['url'])}" target="_blank" rel="noopener">Подробнее о поездке ↗</a>
-        <p class="domain">{e(t['domain'])}</p>
+        <a class="more" href="{e(t['url'])}" target="_blank" rel="noopener">{e(C['tripLink'])} {e(t['domain'])} ↗</a>
       </div>
     </div>
   </article>""")
@@ -719,10 +790,10 @@ def render_body(src, inline=False):
 
     handle = META["telegram"]
     choose = e(tg(H["ctaMessage"]))
-    return f"""
+    return f"""{C.get("previewBar", "")}
 <div class="masthead">
   <div class="wrap top">
-    <span class="brand">Авторские путешествия <b>· сезон 26/27</b></span>
+    <span class="brand">{e(C['brand'])} <b>· сезон 26/27</b></span>
     <nav aria-label="Разделы"><a href="#about">О нас</a><a href="https://t.me/{handle}" target="_blank" rel="noopener">@{handle}</a></nav>
   </div>
 
@@ -745,7 +816,7 @@ def render_body(src, inline=False):
   </div>
 </div>
 
-<section class="wrap hot" aria-labelledby="hot-title">
+<section class="wrap hot rv" aria-labelledby="hot-title">
   <div>
     <h2 id="hot-title">{e(HOT["title"])}</h2>
     <p>{e(HOT["lead"])}</p>
@@ -762,9 +833,11 @@ def render_body(src, inline=False):
 
 {render_gallery(src, inline)}
 
+{render_manifesto()}
+
 {render_about(src, inline)}
 
-{render_why()}
+{render_principles() or render_why()}
 
 {render_reviews(src)}
 
@@ -801,7 +874,7 @@ def build(inline_out=None):
         fonts = (f'<link rel="preconnect" href="https://fonts.googleapis.com">'
                  f'<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
                  f'<link rel="stylesheet" href="{FONTS}">')
-        page = f"<title>{e(META['title'])}</title>\n{fonts}\n{style}\n{body}\n{script}\n"
+        page = f"<title>{e(META['title'])}</title>\n{JS_FLAG}\n{fonts}\n{style}\n{body}\n{script}\n"
         Path(inline_out).write_text(page, encoding="utf-8")
         return
 
@@ -814,12 +887,14 @@ def build(inline_out=None):
     # Версия в адресе картинки: Telegram кэширует превью, новая картинка получит новый адрес.
     og_ver = hashlib.sha1((IMG / "og.jpg").read_bytes()).hexdigest()[:8]
     og_img = f"{site}/img/og.jpg?v={og_ver}" if site else "img/og.jpg"
-    head = f"""<!doctype html>
+
+    def head(title, robots=""):
+        return f"""<!doctype html>
 <html lang="ru">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>{e(META['title'])}</title>
+<title>{e(title)}</title>{robots}
 <meta name="description" content="{e(META['description'])}">
 <link rel="canonical" href="{site}/">
 <link rel="icon" href="favicon.ico" sizes="32x32">
@@ -837,13 +912,44 @@ def build(inline_out=None):
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="{e(C['og']['alt'])}">
 <meta name="twitter:card" content="summary_large_image">
+{JS_FLAG}
 {fonts}
 {style}
 </head>
 <body>
 <a class="skip" href="#trips">{e(C['skip'])}</a>"""
-    (ROOT / "index.html").write_text(f"{head}\n{body}\n{script}\n</body>\n</html>\n", encoding="utf-8")
+
+    (ROOT / "index.html").write_text(f"{head(META['title'])}\n{body}\n{script}\n</body>\n</html>\n", encoding="utf-8")
     build_404(site, fonts, style)
+    build_previews(src, head, script)
+
+
+def build_previews(src, head, script):
+    """Страницы для просмотра вариантов позиционирования: variant-1.html… Основная страница их не видит,
+    поисковикам они закрыты (noindex)."""
+    global C
+    base, P = C, C.get("previews")
+    if not P:
+        return
+    total = len(P["variants"])
+    for i, v in enumerate(P["variants"], 1):
+        here = ' aria-current="page"'
+        links = "".join(f'<a href="{x["slug"]}.html"{here if x is v else ""}>{k}</a>'
+                        for k, x in enumerate(P["variants"], 1))
+        bar = (f'<div class="pv"><div class="wrap pv-in"><span>{e(P["note"])} · вариант {i} из {total}</span>'
+               f'<nav aria-label="Варианты">{links}<a href="./">{e(P["current"])}</a></nav></div></div>')
+        c = copy.deepcopy(base)
+        c["hero"].update({k: v[k] for k in ("eyebrow", "title", "lead")})
+        c.update(brand=P["brand"], manifesto=P["manifesto"], principles=P["principles"], previewBar=bar)
+        C = c
+        try:
+            body = render_body(src)
+        finally:
+            C = base
+        title = f"{v['name']} · вариант {i} из {total} · {META['title']}"
+        robots = '\n<meta name="robots" content="noindex">'
+        (ROOT / f"{v['slug']}.html").write_text(f"{head(title, robots)}\n{body}\n{script}\n</body>\n</html>\n",
+                                                encoding="utf-8")
 
 
 def build_404(site, fonts, style):

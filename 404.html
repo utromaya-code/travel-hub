@@ -58,6 +58,9 @@ p{text-wrap:pretty}
 .skip{position:absolute;z-index:30;left:var(--gutter);top:.75rem;padding:.6rem .9rem;border-radius:4px;background:var(--stamp);color:var(--on-stamp);
   font:600 .95rem/1.2 var(--f-body);text-decoration:none;transform:translateY(-200%)}
 .skip:focus{transform:none}
+/* появление при прокрутке: только когда работает JS, один раз; --d задаёт небольшую очередь внутри ряда */
+.js .rv{opacity:0;transform:translateY(2rem);transition:opacity .7s var(--ease),transform .7s var(--ease);transition-delay:var(--d,0s)}
+.js .rv.in{opacity:1;transform:none}
 :focus-visible{outline:2px solid var(--stamp);outline-offset:3px;border-radius:4px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .wrap{max-width:1240px;margin-inline:auto;padding-inline:var(--gutter)}
@@ -236,7 +239,10 @@ picture{display:contents}
 .btn-ghost:hover{background:var(--ink);color:var(--paper)}
 .aside .btn-primary{margin-top:.35rem}
 .micro{margin:0;font-size:.82rem;line-height:1.45;color:var(--ink-soft);text-align:center}
-.domain{margin:.15rem 0 0;text-align:center;font:400 .78rem/1.3 var(--f-mono);color:var(--ink-soft)}
+.more{justify-self:center;margin-top:.35rem;font:500 .95rem/1.4 var(--f-body);color:var(--ink);text-align:center;
+  text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.3em;text-decoration-color:var(--line);
+  transition:color .3s var(--ease),text-decoration-color .3s var(--ease)}
+.more:hover{color:var(--stamp);text-decoration-color:var(--stamp)}
 
 /* как это было: снимки прошлых поездок, одна серия */
 .gallery{background:var(--night);color:var(--on-night);padding-block:clamp(4rem,9vw,7rem)}
@@ -258,18 +264,18 @@ picture{display:contents}
 @media (min-width:980px){.about-head{grid-template-columns:auto minmax(0,1fr);align-items:start}}
 .year{margin:0;display:grid;gap:.4rem}
 .year b{font:600 clamp(5.5rem,17vw,12.5rem)/.82 var(--f-display);letter-spacing:-.05em;color:var(--stamp)}
-.year span{font:500 .78rem/1.3 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+.year span{font:500 .95rem/1.4 var(--f-body);color:var(--ink-soft)}
 .about-text{display:grid;gap:1rem;min-width:0}
 .about-text h2{margin:0 0 .25rem;font:600 clamp(1.6rem,3.8vw,2.7rem)/1.08 var(--f-display);letter-spacing:-.02em;text-wrap:balance;max-width:20ch}
 .about-text p{margin:0;max-width:62ch;font-size:clamp(1.03rem,1.4vw,1.15rem);line-height:1.65}
 .places{margin:.5rem 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:.45rem}
 .places li{font:500 .78rem/1 var(--f-mono);letter-spacing:.04em;padding:.5rem .65rem;border:1px solid var(--line);border-radius:4px}
-.sub{margin:0 0 1.25rem;font:500 .78rem/1.3 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--stamp)}
+.sub{margin:0 0 1.5rem;font:600 1.35rem/1.25 var(--f-display);letter-spacing:-.01em}
 .team{display:grid;gap:2.5rem clamp(1.25rem,3vw,2.5rem);grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr))}
 .person{display:grid;gap:.55rem;align-content:start;min-width:0}
 .person img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:2px;background:var(--line);margin-bottom:.5rem}
 .person h3{margin:0;font:600 1.25rem/1.25 var(--f-body)}
-.person .role{margin:0;font:500 .74rem/1.3 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--stamp)}
+.person .role{margin:0;font:500 .85rem/1.3 var(--f-mono);letter-spacing:.02em;color:var(--stamp)}
 .person p:last-child{margin:0;color:var(--ink-soft);font-size:.95rem;line-height:1.55}
 .guests{margin:2rem 0 0;max-width:72ch;padding-top:1.25rem;border-top:1px solid var(--line);color:var(--ink-soft)}
 
@@ -280,6 +286,30 @@ picture{display:contents}
 .why-item{display:grid;gap:.5rem;align-content:start;padding-top:1rem;border-top:2px solid var(--stamp);min-width:0}
 .why-item h3{margin:0;font:600 1.12rem/1.3 var(--f-body)}
 .why-item p{margin:0;color:var(--ink-soft);line-height:1.6}
+
+/* как мы путешествуем: принципы списком, без одинаковых карточек */
+.principles{padding-block:clamp(3.5rem,8vw,6rem);border-top:1px solid var(--line);display:grid;gap:1.5rem}
+@media (min-width:980px){.principles{grid-template-columns:minmax(0,22rem) minmax(0,1fr);column-gap:clamp(2.5rem,4.5vw,4rem);align-items:start}}
+.principles h2{margin:0;font:600 clamp(1.5rem,2.8vw,2.1rem)/1.1 var(--f-display);letter-spacing:-.015em;text-wrap:balance;overflow-wrap:anywhere}
+.principles ol{margin:0;padding:0;list-style:none;border-top:1px solid var(--ink)}
+.principles li{display:grid;gap:.5rem 2.5rem;padding-block:1.6rem;border-bottom:1px solid var(--line)}
+@media (min-width:760px) and (max-width:979px),(min-width:1200px){.principles li{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)}}
+.principles h3{margin:0;font:600 clamp(1.15rem,2vw,1.45rem)/1.25 var(--f-display);letter-spacing:-.01em;text-wrap:balance}
+.principles li p{margin:0;color:var(--ink-soft);line-height:1.6}
+
+/* фраза-манифест: слова проявляются по очереди при прокрутке */
+.manifesto{padding-block:clamp(5rem,12vw,9rem)}
+.manifesto-text{margin:0;max-width:22ch;font:600 clamp(2rem,5.4vw,4.3rem)/1.08 var(--f-display);letter-spacing:-.02em;text-wrap:balance}
+.js .manifesto .w{opacity:.28;transition:opacity .5s var(--ease)}
+.js .manifesto .w.on{opacity:1}
+.manifesto-note{margin:1.75rem 0 0;font:500 .95rem/1.4 var(--f-mono);color:var(--stamp)}
+
+/* плашка на страницах для просмотра вариантов */
+.pv{background:var(--stamp);color:var(--on-stamp);font:500 .8rem/1.3 var(--f-mono)}
+.pv-in{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.5rem 1rem;padding-block:.55rem}
+.pv nav{display:flex;flex-wrap:wrap;gap:.35rem}
+.pv a{padding:.3rem .55rem;border:1px solid currentColor;border-radius:4px;text-decoration:none}
+.pv a[aria-current]{background:var(--on-stamp);color:var(--stamp)}
 
 /* что говорят участники */
 .reviews{padding-block:clamp(3.5rem,8vw,6rem);border-top:1px solid var(--line)}
@@ -335,6 +365,7 @@ footer a{color:var(--ink-soft)}
   html{scroll-behavior:auto}
   .spine,.btn,.top a,.tripnav,.tripnav.is-on,.dock,.dock.is-on,.faq summary::after{transition:none}
   .btn:active{transform:none}
+  .js .rv{transform:none;transition:opacity .7s var(--ease)}
 }
 
 .t-dahab{--img:url("img/dahab-800.webp");--pos:50% 50%;--spine-pos:16% 50%}

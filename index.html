@@ -21,6 +21,7 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Восемь фото-полос поездок сезона и заголовок «Путешествия 2026–2027»">
 <meta name="twitter:card" content="summary_large_image">
+<script>document.documentElement.classList.add('js')</script>
 <link rel="preload" href="fonts/unbounded-cyrillic.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="fonts/onest-cyrillic.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="fonts/onest-latin.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="img/dahab-800.webp" as="image" fetchpriority="high">
 <style>
 @font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/plex-mono-cyrillic-400.woff2) format("woff2");unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
@@ -71,6 +72,9 @@ p{text-wrap:pretty}
 .skip{position:absolute;z-index:30;left:var(--gutter);top:.75rem;padding:.6rem .9rem;border-radius:4px;background:var(--stamp);color:var(--on-stamp);
   font:600 .95rem/1.2 var(--f-body);text-decoration:none;transform:translateY(-200%)}
 .skip:focus{transform:none}
+/* появление при прокрутке: только когда работает JS, один раз; --d задаёт небольшую очередь внутри ряда */
+.js .rv{opacity:0;transform:translateY(2rem);transition:opacity .7s var(--ease),transform .7s var(--ease);transition-delay:var(--d,0s)}
+.js .rv.in{opacity:1;transform:none}
 :focus-visible{outline:2px solid var(--stamp);outline-offset:3px;border-radius:4px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .wrap{max-width:1240px;margin-inline:auto;padding-inline:var(--gutter)}
@@ -249,7 +253,10 @@ picture{display:contents}
 .btn-ghost:hover{background:var(--ink);color:var(--paper)}
 .aside .btn-primary{margin-top:.35rem}
 .micro{margin:0;font-size:.82rem;line-height:1.45;color:var(--ink-soft);text-align:center}
-.domain{margin:.15rem 0 0;text-align:center;font:400 .78rem/1.3 var(--f-mono);color:var(--ink-soft)}
+.more{justify-self:center;margin-top:.35rem;font:500 .95rem/1.4 var(--f-body);color:var(--ink);text-align:center;
+  text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.3em;text-decoration-color:var(--line);
+  transition:color .3s var(--ease),text-decoration-color .3s var(--ease)}
+.more:hover{color:var(--stamp);text-decoration-color:var(--stamp)}
 
 /* как это было: снимки прошлых поездок, одна серия */
 .gallery{background:var(--night);color:var(--on-night);padding-block:clamp(4rem,9vw,7rem)}
@@ -271,18 +278,18 @@ picture{display:contents}
 @media (min-width:980px){.about-head{grid-template-columns:auto minmax(0,1fr);align-items:start}}
 .year{margin:0;display:grid;gap:.4rem}
 .year b{font:600 clamp(5.5rem,17vw,12.5rem)/.82 var(--f-display);letter-spacing:-.05em;color:var(--stamp)}
-.year span{font:500 .78rem/1.3 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+.year span{font:500 .95rem/1.4 var(--f-body);color:var(--ink-soft)}
 .about-text{display:grid;gap:1rem;min-width:0}
 .about-text h2{margin:0 0 .25rem;font:600 clamp(1.6rem,3.8vw,2.7rem)/1.08 var(--f-display);letter-spacing:-.02em;text-wrap:balance;max-width:20ch}
 .about-text p{margin:0;max-width:62ch;font-size:clamp(1.03rem,1.4vw,1.15rem);line-height:1.65}
 .places{margin:.5rem 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:.45rem}
 .places li{font:500 .78rem/1 var(--f-mono);letter-spacing:.04em;padding:.5rem .65rem;border:1px solid var(--line);border-radius:4px}
-.sub{margin:0 0 1.25rem;font:500 .78rem/1.3 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--stamp)}
+.sub{margin:0 0 1.5rem;font:600 1.35rem/1.25 var(--f-display);letter-spacing:-.01em}
 .team{display:grid;gap:2.5rem clamp(1.25rem,3vw,2.5rem);grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr))}
 .person{display:grid;gap:.55rem;align-content:start;min-width:0}
 .person img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:2px;background:var(--line);margin-bottom:.5rem}
 .person h3{margin:0;font:600 1.25rem/1.25 var(--f-body)}
-.person .role{margin:0;font:500 .74rem/1.3 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--stamp)}
+.person .role{margin:0;font:500 .85rem/1.3 var(--f-mono);letter-spacing:.02em;color:var(--stamp)}
 .person p:last-child{margin:0;color:var(--ink-soft);font-size:.95rem;line-height:1.55}
 .guests{margin:2rem 0 0;max-width:72ch;padding-top:1.25rem;border-top:1px solid var(--line);color:var(--ink-soft)}
 
@@ -293,6 +300,30 @@ picture{display:contents}
 .why-item{display:grid;gap:.5rem;align-content:start;padding-top:1rem;border-top:2px solid var(--stamp);min-width:0}
 .why-item h3{margin:0;font:600 1.12rem/1.3 var(--f-body)}
 .why-item p{margin:0;color:var(--ink-soft);line-height:1.6}
+
+/* как мы путешествуем: принципы списком, без одинаковых карточек */
+.principles{padding-block:clamp(3.5rem,8vw,6rem);border-top:1px solid var(--line);display:grid;gap:1.5rem}
+@media (min-width:980px){.principles{grid-template-columns:minmax(0,22rem) minmax(0,1fr);column-gap:clamp(2.5rem,4.5vw,4rem);align-items:start}}
+.principles h2{margin:0;font:600 clamp(1.5rem,2.8vw,2.1rem)/1.1 var(--f-display);letter-spacing:-.015em;text-wrap:balance;overflow-wrap:anywhere}
+.principles ol{margin:0;padding:0;list-style:none;border-top:1px solid var(--ink)}
+.principles li{display:grid;gap:.5rem 2.5rem;padding-block:1.6rem;border-bottom:1px solid var(--line)}
+@media (min-width:760px) and (max-width:979px),(min-width:1200px){.principles li{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)}}
+.principles h3{margin:0;font:600 clamp(1.15rem,2vw,1.45rem)/1.25 var(--f-display);letter-spacing:-.01em;text-wrap:balance}
+.principles li p{margin:0;color:var(--ink-soft);line-height:1.6}
+
+/* фраза-манифест: слова проявляются по очереди при прокрутке */
+.manifesto{padding-block:clamp(5rem,12vw,9rem)}
+.manifesto-text{margin:0;max-width:22ch;font:600 clamp(2rem,5.4vw,4.3rem)/1.08 var(--f-display);letter-spacing:-.02em;text-wrap:balance}
+.js .manifesto .w{opacity:.28;transition:opacity .5s var(--ease)}
+.js .manifesto .w.on{opacity:1}
+.manifesto-note{margin:1.75rem 0 0;font:500 .95rem/1.4 var(--f-mono);color:var(--stamp)}
+
+/* плашка на страницах для просмотра вариантов */
+.pv{background:var(--stamp);color:var(--on-stamp);font:500 .8rem/1.3 var(--f-mono)}
+.pv-in{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.5rem 1rem;padding-block:.55rem}
+.pv nav{display:flex;flex-wrap:wrap;gap:.35rem}
+.pv a{padding:.3rem .55rem;border:1px solid currentColor;border-radius:4px;text-decoration:none}
+.pv a[aria-current]{background:var(--on-stamp);color:var(--stamp)}
 
 /* что говорят участники */
 .reviews{padding-block:clamp(3.5rem,8vw,6rem);border-top:1px solid var(--line)}
@@ -348,6 +379,7 @@ footer a{color:var(--ink-soft)}
   html{scroll-behavior:auto}
   .spine,.btn,.top a,.tripnav,.tripnav.is-on,.dock,.dock.is-on,.faq summary::after{transition:none}
   .btn:active{transform:none}
+  .js .rv{transform:none;transition:opacity .7s var(--ease)}
 }
 
 .t-dahab{--img:url("img/dahab-800.webp");--pos:50% 50%;--spine-pos:16% 50%}
@@ -395,7 +427,7 @@ footer a{color:var(--ink-soft)}
   </div>
 </div>
 
-<section class="wrap hot" aria-labelledby="hot-title">
+<section class="wrap hot rv" aria-labelledby="hot-title">
   <div>
     <h2 id="hot-title">Места заканчиваются</h2>
     <p>Группы маленькие, а цена растёт по мере записи. Первые места всегда дешевле.</p>
@@ -418,13 +450,13 @@ footer a{color:var(--ink-soft)}
     <a class="trip-photo" href="https://dahab-camp.ru/dahab-yoga-camp.html" target="_blank" rel="noopener" aria-label="Дахаб: открыть сайт поездки">
       <picture><source media="(max-width:599px)" srcset="img/dahab-800.webp 800w" sizes="100vw" type="image/webp"><source srcset="img/dahab-1440.webp 1440w" sizes="100vw" type="image/webp"><img src="img/dahab.jpg" class="photo" alt="Фридайверы у троса, сверху сквозь воду бьёт солнце" loading="lazy" decoding="async"></picture>
       <span class="badges"><span class="stamp">11–21 ноября 2026</span><span class="chips"><span class="flag is-last">Последнее место</span><span class="status" hidden></span></span></span>
-      <div class="cap">
+      <div class="cap rv">
         <span class="kicker">Йога-кэмп</span>
         <h2>Дахаб</h2>
         <span class="project">«Йога у Красного моря»</span>
       </div>
     </a>
-    <div class="wrap trip-body">
+    <div class="wrap trip-body rv">
       <p class="route">Дахаб · каньон · Абу-Галум · риф</p>
       <div class="trip-main">
         <p class="trip-text">Йога утром и вечером, днём риф и маска. Красное море в ста метрах от отеля, по желанию фридайвинг с инструктором. Между практиками каньон, темаскаль-баня и бухта Абу-Галум. Живём в красивом отеле с завтраками и бассейном.</p>
@@ -435,8 +467,7 @@ footer a{color:var(--ink-soft)}
         <p class="aside-label">Стоимость</p><ol class="ladder"><li class="tier is-sold"><span class="tier-price">99 000 ₽</span><span class="tier-label">Первые 5 мест</span><span class="tier-state">продано</span></li><li class="tier is-sold"><span class="tier-price">109 000 ₽</span><span class="tier-label">Следующие 5</span><span class="tier-state">продано</span></li><li class="tier is-now"><span class="tier-price">119 000 ₽</span><span class="tier-label">Последние 5</span><span class="tier-state">сейчас</span></li></ol>
         <a class="btn btn-primary" href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%B1%D1%80%D0%BE%D0%BD%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C%20%D0%BC%D0%B5%D1%81%D1%82%D0%BE%3A%20%D0%94%D0%B0%D1%85%D0%B0%D0%B1%2C%20%C2%AB%D0%99%D0%BE%D0%B3%D0%B0%20%D1%83%20%D0%9A%D1%80%D0%B0%D1%81%D0%BD%D0%BE%D0%B3%D0%BE%20%D0%BC%D0%BE%D1%80%D1%8F%C2%BB%2C%2011%E2%80%9321%20%D0%BD%D0%BE%D1%8F%D0%B1%D1%80%D1%8F%202026." target="_blank" rel="noopener">Забронировать место</a>
         <p class="micro">Заявка ни к чему не обязывает. Место закрепляет предоплата 40 000 ₽.</p>
-        <a class="btn btn-ghost" href="https://dahab-camp.ru/dahab-yoga-camp.html" target="_blank" rel="noopener">Подробнее о поездке ↗</a>
-        <p class="domain">dahab-camp.ru</p>
+        <a class="more" href="https://dahab-camp.ru/dahab-yoga-camp.html" target="_blank" rel="noopener">Программа и условия на dahab-camp.ru ↗</a>
       </div>
     </div>
   </article>
@@ -444,13 +475,13 @@ footer a{color:var(--ink-soft)}
     <a class="trip-photo" href="https://patagonya.ru" target="_blank" rel="noopener" aria-label="Патагония: открыть сайт поездки">
       <picture><source media="(max-width:599px)" srcset="img/patagonia-800.webp 800w, img/patagonia-1200.webp 1200w" sizes="100vw" type="image/webp"><source srcset="img/patagonia-1440.webp 1440w, img/patagonia-2400.webp 2400w" sizes="100vw" type="image/webp"><img src="img/patagonia.jpg" class="photo" alt="Рассвет над Фицроем и его отражение в горном озере" loading="lazy" decoding="async"></picture>
       <span class="badges"><span class="stamp">3–15 января 2027</span><span class="chips"><span class="flag is-last">Последнее место</span><span class="status" hidden></span></span></span>
-      <div class="cap">
+      <div class="cap rv">
         <span class="kicker">Треккинг</span>
         <h2>Патагония</h2>
         <span class="project">«Край земли»</span>
       </div>
     </a>
-    <div class="wrap trip-body">
+    <div class="wrap trip-body rv">
       <p class="route">Эль-Калафате → Эль-Чальтен → Торрес-дель-Пайне → Ушуая</p>
       <div class="trip-main">
         <p class="trip-text">Гранитный Фицрой, который краснеет на рассвете, башни Торрес-дель-Пайне, ледник Перито-Морено с воды и канал Бигль с пингвинами. Чистый треккинг без практик: горы, ветер и дорога. Живём в отелях и на эстансиях.</p>
@@ -461,8 +492,7 @@ footer a{color:var(--ink-soft)}
         <p class="aside-label">Стоимость</p><ol class="ladder"><li class="tier is-now"><span class="tier-price">4 500 €</span><span class="tier-label">Двухместное размещение</span><span class="tier-state">сейчас</span></li></ol>
         <a class="btn btn-primary" href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%B1%D1%80%D0%BE%D0%BD%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C%20%D0%BC%D0%B5%D1%81%D1%82%D0%BE%3A%20%D0%9F%D0%B0%D1%82%D0%B0%D0%B3%D0%BE%D0%BD%D0%B8%D1%8F%2C%20%C2%AB%D0%9A%D1%80%D0%B0%D0%B9%20%D0%B7%D0%B5%D0%BC%D0%BB%D0%B8%C2%BB%2C%203%E2%80%9315%20%D1%8F%D0%BD%D0%B2%D0%B0%D1%80%D1%8F%202027." target="_blank" rel="noopener">Забронировать место</a>
         <p class="micro">Заявка ни к чему не обязывает. Место закрепляет предоплата 2 000 €.</p>
-        <a class="btn btn-ghost" href="https://patagonya.ru" target="_blank" rel="noopener">Подробнее о поездке ↗</a>
-        <p class="domain">patagonya.ru</p>
+        <a class="more" href="https://patagonya.ru" target="_blank" rel="noopener">Программа и условия на patagonya.ru ↗</a>
       </div>
     </div>
   </article>
@@ -470,13 +500,13 @@ footer a{color:var(--ink-soft)}
     <a class="trip-photo" href="https://bali-soul.ru" target="_blank" rel="noopener" aria-label="Бали: открыть сайт поездки">
       <picture><source media="(max-width:599px)" srcset="img/bali-800.webp 800w" sizes="100vw" type="image/webp"><source srcset="img/bali-1440.webp 1440w, img/bali-2400.webp 2400w" sizes="100vw" type="image/webp"><img src="img/bali.jpg" class="photo" alt="Рисовые террасы Джатилувих у подножия гор" loading="lazy" decoding="async"></picture>
       <span class="badges"><span class="stamp">12–22 февраля 2027</span><span class="chips"><span class="flag">Регистрация по ранней цене</span><span class="status" hidden></span></span></span>
-      <div class="cap">
+      <div class="cap rv">
         <span class="kicker">Путешествие-практика</span>
         <h2>Бали</h2>
         <span class="project">«Соль. Рис. Тишина.»</span>
       </div>
     </a>
-    <div class="wrap trip-body">
+    <div class="wrap trip-body rv">
       <p class="route">Баланган → Убуд → Гили Мено → Санур</p>
       <div class="trip-main">
         <p class="trip-text">Цигун на рассвете и поющие чаши на закате. Ночной подъём на вулкан Батур к рассвету над облаками, рисовые террасы Джатилувих, вилла среди полей Убуда и два тихих дня на Гили Мено, где слышно только море.</p>
@@ -487,8 +517,7 @@ footer a{color:var(--ink-soft)}
         <p class="aside-label">Стоимость</p><ol class="ladder"><li class="tier is-now"><span class="tier-price">2 400 €</span><span class="tier-label">Первые 5 участников</span><span class="tier-state">сейчас</span></li><li class="tier is-next"><span class="tier-price">2 700 €</span><span class="tier-label">Следующие места</span><span class="tier-state">потом</span></li></ol>
         <a class="btn btn-primary" href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%B1%D1%80%D0%BE%D0%BD%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C%20%D0%BC%D0%B5%D1%81%D1%82%D0%BE%3A%20%D0%91%D0%B0%D0%BB%D0%B8%2C%20%C2%AB%D0%A1%D0%BE%D0%BB%D1%8C.%20%D0%A0%D0%B8%D1%81.%20%D0%A2%D0%B8%D1%88%D0%B8%D0%BD%D0%B0.%C2%BB%2C%2012%E2%80%9322%20%D1%84%D0%B5%D0%B2%D1%80%D0%B0%D0%BB%D1%8F%202027." target="_blank" rel="noopener">Забронировать место</a>
         <p class="micro">Заявка ни к чему не обязывает. Место закрепляет предоплата.</p>
-        <a class="btn btn-ghost" href="https://bali-soul.ru" target="_blank" rel="noopener">Подробнее о поездке ↗</a>
-        <p class="domain">bali-soul.ru</p>
+        <a class="more" href="https://bali-soul.ru" target="_blank" rel="noopener">Программа и условия на bali-soul.ru ↗</a>
       </div>
     </div>
   </article>
@@ -496,13 +525,13 @@ footer a{color:var(--ink-soft)}
     <a class="trip-photo" href="https://cambodiamoto.ru" target="_blank" rel="noopener" aria-label="Камбоджа: открыть сайт поездки">
       <picture><source media="(max-width:599px)" srcset="img/cambodia-800.webp 800w" sizes="100vw" type="image/webp"><source srcset="img/cambodia-1440.webp 1440w" sizes="100vw" type="image/webp"><img src="img/cambodia.jpg" class="photo" alt="Колонна мотоциклов на пыльной дороге, на горизонте башни храма" loading="lazy" decoding="async"></picture>
       <span class="badges"><span class="stamp">26 февраля – 8 марта 2027</span><span class="chips"><span class="flag">Осталось 5 мест</span><span class="status" hidden></span></span></span>
-      <div class="cap">
+      <div class="cap rv">
         <span class="kicker">Мототур</span>
         <h2>Камбоджа</h2>
         <span class="project">«Дорога на юг»</span>
       </div>
     </a>
-    <div class="wrap trip-body">
+    <div class="wrap trip-body rv">
       <p class="route">Ангкор → джунгли и горы → Сиануквиль · остров Ко Ронг</p>
       <div class="trip-main">
         <p class="trip-text">От Ангкора через деревни, джунгли и горы к морю. Маршрут один, способов два: за рулём Honda FTR 230 или в микроавтобусе. После можно остаться на неделю на острове Ко Ронг, 8–15 марта.</p>
@@ -513,8 +542,7 @@ footer a{color:var(--ink-soft)}
         <p class="aside-label">Стоимость</p><ol class="ladder"><li class="tier is-option"><span class="tier-price">2 200 €</span><span class="tier-label">За рулём байка</span><span class="tier-state"></span></li><li class="tier is-option"><span class="tier-price">2 000 €</span><span class="tier-label">В микроавтобусе</span><span class="tier-state"></span></li></ol>
         <a class="btn btn-primary" href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%B1%D1%80%D0%BE%D0%BD%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C%20%D0%BC%D0%B5%D1%81%D1%82%D0%BE%3A%20%D0%9A%D0%B0%D0%BC%D0%B1%D0%BE%D0%B4%D0%B6%D0%B0%2C%20%C2%AB%D0%94%D0%BE%D1%80%D0%BE%D0%B3%D0%B0%20%D0%BD%D0%B0%20%D1%8E%D0%B3%C2%BB%2C%2026%20%D1%84%D0%B5%D0%B2%D1%80%D0%B0%D0%BB%D1%8F%20%E2%80%93%208%20%D0%BC%D0%B0%D1%80%D1%82%D0%B0%202027." target="_blank" rel="noopener">Забронировать место</a>
         <p class="micro">Заявка ни к чему не обязывает. Место закрепляет предоплата 1 000 €.</p>
-        <a class="btn btn-ghost" href="https://cambodiamoto.ru" target="_blank" rel="noopener">Подробнее о поездке ↗</a>
-        <p class="domain">cambodiamoto.ru</p>
+        <a class="more" href="https://cambodiamoto.ru" target="_blank" rel="noopener">Программа и условия на cambodiamoto.ru ↗</a>
       </div>
     </div>
   </article>
@@ -522,13 +550,13 @@ footer a{color:var(--ink-soft)}
     <a class="trip-photo" href="https://cambodiamoto.ru/retreat/" target="_blank" rel="noopener" aria-label="Ко Ронг: открыть сайт поездки">
       <picture><source media="(max-width:599px)" srcset="img/kohrong-800.webp 800w, img/kohrong-1200.webp 1200w" sizes="100vw" type="image/webp"><source srcset="img/kohrong-1440.webp 1440w, img/kohrong-2400.webp 2400w" sizes="100vw" type="image/webp"><img src="img/kohrong.jpg" class="photo" alt="Прозрачная зелёная вода у пляжа Ко Ронга, на берегу деревья" loading="lazy" decoding="async"></picture>
       <span class="badges"><span class="stamp">8–15 марта 2027</span><span class="chips"><span class="status" hidden></span></span></span>
-      <div class="cap">
+      <div class="cap rv">
         <span class="kicker">Ретрит</span>
         <h2>Ко Ронг</h2>
         <span class="project">«Ретрит на острове»</span>
       </div>
     </a>
-    <div class="wrap trip-body">
+    <div class="wrap trip-body rv">
       <p class="route">Сиануквиль → лодка → Ко Ронг</p>
       <div class="trip-main">
         <p class="trip-text">Неделя на острове в Сиамском заливе: сразу после мототура по Камбодже или отдельно от него. Йога, цигун и медитация утром и вечером, между ними море и свободное время. Белые пляжи, джунгли и почти нет дорог, остров так и не стал курортом. Живём в отеле 4★ у самого моря, с бассейном и завтраками. Подходит для любого уровня.</p>
@@ -539,8 +567,7 @@ footer a{color:var(--ink-soft)}
         <p class="aside-label">Стоимость</p><ol class="ladder"><li class="tier is-now"><span class="tier-price">1 000 €</span><span class="tier-label">Двухместное размещение</span><span class="tier-state">сейчас</span></li></ol>
         <a class="btn btn-primary" href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%B1%D1%80%D0%BE%D0%BD%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C%20%D0%BC%D0%B5%D1%81%D1%82%D0%BE%3A%20%D0%9A%D0%BE%20%D0%A0%D0%BE%D0%BD%D0%B3%2C%20%C2%AB%D0%A0%D0%B5%D1%82%D1%80%D0%B8%D1%82%20%D0%BD%D0%B0%20%D0%BE%D1%81%D1%82%D1%80%D0%BE%D0%B2%D0%B5%C2%BB%2C%208%E2%80%9315%20%D0%BC%D0%B0%D1%80%D1%82%D0%B0%202027." target="_blank" rel="noopener">Забронировать место</a>
         <p class="micro">Заявка ни к чему не обязывает. Место закрепляет предоплата 1 000 €.</p>
-        <a class="btn btn-ghost" href="https://cambodiamoto.ru/retreat/" target="_blank" rel="noopener">Подробнее о поездке ↗</a>
-        <p class="domain">cambodiamoto.ru/retreat</p>
+        <a class="more" href="https://cambodiamoto.ru/retreat/" target="_blank" rel="noopener">Программа и условия на cambodiamoto.ru/retreat ↗</a>
       </div>
     </div>
   </article>
@@ -548,13 +575,13 @@ footer a{color:var(--ink-soft)}
     <a class="trip-photo" href="https://shangrila-trip.ru" target="_blank" rel="noopener" aria-label="Китай: открыть сайт поездки">
       <picture><source media="(max-width:599px)" srcset="img/china-800.webp 800w, img/china-1200.webp 1200w" sizes="100vw" type="image/webp"><source srcset="img/china-1440.webp 1440w, img/china-2400.webp 2400w" sizes="100vw" type="image/webp"><img src="img/china.jpg" class="photo" alt="Карстовые горы Яншо на закате" loading="lazy" decoding="async"></picture>
       <span class="badges"><span class="stamp">23 марта – 2 апреля 2027</span><span class="chips"><span class="flag">Регистрация по ранней цене</span><span class="status" hidden></span></span></span>
-      <div class="cap">
+      <div class="cap rv">
         <span class="kicker">Авторское путешествие</span>
         <h2>Китай</h2>
         <span class="project">«Путь в Шангри-Ла»</span>
       </div>
     </a>
-    <div class="wrap trip-body">
+    <div class="wrap trip-body rv">
       <p class="route">Гуанчжоу → Яншо → Шангри-Ла → Лицзян</p>
       <div class="trip-main">
         <p class="trip-text">Ночные огни Гуанчжоу, винчун на родине Ип Мана, туманы над карстом Яншо, утренняя пуджа в монастыре Сонгцзанлинь на 3300 метрах, старый Лицзян и озеро Лугу, где живёт народ мосо.</p>
@@ -565,8 +592,7 @@ footer a{color:var(--ink-soft)}
         <p class="aside-label">Стоимость</p><ol class="ladder"><li class="tier is-now"><span class="tier-price">2 000 €</span><span class="tier-label">Первые 5 участников</span><span class="tier-state">сейчас</span></li><li class="tier is-next"><span class="tier-price">2 300 €</span><span class="tier-label">Следующие места</span><span class="tier-state">потом</span></li></ol>
         <a class="btn btn-primary" href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%B1%D1%80%D0%BE%D0%BD%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C%20%D0%BC%D0%B5%D1%81%D1%82%D0%BE%3A%20%D0%9A%D0%B8%D1%82%D0%B0%D0%B9%2C%20%C2%AB%D0%9F%D1%83%D1%82%D1%8C%20%D0%B2%20%D0%A8%D0%B0%D0%BD%D0%B3%D1%80%D0%B8-%D0%9B%D0%B0%C2%BB%2C%2023%20%D0%BC%D0%B0%D1%80%D1%82%D0%B0%20%E2%80%93%202%20%D0%B0%D0%BF%D1%80%D0%B5%D0%BB%D1%8F%202027." target="_blank" rel="noopener">Забронировать место</a>
         <p class="micro">Заявка ни к чему не обязывает. Место закрепляет предоплата 1 000 €.</p>
-        <a class="btn btn-ghost" href="https://shangrila-trip.ru" target="_blank" rel="noopener">Подробнее о поездке ↗</a>
-        <p class="domain">shangrila-trip.ru</p>
+        <a class="more" href="https://shangrila-trip.ru" target="_blank" rel="noopener">Программа и условия на shangrila-trip.ru ↗</a>
       </div>
     </div>
   </article>
@@ -574,13 +600,13 @@ footer a{color:var(--ink-soft)}
     <a class="trip-photo" href="https://kanchenjunga.ru" target="_blank" rel="noopener" aria-label="Канченджанга: открыть сайт поездки">
       <picture><source media="(max-width:599px)" srcset="img/kanchenjunga-800.webp 800w, img/kanchenjunga-1200.webp 1200w" sizes="100vw" type="image/webp"><source srcset="img/kanchenjunga-1440.webp 1440w, img/kanchenjunga-2400.webp 2400w" sizes="100vw" type="image/webp"><img src="img/kanchenjunga.jpg" class="photo" alt="Канченджанга в огненном свете заката" loading="lazy" decoding="async"></picture>
       <span class="badges"><span class="stamp">5–20 апреля 2027</span><span class="chips"><span class="flag">3 места по ранней цене</span><span class="status" hidden></span></span></span>
-      <div class="cap">
+      <div class="cap rv">
         <span class="kicker">Высокогорный трек</span>
         <h2>Канченджанга</h2>
         <span class="project">«Пять сокровищ снегов»</span>
       </div>
     </a>
-    <div class="wrap trip-body">
+    <div class="wrap trip-body rv">
       <p class="route">Илам → Гунса → Пангпема, 5143 м → перевал Селе Ла</p>
       <div class="trip-main">
         <p class="trip-text">Восточный Непал, куда пускают только по спецпермиту. Чайные холмы, цветущие рододендроны, деревни лимбу и шерпов, караваны яков и стена Жанну. Трек до северного базового лагеря третьей вершины мира, по дороге гомпы горных деревень и монастырь Таши Чолинг в Гунсе. Обратно другой долиной, через перевал Селе Ла.</p>
@@ -591,8 +617,7 @@ footer a{color:var(--ink-soft)}
         <p class="aside-label">Стоимость</p><ol class="ladder"><li class="tier is-now"><span class="tier-price">2 200 $</span><span class="tier-label">Первые 5 мест</span><span class="tier-state">сейчас</span></li><li class="tier is-next"><span class="tier-price">2 500 $</span><span class="tier-label">Следующие места</span><span class="tier-state">потом</span></li></ol>
         <a class="btn btn-primary" href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%B1%D1%80%D0%BE%D0%BD%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C%20%D0%BC%D0%B5%D1%81%D1%82%D0%BE%3A%20%D0%9A%D0%B0%D0%BD%D1%87%D0%B5%D0%BD%D0%B4%D0%B6%D0%B0%D0%BD%D0%B3%D0%B0%2C%20%C2%AB%D0%9F%D1%8F%D1%82%D1%8C%20%D1%81%D0%BE%D0%BA%D1%80%D0%BE%D0%B2%D0%B8%D1%89%20%D1%81%D0%BD%D0%B5%D0%B3%D0%BE%D0%B2%C2%BB%2C%205%E2%80%9320%20%D0%B0%D0%BF%D1%80%D0%B5%D0%BB%D1%8F%202027." target="_blank" rel="noopener">Забронировать место</a>
         <p class="micro">Заявка ни к чему не обязывает. Место закрепляет предоплата 1 000 $.</p>
-        <a class="btn btn-ghost" href="https://kanchenjunga.ru" target="_blank" rel="noopener">Подробнее о поездке ↗</a>
-        <p class="domain">kanchenjunga.ru</p>
+        <a class="more" href="https://kanchenjunga.ru" target="_blank" rel="noopener">Программа и условия на kanchenjunga.ru ↗</a>
       </div>
     </div>
   </article>
@@ -600,13 +625,13 @@ footer a{color:var(--ink-soft)}
     <a class="trip-photo" href="https://tibet2027.ru" target="_blank" rel="noopener" aria-label="Тибет: открыть сайт поездки">
       <picture><source media="(max-width:599px)" srcset="img/tibet-800.webp 800w, img/tibet-1200.webp 1200w" sizes="100vw" type="image/webp"><source srcset="img/tibet-1440.webp 1440w, img/tibet-2400.webp 2400w" sizes="100vw" type="image/webp"><img src="img/tibet.jpg" class="photo" alt="Кайлас под синим небом" loading="lazy" decoding="async"></picture>
       <span class="badges"><span class="stamp">12–29 августа 2027</span><span class="chips"><span class="flag">Регистрация по ранней цене</span><span class="status" hidden></span></span></span>
-      <div class="cap">
+      <div class="cap rv">
         <span class="kicker">Паломничество</span>
         <h2>Тибет</h2>
         <span class="project">«Путь к Кайласу»</span>
       </div>
     </a>
-    <div class="wrap trip-body">
+    <div class="wrap trip-body rv">
       <p class="route">Лхаса → Эверест → Гуге → Кайлас</p>
       <div class="trip-main">
         <p class="trip-text">Уникальный расширенный маршрут: Лхаса и её монастыри, базовый лагерь Эвереста, руины царства Гуге и трёхдневная кора вокруг Кайласа. Сильная команда: Леонид Кутузов, альпинистка Ксения Абрамова и Андрей Баранов. С группой едет экспедиционный фотограф и оператор Симона Малиренко, снимает фото и видео всего путешествия. Фотосъёмка уже в стоимости.</p>
@@ -617,8 +642,7 @@ footer a{color:var(--ink-soft)}
         <p class="aside-label">Стоимость</p><ol class="ladder"><li class="tier is-sold"><span class="tier-price">3 900 €</span><span class="tier-label">Первые 5 мест</span><span class="tier-state">продано</span></li><li class="tier is-now"><span class="tier-price">4 100 €</span><span class="tier-label">Вторые 5 мест</span><span class="tier-state">сейчас</span></li><li class="tier is-next"><span class="tier-price">4 500 €</span><span class="tier-label">Следующие места</span><span class="tier-state">потом</span></li></ol>
         <a class="btn btn-primary" href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%B1%D1%80%D0%BE%D0%BD%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C%20%D0%BC%D0%B5%D1%81%D1%82%D0%BE%3A%20%D0%A2%D0%B8%D0%B1%D0%B5%D1%82%2C%20%C2%AB%D0%9F%D1%83%D1%82%D1%8C%20%D0%BA%20%D0%9A%D0%B0%D0%B9%D0%BB%D0%B0%D1%81%D1%83%C2%BB%2C%2012%E2%80%9329%20%D0%B0%D0%B2%D0%B3%D1%83%D1%81%D1%82%D0%B0%202027." target="_blank" rel="noopener">Забронировать место</a>
         <p class="micro">Заявка ни к чему не обязывает. Место закрепляет предоплата 2 000 €.</p>
-        <a class="btn btn-ghost" href="https://tibet2027.ru" target="_blank" rel="noopener">Подробнее о поездке ↗</a>
-        <p class="domain">tibet2027.ru</p>
+        <a class="more" href="https://tibet2027.ru" target="_blank" rel="noopener">Программа и условия на tibet2027.ru ↗</a>
       </div>
     </div>
   </article>
@@ -626,42 +650,43 @@ footer a{color:var(--ink-soft)}
 
 <section class="gallery" id="moments" aria-labelledby="moments-title">
   <div class="wrap">
-    <h2 id="moments-title">Как это было</h2>
-    <div class="moments"><figure style="--r:1.5"><picture><source srcset="img/moment-himalaya-sunrise-360.webp 360w, img/moment-himalaya-sunrise-640.webp 640w, img/moment-himalaya-sunrise-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 60vw, 378px" type="image/webp"><img src="img/moment-himalaya-sunrise.jpg" alt="Группа на утренней практике на рассвете, руки подняты к солнцу над гималайской долиной" width="960" height="640" loading="lazy" decoding="async"></picture><figcaption>Гималаи · утренняя практика на рассвете</figcaption></figure><figure style="--r:0.8"><picture><source srcset="img/moment-bhutan-yaks-360.webp 360w, img/moment-bhutan-yaks-640.webp 640w, img/moment-bhutan-yaks-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 32vw, 202px" type="image/webp"><img src="img/moment-bhutan-yaks.jpg" alt="Мотоциклы группы едут по горной дороге среди яков" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Бутан · яки на горной дороге</figcaption></figure><figure style="--r:1.5"><picture><source srcset="img/moment-bhutan-dochula-360.webp 360w, img/moment-bhutan-dochula-640.webp 640w, img/moment-bhutan-dochula-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 60vw, 378px" type="image/webp"><img src="img/moment-bhutan-dochula.jpg" alt="Мотоциклы у чортенов перевала Дочула" width="960" height="640" loading="lazy" decoding="async"></picture><figcaption>Мототур по Бутану · перевал Дочула</figcaption></figure><figure style="--r:0.8"><picture><source srcset="img/moment-wudang-taiji-360.webp 360w, img/moment-wudang-taiji-640.webp 640w, img/moment-wudang-taiji-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 32vw, 202px" type="image/webp"><img src="img/moment-wudang-taiji.jpg" alt="Девушка в белом костюме для тайцзи в низкой стойке у ворот храма Пурпурного облака" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Тайцзи у храма Пурпурного облака · Удан</figcaption></figure><figure style="--r:0.8"><picture><source srcset="img/moment-himalaya-group-360.webp 360w, img/moment-himalaya-group-640.webp 640w, img/moment-himalaya-group-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 32vw, 202px" type="image/webp"><img src="img/moment-himalaya-group.jpg" alt="Счастливая группа на фоне снежных вершин" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Гималаи · группа у снежных вершин</figcaption></figure><figure style="--r:2"><picture><source srcset="img/moment-bhutan-ridge-360.webp 360w, img/moment-bhutan-ridge-640.webp 640w, img/moment-bhutan-ridge-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 80vw, 504px" type="image/webp"><img src="img/moment-bhutan-ridge.jpg" alt="Мотоциклы группы в ряд на перевале на фоне гор" width="960" height="480" loading="lazy" decoding="async"></picture><figcaption>Бутан · группа на перевале</figcaption></figure><figure style="--r:0.8"><picture><source srcset="img/moment-china-circle-360.webp 360w, img/moment-china-circle-640.webp 640w, img/moment-china-circle-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 32vw, 202px" type="image/webp"><img src="img/moment-china-circle.jpg" alt="Двое практикуют на большом круге инь-ян в сумерках, вокруг триграммы багуа" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Дао-тур по Китаю · круг инь-ян в сумерках</figcaption></figure><figure style="--r:0.8"><picture><source srcset="img/moment-himalaya-qigong-360.webp 360w, img/moment-himalaya-qigong-640.webp 640w, img/moment-himalaya-qigong-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 32vw, 202px" type="image/webp"><img src="img/moment-himalaya-qigong.jpg" alt="Группа на практике цигун на террасе лоджи с видом на гималайские вершины" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Гималаи · цигун на террасе лоджи</figcaption></figure><figure style="--r:1.5"><picture><source srcset="img/moment-china-gate-360.webp 360w, img/moment-china-gate-640.webp 640w, img/moment-china-gate-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 60vw, 378px" type="image/webp"><img src="img/moment-china-gate.jpg" alt="Вся группа под резными воротами-пайфан, за ними горы в дымке" width="960" height="640" loading="lazy" decoding="async"></picture><figcaption>Дао-тур по Китаю · 2026</figcaption></figure><figure style="--r:0.8"><picture><source srcset="img/moment-himalaya-flags-360.webp 360w, img/moment-himalaya-flags-640.webp 640w, img/moment-himalaya-flags-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 32vw, 202px" type="image/webp"><img src="img/moment-himalaya-flags.jpg" alt="Группа на перевале среди молитвенных флагов" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Перевал в молитвенных флагах</figcaption></figure><figure style="--r:1.5"><picture><source srcset="img/moment-bhutan-morning-360.webp 360w, img/moment-bhutan-morning-640.webp 640w, img/moment-bhutan-morning-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 60vw, 378px" type="image/webp"><img src="img/moment-bhutan-morning.jpg" alt="Райдеры в шлемах на мотоциклах перед выездом" width="960" height="640" loading="lazy" decoding="async"></picture><figcaption>Бутан · утро перед выездом</figcaption></figure><figure style="--r:0.8"><picture><source srcset="img/moment-wudang-stairs-360.webp 360w, img/moment-wudang-stairs-640.webp 640w, img/moment-wudang-stairs-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 32vw, 202px" type="image/webp"><img src="img/moment-wudang-stairs.jpg" alt="Крутая каменная лестница между стенами храма в тумане, на ступенях трое из группы" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Дао-тур по Китаю · лестница в тумане</figcaption></figure></div>
+    <h2 id="moments-title" class="rv">Как это было</h2>
+    <div class="moments"><figure class="rv" style="--r:1.5;--d:0ms"><picture><source srcset="img/moment-himalaya-sunrise-360.webp 360w, img/moment-himalaya-sunrise-640.webp 640w, img/moment-himalaya-sunrise-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 60vw, 378px" type="image/webp"><img src="img/moment-himalaya-sunrise.jpg" alt="Группа на утренней практике на рассвете, руки подняты к солнцу над гималайской долиной" width="960" height="640" loading="lazy" decoding="async"></picture><figcaption>Гималаи · утренняя практика на рассвете</figcaption></figure><figure class="rv" style="--r:0.8;--d:80ms"><picture><source srcset="img/moment-bhutan-yaks-360.webp 360w, img/moment-bhutan-yaks-640.webp 640w, img/moment-bhutan-yaks-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 32vw, 202px" type="image/webp"><img src="img/moment-bhutan-yaks.jpg" alt="Мотоциклы группы едут по горной дороге среди яков" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Бутан · яки на горной дороге</figcaption></figure><figure class="rv" style="--r:1.5;--d:160ms"><picture><source srcset="img/moment-bhutan-dochula-360.webp 360w, img/moment-bhutan-dochula-640.webp 640w, img/moment-bhutan-dochula-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 60vw, 378px" type="image/webp"><img src="img/moment-bhutan-dochula.jpg" alt="Мотоциклы у чортенов перевала Дочула" width="960" height="640" loading="lazy" decoding="async"></picture><figcaption>Мототур по Бутану · перевал Дочула</figcaption></figure><figure class="rv" style="--r:0.8;--d:240ms"><picture><source srcset="img/moment-wudang-taiji-360.webp 360w, img/moment-wudang-taiji-640.webp 640w, img/moment-wudang-taiji-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 32vw, 202px" type="image/webp"><img src="img/moment-wudang-taiji.jpg" alt="Девушка в белом костюме для тайцзи в низкой стойке у ворот храма Пурпурного облака" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Тайцзи у храма Пурпурного облака · Удан</figcaption></figure><figure class="rv" style="--r:0.8;--d:0ms"><picture><source srcset="img/moment-himalaya-group-360.webp 360w, img/moment-himalaya-group-640.webp 640w, img/moment-himalaya-group-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 32vw, 202px" type="image/webp"><img src="img/moment-himalaya-group.jpg" alt="Счастливая группа на фоне снежных вершин" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Гималаи · группа у снежных вершин</figcaption></figure><figure class="rv" style="--r:2;--d:80ms"><picture><source srcset="img/moment-bhutan-ridge-360.webp 360w, img/moment-bhutan-ridge-640.webp 640w, img/moment-bhutan-ridge-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 80vw, 504px" type="image/webp"><img src="img/moment-bhutan-ridge.jpg" alt="Мотоциклы группы в ряд на перевале на фоне гор" width="960" height="480" loading="lazy" decoding="async"></picture><figcaption>Бутан · группа на перевале</figcaption></figure><figure class="rv" style="--r:0.8;--d:160ms"><picture><source srcset="img/moment-china-circle-360.webp 360w, img/moment-china-circle-640.webp 640w, img/moment-china-circle-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 32vw, 202px" type="image/webp"><img src="img/moment-china-circle.jpg" alt="Двое практикуют на большом круге инь-ян в сумерках, вокруг триграммы багуа" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Дао-тур по Китаю · круг инь-ян в сумерках</figcaption></figure><figure class="rv" style="--r:0.8;--d:240ms"><picture><source srcset="img/moment-himalaya-qigong-360.webp 360w, img/moment-himalaya-qigong-640.webp 640w, img/moment-himalaya-qigong-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 32vw, 202px" type="image/webp"><img src="img/moment-himalaya-qigong.jpg" alt="Группа на практике цигун на террасе лоджи с видом на гималайские вершины" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Гималаи · цигун на террасе лоджи</figcaption></figure><figure class="rv" style="--r:1.5;--d:0ms"><picture><source srcset="img/moment-china-gate-360.webp 360w, img/moment-china-gate-640.webp 640w, img/moment-china-gate-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 60vw, 378px" type="image/webp"><img src="img/moment-china-gate.jpg" alt="Вся группа под резными воротами-пайфан, за ними горы в дымке" width="960" height="640" loading="lazy" decoding="async"></picture><figcaption>Дао-тур по Китаю · 2026</figcaption></figure><figure class="rv" style="--r:0.8;--d:80ms"><picture><source srcset="img/moment-himalaya-flags-360.webp 360w, img/moment-himalaya-flags-640.webp 640w, img/moment-himalaya-flags-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 32vw, 202px" type="image/webp"><img src="img/moment-himalaya-flags.jpg" alt="Группа на перевале среди молитвенных флагов" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Перевал в молитвенных флагах</figcaption></figure><figure class="rv" style="--r:1.5;--d:160ms"><picture><source srcset="img/moment-bhutan-morning-360.webp 360w, img/moment-bhutan-morning-640.webp 640w, img/moment-bhutan-morning-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 60vw, 378px" type="image/webp"><img src="img/moment-bhutan-morning.jpg" alt="Райдеры в шлемах на мотоциклах перед выездом" width="960" height="640" loading="lazy" decoding="async"></picture><figcaption>Бутан · утро перед выездом</figcaption></figure><figure class="rv" style="--r:0.8;--d:240ms"><picture><source srcset="img/moment-wudang-stairs-360.webp 360w, img/moment-wudang-stairs-640.webp 640w, img/moment-wudang-stairs-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 32vw, 202px" type="image/webp"><img src="img/moment-wudang-stairs.jpg" alt="Крутая каменная лестница между стенами храма в тумане, на ступенях трое из группы" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Дао-тур по Китаю · лестница в тумане</figcaption></figure></div>
   </div>
 </section>
 
+
+
 <section class="wrap about" id="about" aria-labelledby="about-title">
-  <div class="about-head">
+  <div class="about-head rv">
     <p class="year"><b>20</b><span>лет организуем путешествия</span></p>
     <div class="about-text">
-      <p class="sub">О нас</p>
       <h2 id="about-title">Собираем маршруты сами и едем вместе с группой</h2>
       <p>Мы команда организаторов и преподавателей практик из Санкт-Петербурга. 20 лет собираем авторские путешествия: прошли кору вокруг Кайласа, проехали Бутан на мотоциклах, практиковали тайцзи у даосских храмов в горах Удан, возили группы на Алтай, в Японию, Индию и Патагонию. Летом проводим Йогафест на Ладоге.</p><p>Каждый маршрут мы собираем сами. Выбираем места, договариваемся с проверенными местными гидами и едем вместе с группой от первого до последнего дня. За эти годы вокруг нас собралась компания людей, которые ездят с нами снова и снова. Присоединяйтесь.</p>
       <ul class="places" aria-label="Где мы бывали"><li>Тибет и Кайлас</li><li>Бутан</li><li>Китай</li><li>Япония</li><li>Индия</li><li>Патагония</li><li>Красное море</li><li>Алтай</li><li>Ладога</li></ul>
     </div>
   </div>
   <div>
-    <p class="sub">Команда</p>
-    <div class="team"><article class="person"><picture><source srcset="img/team-andrey-400.webp 400w, img/team-andrey-800.webp 800w" sizes="(max-width:599px) 100vw, (max-width:979px) 50vw, 380px" type="image/webp"><img src="img/team-andrey.jpg" alt="Андрей Баранов" width="800" height="1000" loading="lazy" decoding="async"></picture><h3>Андрей Баранов</h3><p class="role">Маршрут и логистика</p><p>Организует путешествия 20 лет: Алтай, Тибет и кора вокруг Кайласа, Бутан, Китай, Япония, Индия, Патагония. Сооснователь проекта Neuro-Universe, проводит Йогафест на Ладоге. Следит, чтобы дорога, отели и местная команда работали, а вы думали о горах и море.</p></article><article class="person"><picture><source srcset="img/team-ilya-400.webp 400w, img/team-ilya-800.webp 800w" sizes="(max-width:599px) 100vw, (max-width:979px) 50vw, 380px" type="image/webp"><img src="img/team-ilya.jpg" alt="Илья Баринов" width="800" height="1000" loading="lazy" decoding="async"></picture><h3>Илья Баринов</h3><p class="role">Движение и дыхание</p><p>Больше 20 лет в телесных и восточных практиках, 14 лет преподаёт. Трёхкратный чемпион Европы по тайцзи-цюань, реабилитолог и кинезиолог, выпускник Академии Русского балета имени Вагановой.</p></article><article class="person"><picture><source srcset="img/team-leonid-400.webp 400w, img/team-leonid-800.webp 800w" sizes="(max-width:599px) 100vw, (max-width:979px) 50vw, 380px" type="image/webp"><img src="img/team-leonid.jpg" alt="Леонид Кутузов" width="800" height="1000" loading="lazy" decoding="async"></picture><h3>Леонид Кутузов</h3><p class="role">Медитация и мозг</p><p>Президент Федерации йоги Санкт-Петербурга, основатель проекта Neuro-Universe. Практикует йогу с 1998 года, преподаёт с 2000-го, больше 15 лет водит выездные ретриты. Опытный горный путешественник, поднимается на шести- и семитысячники. Ведёт медитацию, дыхание и лекции о том, что практики делают с мозгом.</p></article></div>
+    <h3 class="sub">Команда</h3>
+    <div class="team"><article class="person rv" style="--d:0ms"><picture><source srcset="img/team-andrey-400.webp 400w, img/team-andrey-800.webp 800w" sizes="(max-width:599px) 100vw, (max-width:979px) 50vw, 380px" type="image/webp"><img src="img/team-andrey.jpg" alt="Андрей Баранов" width="800" height="1000" loading="lazy" decoding="async"></picture><h3>Андрей Баранов</h3><p class="role">Маршрут и логистика</p><p>Организует путешествия 20 лет: Алтай, Тибет и кора вокруг Кайласа, Бутан, Китай, Япония, Индия, Патагония. Сооснователь проекта Neuro-Universe, проводит Йогафест на Ладоге. Следит, чтобы дорога, отели и местная команда работали, а вы думали о горах и море.</p></article><article class="person rv" style="--d:100ms"><picture><source srcset="img/team-ilya-400.webp 400w, img/team-ilya-800.webp 800w" sizes="(max-width:599px) 100vw, (max-width:979px) 50vw, 380px" type="image/webp"><img src="img/team-ilya.jpg" alt="Илья Баринов" width="800" height="1000" loading="lazy" decoding="async"></picture><h3>Илья Баринов</h3><p class="role">Движение и дыхание</p><p>Больше 20 лет в телесных и восточных практиках, 14 лет преподаёт. Трёхкратный чемпион Европы по тайцзи-цюань, реабилитолог и кинезиолог, выпускник Академии Русского балета имени Вагановой.</p></article><article class="person rv" style="--d:200ms"><picture><source srcset="img/team-leonid-400.webp 400w, img/team-leonid-800.webp 800w" sizes="(max-width:599px) 100vw, (max-width:979px) 50vw, 380px" type="image/webp"><img src="img/team-leonid.jpg" alt="Леонид Кутузов" width="800" height="1000" loading="lazy" decoding="async"></picture><h3>Леонид Кутузов</h3><p class="role">Медитация и мозг</p><p>Президент Федерации йоги Санкт-Петербурга, основатель проекта Neuro-Universe. Практикует йогу с 1998 года, преподаёт с 2000-го, больше 15 лет водит выездные ретриты. Опытный горный путешественник, поднимается на шести- и семитысячники. Ведёт медитацию, дыхание и лекции о том, что практики делают с мозгом.</p></article></div>
   </div>
 </section>
 
 <section class="wrap why" id="why" aria-labelledby="why-title">
   <h2 id="why-title">Почему с нами</h2>
-  <div class="why-grid"><div class="why-item"><h3>Небанальные места</h3><p>Ищем локации, куда не возят автобусы: монастырь, где пускают на утреннюю пуджу, перевал с видом на пол-Гималаев, остров, где слышно только море. Маршрут строим так, чтобы такие моменты случались каждый день.</p></div><div class="why-item"><h3>Практики в дороге</h3><p>Утром йога, цигун или медитация, днём горы, храмы и море. Поездка даёт и этнографию, и пользу телу и голове. Все практики по желанию и под любой уровень.</p></div><div class="why-item"><h3>20 лет опыта</h3><p>Знаем тонкости: где оформить разрешения, как пройти высоту без спешки, где ночевать, чтобы утром успеть к рассвету. Маршруты проверены, местные команды тоже.</p></div><div class="why-item"><h3>Команда</h3><p>Преподаватели практик, организаторы и свои люди на местах: гиды, водители, хозяева отелей. Ведущие едут с вами от первого дня до последнего.</p></div><div class="why-item"><h3>Люди</h3><p>Мы соединяем разных людей. После поездок остаются друзья, общие планы и даже пары. У нас сложился костяк постоянных участников, и в эту компанию легко влиться.</p></div><div class="why-item"><h3>Сервис</h3><p>Поможем с билетами, дополнительными ночами, трансферами и программой до или после поездки. Андрей на связи с момента заявки.</p></div></div>
+  <div class="why-grid"><div class="why-item rv" style="--d:0ms"><h3>Небанальные места</h3><p>Ищем локации, куда не возят автобусы: монастырь, где пускают на утреннюю пуджу, перевал с видом на пол-Гималаев, остров, где слышно только море. Маршрут строим так, чтобы такие моменты случались каждый день.</p></div><div class="why-item rv" style="--d:80ms"><h3>Практики в дороге</h3><p>Утром йога, цигун или медитация, днём горы, храмы и море. Поездка даёт и этнографию, и пользу телу и голове. Все практики по желанию и под любой уровень.</p></div><div class="why-item rv" style="--d:160ms"><h3>20 лет опыта</h3><p>Знаем тонкости: где оформить разрешения, как пройти высоту без спешки, где ночевать, чтобы утром успеть к рассвету. Маршруты проверены, местные команды тоже.</p></div><div class="why-item rv" style="--d:0ms"><h3>Команда</h3><p>Преподаватели практик, организаторы и свои люди на местах: гиды, водители, хозяева отелей. Ведущие едут с вами от первого дня до последнего.</p></div><div class="why-item rv" style="--d:80ms"><h3>Люди</h3><p>Мы соединяем разных людей. После поездок остаются друзья, общие планы и даже пары. У нас сложился костяк постоянных участников, и в эту компанию легко влиться.</p></div><div class="why-item rv" style="--d:160ms"><h3>Сервис</h3><p>Поможем с билетами, дополнительными ночами, трансферами и программой до или после поездки. Андрей на связи с момента заявки.</p></div></div>
 </section>
 
 
 
 <section class="wrap faq" id="faq" aria-labelledby="faq-title">
-  <div class="faq-head"><h2 id="faq-title">Частые сомнения</h2><p>Ответы на то, о чём нас спрашивают перед записью. Если вашего вопроса нет, напишите, ответим лично.</p></div>
-  <div class="faq-list"><details><summary>Я поеду один и никого не знаю</summary><p>Так приезжают многие. В каждой поездке есть наши постоянные участники и новые люди, знакомимся в первый же вечер. Группы небольшие, поэтому к третьему дню все уже свои.</p></details><details><summary>Я не в форме или никогда не занимался йогой</summary><p>Практики по желанию и подстраиваются под уровень. Во многих поездках с нами реабилитолог Илья Баринов. Сложность каждого маршрута честно описана на его сайте. Не уверены, что потянете? Напишите, подберём поездку под ваш темп.</p></details><details><summary>Что будет с предоплатой, если планы изменятся</summary><p>Если вы отменили поездку заранее, возвращаем предоплату. Срок указан на сайте каждой поездки: за месяц или за два до старта. Если поездку отменим или сильно изменим мы, вернём предоплату полностью.</p></details><details><summary>До старта меньше месяца, а поехать не получается</summary><p>Место можно передать другому человеку. Предупредите нас, и вместо вас поедет друг, родственник или знакомый.</p></details><details><summary>Боюсь запутаться с билетами и визами</summary><p>Поможем выбрать рейсы, подскажем, какие нужны визы и разрешения, забронируем дополнительные ночи до или после поездки. Разрешения на треки и в закрытые районы оформляем сами.</p></details><details><summary>Насколько это безопасно</summary><p>Работаем с проверенными местными гидами и командами. В горных поездках акклиматизация заложена в график, а ведущие следят за самочувствием группы каждый день. Страховка с нужным покрытием обязательна, подскажем, какую взять.</p></details><details><summary>Почему записываться нужно заранее</summary><p>Группы маленькие, а цена растёт по мере записи: первые места дешевле. Предоплата закрепляет за вами место и цену. Чем ближе старт, тем меньше выбор и дороже участие.</p></details></div>
+  <div class="faq-head rv"><h2 id="faq-title">Частые сомнения</h2><p>Ответы на то, о чём нас спрашивают перед записью. Если вашего вопроса нет, напишите, ответим лично.</p></div>
+  <div class="faq-list rv"><details><summary>Я поеду один и никого не знаю</summary><p>Так приезжают многие. В каждой поездке есть наши постоянные участники и новые люди, знакомимся в первый же вечер. Группы небольшие, поэтому к третьему дню все уже свои.</p></details><details><summary>Я не в форме или никогда не занимался йогой</summary><p>Практики по желанию и подстраиваются под уровень. Во многих поездках с нами реабилитолог Илья Баринов. Сложность каждого маршрута честно описана на его сайте. Не уверены, что потянете? Напишите, подберём поездку под ваш темп.</p></details><details><summary>Что будет с предоплатой, если планы изменятся</summary><p>Если вы отменили поездку заранее, возвращаем предоплату. Срок указан на сайте каждой поездки: за месяц или за два до старта. Если поездку отменим или сильно изменим мы, вернём предоплату полностью.</p></details><details><summary>До старта меньше месяца, а поехать не получается</summary><p>Место можно передать другому человеку. Предупредите нас, и вместо вас поедет друг, родственник или знакомый.</p></details><details><summary>Боюсь запутаться с билетами и визами</summary><p>Поможем выбрать рейсы, подскажем, какие нужны визы и разрешения, забронируем дополнительные ночи до или после поездки. Разрешения на треки и в закрытые районы оформляем сами.</p></details><details><summary>Насколько это безопасно</summary><p>Работаем с проверенными местными гидами и командами. В горных поездках акклиматизация заложена в график, а ведущие следят за самочувствием группы каждый день. Страховка с нужным покрытием обязательна, подскажем, какую взять.</p></details><details><summary>Почему записываться нужно заранее</summary><p>Группы маленькие, а цена растёт по мере записи: первые места дешевле. Предоплата закрепляет за вами место и цену. Чем ближе старт, тем меньше выбор и дороже участие.</p></details></div>
 </section>
 
 <section class="contact" aria-labelledby="contact-title">
   <div class="contact-bg" aria-hidden="true"><picture><source srcset="img/moment-himalaya-sunrise-bg-800.webp 800w, img/moment-himalaya-sunrise-bg-1280.webp 1280w" sizes="100vw" type="image/webp"><img src="img/moment-himalaya-sunrise.jpg" alt="" width="1280" height="960" loading="lazy" decoding="async"></picture></div>
-  <div class="wrap">
+  <div class="wrap rv">
     <div>
       <h2 id="contact-title">Места заканчиваются быстро</h2>
       <p>Смотрите поездки и записывайтесь заранее: группы маленькие, а первые места дешевле. Не знаете, что выбрать? Напишите Андрею, подберём поездку под ваш темп.</p>
@@ -701,7 +726,21 @@ footer a{color:var(--ink-soft)}
     if(!nextFound){var d=Math.round((s-now)/DAY);badge.textContent='Старт через '+d+' '+plural(d);badge.hidden=false;nextFound=true;}
   });
 
-  if(!('IntersectionObserver' in window))return;
+  // появление блоков и слов манифеста при прокрутке, один раз
+  var rv=document.querySelectorAll('.rv'), words=document.querySelectorAll('.manifesto .w');
+  if(!('IntersectionObserver' in window)){
+    rv.forEach(function(el){el.classList.add('in');}); words.forEach(function(w){w.classList.add('on');}); return;
+  }
+  var rio=new IntersectionObserver(function(es){es.forEach(function(en){
+    if(en.isIntersecting){en.target.classList.add('in');rio.unobserve(en.target);}
+  });},{rootMargin:'0px 0px -8% 0px'});
+  rv.forEach(function(el){rio.observe(el);});
+  var wio=new IntersectionObserver(function(es){var k=0;es.forEach(function(en){
+    if(!en.isIntersecting)return;
+    en.target.style.transitionDelay=(k++*70)+'ms'; en.target.classList.add('on'); wio.unobserve(en.target);
+  });},{rootMargin:'0px 0px -35% 0px'});
+  words.forEach(function(w){wio.observe(w);});
+
   var smooth=!matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // строка поездок видна, пока главы пересекают верх экрана; текущая глава подсвечена
