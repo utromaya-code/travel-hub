@@ -43,6 +43,7 @@
       "domain": "dahab-camp.ru",
       "alt": "Фридайверы у троса, сверху сквозь воду бьёт солнце",
       "pos": "50% 50%",
+      "bandPos": "50% 62%",
       "spinePos": "16% 50%",
       "seats": {
         "left": 1,
@@ -90,6 +91,7 @@
       "domain": "patagonya.ru",
       "alt": "Рассвет над Фицроем и его отражение в горном озере",
       "pos": "30% 50%",
+      "bandPos": "50% 24%",
       "seats": {
         "left": 1,
         "total": null,
@@ -168,6 +170,7 @@
       "domain": "cambodiamoto.ru",
       "alt": "Колонна мотоциклов на пыльной дороге, на горизонте башни храма",
       "pos": "50% 55%",
+      "bandPos": "50% 48%",
       "seats": {
         "left": 5,
         "total": null,
@@ -240,6 +243,7 @@
       "domain": "shangrila-trip.ru",
       "alt": "Карстовые горы Яншо на закате",
       "pos": "50% 50%",
+      "bandPos": "50% 50%",
       "seats": null,
       "callout": {
         "title": "Регистрация по ранней цене",
@@ -281,6 +285,7 @@
       "domain": "kanchenjunga.ru",
       "alt": "Канченджанга в огненном свете заката",
       "pos": "72% 40%",
+      "bandPos": "50% 36%",
       "seats": {
         "left": 3,
         "total": 5,
@@ -322,6 +327,7 @@
       "domain": "tibet2027.ru",
       "alt": "Кайлас под синим небом",
       "pos": "50% 35%",
+      "bandPos": "50% 42%",
       "seats": null,
       "callout": {
         "title": "Регистрация по ранней цене",

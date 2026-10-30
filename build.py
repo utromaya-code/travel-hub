@@ -174,23 +174,27 @@ picture{display:contents}
   .spines{flex:1 1 auto;height:auto;min-height:30rem;gap:3px}
   .spine{border-radius:0}
 }
-/* на телефоне полосы становятся лентой карточек, которая листается пальцем */
+/* на телефоне те же полосы, повёрнутые на 90°: восемь горизонтальных фото-полос одна под другой,
+   все поездки видны сразу, ничего не обрезано. При открытии полосы выезжают по очереди. */
 @media (max-width:759px){
-  .spines{height:auto;gap:10px;margin-inline:calc(var(--gutter)*-1);padding-inline:var(--gutter);overflow-x:auto;overscroll-behavior-x:contain;
-    scroll-snap-type:x mandatory;scroll-padding-inline:var(--gutter);scrollbar-width:none}
-  .spines::-webkit-scrollbar{display:none}
-  .spine{flex:0 0 min(70vw,22rem);aspect-ratio:4/5;border-radius:4px;scroll-snap-align:start}
-  .spine::after{background:linear-gradient(to top,rgba(6,10,12,.82) 0%,rgba(6,10,12,.3) 38%,rgba(6,10,12,0) 62%)}
-  .spine-label{left:1rem;right:1rem;bottom:1rem;display:grid;justify-items:start;gap:.4rem;white-space:normal;
+  .spines{display:grid;gap:3px;height:auto}
+  .spine{height:3.9rem;border-radius:4px;background-image:var(--band,var(--img));background-position:var(--band-pos,var(--pos));
+    animation:band-in .7s var(--ease) both;animation-delay:calc(var(--i,0) * 60ms + 150ms)}
+  .spine::after{background:linear-gradient(90deg,rgba(6,10,12,.72) 0%,rgba(6,10,12,.3) 45%,rgba(6,10,12,.3) 62%,rgba(6,10,12,.62) 100%)}
+  .spine-label{inset:0 1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;
     writing-mode:horizontal-tb;transform:none}
-  .spine-name{font-size:1.45rem}
-  /* фото сразу под заголовком и кнопкой, длинный абзац после ленты */
+  .spine-name{font-size:1.2rem}
+  .spine-month{font-size:.9rem;opacity:.9}
+  .spine-label{text-shadow:0 1px 10px rgba(0,0,0,.45)}
+  .spine:active{filter:brightness(1.15)}
+  /* фото сразу под заголовком и кнопкой, длинный абзац после полос */
   .intro{row-gap:1.2rem}
   .hero{display:contents}
   .hero-cta{order:1;padding-top:0}
-  .spines-nav{order:2;margin-top:.8rem}
-  .lead{order:3;margin-top:1rem}
+  .spines-nav{order:2;margin-top:.6rem}
+  .lead{order:3;margin-top:.8rem}
 }
+@keyframes band-in{from{opacity:0;transform:translateX(-1.25rem)}}
 
 /* строка поездок: появляется, пока на экране главы */
 .tripnav{position:fixed;z-index:20;top:env(safe-area-inset-top,0px);left:0;right:0;background:var(--paper);border-bottom:1px solid var(--line);
@@ -401,6 +405,7 @@ footer a{color:var(--ink-soft)}
   .spine,.btn,.top a,.tripnav,.tripnav.is-on,.dock,.dock.is-on,.faq summary::after{transition:none}
   .btn:active{transform:none}
   .js .rv{transform:none;transition:opacity .7s var(--ease)}
+  .spine{animation:none}
 }
 """
 
@@ -531,6 +536,10 @@ def image_css(src):
         r = f'.t-{i}{{--img:url("{src(variant(i, 800))}");--pos:{t["pos"]}'
         if (IMG / f"{i}-1200.webp").exists():
             r += f';--img2:url("{src(i + "-1200.webp")}")'
+        if (IMG / f"{i}-960.webp").exists():
+            r += f';--band:url("{src(i + "-960.webp")}")'
+        if t.get("bandPos"):
+            r += f';--band-pos:{t["bandPos"]}'
         if t.get("spinePos"):
             r += f';--spine-pos:{t["spinePos"]}'
         rules.append(r + "}")
@@ -738,10 +747,10 @@ def render_contact(src, inline, choose, handle):
 def render_body(src, inline=False):
     H, HOT = C["hero"], C["hot"]
     spines = "\n".join(
-        f'      <a class="spine t-{t["id"]}" href="#{t["id"]}">'
+        f'      <a class="spine t-{t["id"]}" href="#{t["id"]}" style="--i:{n}">'
         f'<span class="spine-label"><span class="spine-name">{e(t["name"])}</span> <span class="spine-month">{e(t["monthFull"])}</span></span>'
         f'<span class="sr">{e(t["dates"])}</span></a>'
-        for t in TOURS)
+        for n, t in enumerate(TOURS))
 
     hot = sorted((t for t in TOURS if t.get("hot")), key=lambda t: t["hotOrder"])
     hot_rows = "\n".join(
@@ -885,7 +894,10 @@ def build(inline_out=None):
     style = f"<style>{FONT_FACES}{CSS}\n{image_css(src)}\n</style>"
     fonts = "".join(f'<link rel="preload" href="fonts/{f}.woff2" as="font" type="font/woff2" crossorigin>' for f in PRELOAD)
     # первая полоса первого экрана: фон из CSS браузер находит поздно, поэтому заранее
-    fonts += f'<link rel="preload" href="{src(variant(TOURS[0]["id"], 800))}" as="image" fetchpriority="high">'
+    first = TOURS[0]["id"]
+    fonts += f'<link rel="preload" href="{src(variant(first, 800))}" as="image" fetchpriority="high" media="(min-width:760px)">'
+    if (IMG / f"{first}-960.webp").exists():
+        fonts += f'<link rel="preload" href="{src(first + "-960.webp")}" as="image" fetchpriority="high" media="(max-width:759px)">'
 
     site = META["siteUrl"].rstrip("/")
     # Версия в адресе картинки: Telegram кэширует превью, новая картинка получит новый адрес.
