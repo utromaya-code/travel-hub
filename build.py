@@ -67,6 +67,7 @@ CSS = r"""
   --gutter:max(clamp(16px,4vw,40px),env(safe-area-inset-left,0px),env(safe-area-inset-right,0px));
   --edge:max(var(--gutter),calc((100% - 1160px) / 2));
   --bar:2.75rem;
+  --ease:cubic-bezier(.22,1,.36,1);
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -82,6 +83,11 @@ CSS = r"""
 html{scroll-behavior:smooth}
 body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--f-body);-webkit-font-smoothing:antialiased;overflow-x:clip}
 a{color:inherit}
+p{text-wrap:pretty}
+/* ссылка «к поездкам» для клавиатуры: видна только в фокусе */
+.skip{position:absolute;z-index:30;left:var(--gutter);top:.75rem;padding:.6rem .9rem;border-radius:4px;background:var(--stamp);color:var(--on-stamp);
+  font:600 .95rem/1.2 var(--f-body);text-decoration:none;transform:translateY(-200%)}
+.skip:focus{transform:none}
 :focus-visible{outline:2px solid var(--stamp);outline-offset:3px;border-radius:4px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .wrap{max-width:1240px;margin-inline:auto;padding-inline:var(--gutter)}
@@ -92,7 +98,7 @@ picture{display:contents}
 .top{display:flex;align-items:center;justify-content:space-between;gap:1rem;width:100%;padding-block:1.1rem}
 .brand{font:500 .78rem/1.2 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
 .brand b{font-weight:500;color:var(--on-night-soft)}
-.top a{font:500 .85rem/1 var(--f-mono);text-decoration:none;padding:.55rem .8rem;border:1px solid var(--night-line);border-radius:4px;transition:border-color .2s}
+.top a{font:500 .85rem/1 var(--f-mono);text-decoration:none;padding:.55rem .8rem;border:1px solid var(--night-line);border-radius:4px;transition:border-color .3s var(--ease)}
 .top a:hover{border-color:var(--on-night)}
 .top nav{display:flex;gap:.5rem;flex-shrink:0}
 .top nav a{white-space:nowrap}
@@ -106,6 +112,12 @@ picture{display:contents}
 .hero-cta{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.25rem;padding-top:.6rem}
 .hero-cta .btn{min-width:min(100%,15rem)}
 .hero-cta span{font-size:.9rem;color:var(--on-night-soft)}
+
+.masthead.notfound{min-height:100svh;display:flex;flex-direction:column}
+.nf{flex:1;width:100%;display:grid;align-content:center;padding-block:3rem 5rem}
+.nf .hero{display:grid}
+.nf .hero>*{order:0}
+.notfound .brand{text-decoration:none;border:0;padding:0}
 
 /* горящие места */
 .hot{padding-block:clamp(3rem,7vw,5rem) 0;min-width:0}
@@ -128,7 +140,7 @@ picture{display:contents}
 .spines-nav{min-width:0}
 .spines{display:flex;gap:clamp(4px,.8vw,8px);height:clamp(300px,42vw,460px)}
 .spine{position:relative;flex:1 1 0;min-width:0;overflow:hidden;border-radius:4px;text-decoration:none;color:var(--on-photo);
-  background:#2a3133 var(--img) var(--pos)/cover no-repeat;transition:flex-grow .55s cubic-bezier(.2,.7,.2,1)}
+  background:#2a3133 var(--img) var(--pos)/cover no-repeat;transition:flex-grow .6s var(--ease)}
 .spine::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(6,10,12,.82) 0%,rgba(6,10,12,.15) 55%,rgba(6,10,12,.05) 100%)}
 .spine-name{position:absolute;z-index:1;left:50%;bottom:3rem;writing-mode:vertical-rl;transform:translateX(-50%) rotate(180deg);
   font:600 clamp(.92rem,2.1vw,1.45rem)/1 var(--f-display);white-space:nowrap;letter-spacing:.01em}
@@ -174,8 +186,8 @@ picture{display:contents}
 
 /* строка поездок: появляется, пока на экране главы */
 .tripnav{position:fixed;z-index:20;top:env(safe-area-inset-top,0px);left:0;right:0;background:var(--paper);border-bottom:1px solid var(--line);
-  transform:translateY(-110%);visibility:hidden;transition:transform .3s ease,visibility 0s linear .3s}
-.tripnav.is-on{transform:none;visibility:visible;transition:transform .3s ease}
+  transform:translateY(-110%);visibility:hidden;transition:transform .5s var(--ease),visibility 0s linear .5s}
+.tripnav.is-on{transform:none;visibility:visible;transition:transform .5s var(--ease)}
 .tripnav-in{display:flex;gap:1.5rem;height:var(--bar);overflow-x:auto;scrollbar-width:none}
 .tripnav-in::-webkit-scrollbar{display:none}
 .tripnav a{display:flex;align-items:center;gap:.45rem;flex-shrink:0;padding-top:2px;border-bottom:2px solid transparent;
@@ -246,7 +258,8 @@ picture{display:contents}
 .tier.is-now .tier-state{background:var(--stamp);color:var(--on-stamp);padding:.3rem .45rem;border-radius:3px}
 .tier.is-next .tier-price{color:var(--ink-soft);font-weight:500}
 .btn{display:flex;align-items:center;justify-content:center;gap:.5rem;min-height:3.1rem;padding:.6rem 1.2rem;border-radius:4px;
-  font:600 1rem/1.2 var(--f-body);text-decoration:none;text-align:center;transition:background-color .2s,color .2s,border-color .2s}
+  font:600 1rem/1.2 var(--f-body);text-decoration:none;text-align:center;transition:background-color .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease),transform .3s var(--ease)}
+.btn:active{transform:translateY(1px)}
 .btn-primary{background:var(--stamp);color:var(--on-stamp);border:1.5px solid var(--stamp)}
 .btn-primary:hover{filter:brightness(1.08)}
 .btn-ghost{border:1.5px solid var(--ink);color:var(--ink)}
@@ -318,7 +331,7 @@ picture{display:contents}
 .faq details{border-bottom:1px solid var(--line)}
 .faq summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1rem;align-items:baseline;padding:1.05rem .1rem;font:600 1.08rem/1.35 var(--f-body)}
 .faq summary::-webkit-details-marker{display:none}
-.faq summary::after{content:"+";font:500 1.3rem/1 var(--f-mono);color:var(--stamp);transition:transform .2s}
+.faq summary::after{content:"+";font:500 1.3rem/1 var(--f-mono);color:var(--stamp);transition:transform .3s var(--ease)}
 .faq details[open] summary::after{transform:rotate(45deg)}
 .faq summary:hover{color:var(--stamp)}
 .faq details p{margin:0;padding:0 2.5rem 1.2rem .1rem;max-width:64ch;color:var(--ink-soft);line-height:1.62}
@@ -342,8 +355,8 @@ footer a{color:var(--ink-soft)}
 /* плашка внизу экрана на телефоне: после первого экрана и до контактов */
 .dock{position:fixed;z-index:20;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:.75rem;
   padding:.6rem var(--gutter) calc(.6rem + env(safe-area-inset-bottom,0px));background:var(--surface);border-top:1px solid var(--line);
-  transform:translateY(110%);visibility:hidden;transition:transform .3s ease,visibility 0s linear .3s}
-.dock.is-on{transform:none;visibility:visible;transition:transform .3s ease}
+  transform:translateY(110%);visibility:hidden;transition:transform .5s var(--ease),visibility 0s linear .5s}
+.dock.is-on{transform:none;visibility:visible;transition:transform .5s var(--ease)}
 .dock-text{font:600 .95rem/1.25 var(--f-body)}
 .dock .btn{flex-shrink:0;min-height:2.85rem;padding:.5rem 1.1rem;font-size:.95rem}
 @media (min-width:760px){.dock{display:none}}
@@ -351,6 +364,7 @@ footer a{color:var(--ink-soft)}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   .spine,.btn,.top a,.tripnav,.tripnav.is-on,.dock,.dock.is-on,.faq summary::after{transition:none}
+  .btn:active{transform:none}
 }
 """
 
@@ -743,7 +757,7 @@ def render_body(src, inline=False):
 
 <nav class="tripnav" aria-label="{e(C["tripNav"])}"><div class="wrap tripnav-in">{nav_links}</div></nav>
 
-<main class="trips">{''.join(trips)}
+<main class="trips" id="trips">{''.join(trips)}
 </main>
 
 {render_gallery(src, inline)}
@@ -826,8 +840,45 @@ def build(inline_out=None):
 {fonts}
 {style}
 </head>
-<body>"""
+<body>
+<a class="skip" href="#trips">{e(C['skip'])}</a>"""
     (ROOT / "index.html").write_text(f"{head}\n{body}\n{script}\n</body>\n</html>\n", encoding="utf-8")
+    build_404(site, fonts, style)
+
+
+def build_404(site, fonts, style):
+    """404.html для GitHub Pages: тот же вид, ссылки от адреса сайта, потому что страница открывается по любому пути."""
+    N, handle = C["notFound"], META["telegram"]
+    page = f"""<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<base href="{site}/">
+<title>{e(N['title'])} · {e(META['title'])}</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+{fonts}
+{style}
+</head>
+<body>
+<div class="masthead notfound">
+  <div class="wrap top">
+    <a class="brand" href="./">Авторские путешествия <b>· сезон 26/27</b></a>
+    <nav aria-label="Разделы"><a href="https://t.me/{handle}" target="_blank" rel="noopener">@{handle}</a></nav>
+  </div>
+  <main class="wrap nf"><div class="hero">
+    <p class="eyebrow">404</p>
+    <h1>{e(N['title'])}</h1>
+    <p class="lead">{e(N['text'])}</p>
+    <div class="hero-cta"><a class="btn btn-primary" href="./">{e(N['cta'])}</a></div>
+  </div></main>
+</div>
+</body>
+</html>
+"""
+    (ROOT / "404.html").write_text(page, encoding="utf-8")
 
 
 if __name__ == "__main__":
