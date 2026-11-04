@@ -22,7 +22,7 @@
 <meta property="og:image:alt" content="Восемь фото-полос поездок сезона и заголовок «Путешествия 2026–2027»">
 <meta name="twitter:card" content="summary_large_image">
 <script>document.documentElement.classList.add('js')</script>
-<link rel="preload" href="fonts/unbounded-cyrillic.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="fonts/onest-cyrillic.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="fonts/onest-latin.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="img/dahab-800.webp" as="image" fetchpriority="high" media="(min-width:760px)"><link rel="preload" href="img/dahab-960.webp" as="image" fetchpriority="high" media="(max-width:759px)">
+<link rel="preload" href="fonts/unbounded-cyrillic.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="fonts/onest-cyrillic.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="fonts/onest-latin.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="img/dahab-800.webp" as="image" fetchpriority="high" media="(min-width:760px)">
 <style>
 @font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/plex-mono-cyrillic-400.woff2) format("woff2");unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
 @font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/plex-mono-latin-ext-400.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
@@ -96,6 +96,11 @@ picture{display:contents}
 .hero{display:grid;gap:1.2rem;align-content:start;min-width:0}
 .eyebrow{margin:0;font:500 .95rem/1.4 var(--f-body);color:var(--night-accent)}
 .hero h1{margin:0;font:600 clamp(2rem,5.6vw,4.3rem)/1.05 var(--f-display);letter-spacing:-.02em;text-wrap:balance;max-width:17ch}
+/* строки заголовка со сдвигом, как в журнальной вёрстке: каждая следующая фраза чуть правее.
+   Заголовок остаётся одним блоком (быстрее отрисовка), отступ получает каждая строка фразы (box-decoration-break) */
+.hero h1 .ln{-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.hero h1 .ln:nth-of-type(2){padding-left:.8em}
+.hero h1 .ln:nth-of-type(3){padding-left:1.6em}
 .lead{margin:0;max-width:58ch;font-size:clamp(1.02rem,1.6vw,1.2rem);color:var(--on-night-soft)}
 .hero-cta{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.25rem;padding-top:.6rem}
 .hero-cta .btn{min-width:min(100%,15rem)}
@@ -106,6 +111,23 @@ picture{display:contents}
 .nf .hero{display:grid}
 .nf .hero>*{order:0}
 .notfound .brand{text-decoration:none;border:0;padding:0}
+
+/* мне нравится: теги настроения, под ними подходящие поездки */
+.mood{padding-block:clamp(3rem,7vw,5rem) 0;display:grid;gap:1rem}
+@media (min-width:980px){.mood{grid-template-columns:minmax(0,18.5rem) minmax(0,1fr);column-gap:clamp(2.5rem,4.5vw,4rem);align-items:start}}
+.mood h2{margin:0;font:600 1.15rem/1.25 var(--f-display);letter-spacing:-.01em}
+.mood-tags{display:flex;flex-wrap:wrap;gap:.5rem}
+.tag{appearance:none;cursor:pointer;padding:.6rem .95rem;border:1px solid var(--line);border-radius:4px;background:none;color:var(--ink);
+  font:500 1rem/1.2 var(--f-body);transition:border-color .3s var(--ease),background-color .3s var(--ease),color .3s var(--ease)}
+.tag:hover{border-color:var(--ink)}
+.tag[aria-pressed="true"]{background:var(--fill);border-color:var(--fill);color:var(--on-fill)}
+.mood-hint{margin:.75rem 0 0;color:var(--ink-soft);font-size:.95rem}
+.mood-list{list-style:none;margin:1rem 0 0;padding:0;border-top:1px solid var(--ink)}
+.mood-list li{border-bottom:1px solid var(--line)}
+.mood-list a{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:.1rem 1rem;padding:.7rem .1rem;text-decoration:none}
+.mood-list b{font:600 1.05rem/1.3 var(--f-body)}
+.mood-list span{color:var(--ink-soft);font-size:.95rem}
+.mood-list a:hover b{color:var(--stamp)}
 
 /* горящие места */
 .hot{padding-block:clamp(3rem,7vw,5rem) 0;min-width:0}
@@ -136,6 +158,7 @@ picture{display:contents}
 .spine-name{font:600 clamp(.92rem,2.1vw,1.45rem)/1 var(--f-display);letter-spacing:.01em}
 .spine-month{font:500 .8rem/1 var(--f-body);opacity:.8}
 .spine.is-past{filter:grayscale(.85) brightness(.8)}
+.band{display:none}
 @media (hover:hover) and (min-width:760px){
   .spines:hover .spine{flex-grow:.75}
   .spines .spine:hover,.spines .spine:focus-visible{flex-grow:3.2}
@@ -149,9 +172,9 @@ picture{display:contents}
 /* широкий экран: текст слева, полосы справа во всю высоту экрана до края */
 @media (min-width:980px){
   .masthead{display:grid;grid-template-rows:auto 1fr;min-height:min(100svh,58rem)}
-  .intro{grid-template-columns:minmax(0,29rem) minmax(0,1fr);column-gap:clamp(3rem,6vw,6rem);max-width:none;margin:0;padding:0 0 0 var(--edge)}
+  .intro{grid-template-columns:minmax(0,32rem) minmax(0,1fr);column-gap:clamp(3rem,6vw,6rem);max-width:none;margin:0;padding:0 0 0 var(--edge)}
   .hero{align-self:center;padding-block:2rem 3.5rem}
-  .hero h1{font-size:clamp(2.4rem,3.8vw,3.6rem)}
+  .hero h1{font-size:clamp(2.4rem,3.4vw,3.3rem)}
   .lead{font-size:1.08rem}
   .spines-nav{display:flex}
   .spines{flex:1 1 auto;height:auto;min-height:30rem;gap:3px}
@@ -161,7 +184,7 @@ picture{display:contents}
    все поездки видны сразу, ничего не обрезано. При открытии полосы выезжают по очереди. */
 @media (max-width:759px){
   .spines{display:grid;gap:3px;height:auto}
-  .spine{height:3.9rem;border-radius:4px;background-image:var(--band,var(--img));background-position:var(--band-pos,var(--pos));
+  .spine{height:3.9rem;border-radius:4px;background-image:none;
     animation:band-in .7s var(--ease) both;animation-delay:calc(var(--i,0) * 60ms + 150ms)}
   .spine::after{background:linear-gradient(90deg,rgba(6,10,12,.72) 0%,rgba(6,10,12,.3) 45%,rgba(6,10,12,.3) 62%,rgba(6,10,12,.62) 100%)}
   .spine-label{inset:0 1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;
@@ -170,6 +193,7 @@ picture{display:contents}
   .spine-month{font-size:.9rem;opacity:.9}
   .spine-label{text-shadow:0 1px 10px rgba(0,0,0,.45)}
   .spine:active{filter:brightness(1.15)}
+  .spine .band{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
   /* фото сразу под заголовком и кнопкой, длинный абзац после полос */
   .intro{row-gap:1.2rem}
   .hero{display:contents}
@@ -177,7 +201,8 @@ picture{display:contents}
   .spines-nav{order:2;margin-top:.6rem}
   .lead{order:3;margin-top:.8rem}
 }
-@keyframes band-in{from{opacity:0;transform:translateX(-1.25rem)}}
+/* только сдвиг, без прозрачности: полосы видны с первого кадра и не задерживают отрисовку */
+@keyframes band-in{from{transform:translateX(-1.25rem)}}
 
 /* строка поездок: появляется, пока на экране главы */
 .tripnav{position:fixed;z-index:20;top:env(safe-area-inset-top,0px);left:0;right:0;background:var(--paper);border-bottom:1px solid var(--line);
@@ -199,11 +224,18 @@ picture{display:contents}
 .trip-photo{position:relative;display:block;overflow:hidden;aspect-ratio:4/5;color:var(--on-photo);text-decoration:none;background:#2a3133}
 @media (min-width:600px){.trip-photo{aspect-ratio:auto;height:clamp(26rem,64vw,40rem)}}
 @media (min-width:1000px){.trip-photo{height:clamp(30rem,80svh,54rem)}}
-.photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--pos)}
+/* фото чуть выше рамки и при прокрутке движется медленнее текста: глубина, как в кино */
+.photo{position:absolute;left:0;top:-8%;width:100%;height:116%;object-fit:cover;object-position:var(--pos);
+  transform:translate3d(0,var(--py,0px),0);will-change:transform}
 .trip-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,var(--scrim) 0%,rgba(6,10,12,.45) 30%,rgba(6,10,12,0) 58%)}
-.cap{position:absolute;z-index:1;left:0;right:0;bottom:0;padding:0 var(--edge) clamp(1.5rem,4.5vw,3.5rem);display:grid;gap:.5rem;text-shadow:0 1px 14px rgba(0,0,0,.35)}
+.cap{position:absolute;z-index:1;left:0;right:0;bottom:0;padding:0 var(--edge) clamp(1.5rem,4.5vw,3.5rem);display:grid;gap:.5rem;text-shadow:0 1px 14px rgba(0,0,0,.35);
+  container-type:inline-size}
 .kicker{font:500 1rem/1.3 var(--f-body);opacity:.9}
-.trip h2{margin:0;font:600 clamp(1.85rem,8.6vw,7.5rem)/.95 var(--f-display);letter-spacing:-.03em}
+.trip h2{margin:0;font:600 clamp(1.85rem,8.6vw,7.5rem)/.9 var(--f-display);letter-spacing:-.03em;white-space:nowrap;--h2max:5.5rem}
+/* название поездки на всю ширину главы: --w ширина названия в em, короткие названия ограничены сверху */
+@supports (font-size:1cqi){.trip h2{font-size:min(calc(100cqi / var(--w,6)),var(--h2max))}}
+@media (min-width:600px){.trip h2{--h2max:9rem}}
+@media (min-width:1000px){.trip h2{--h2max:13rem}}
 .project{font:500 clamp(1.05rem,2vw,1.4rem)/1.3 var(--f-body)}
 /* даты слева, флажки справа: в одной строке, поэтому не наезжают друг на друга на любой ширине */
 .badges{position:absolute;z-index:1;top:clamp(1rem,3vw,2rem);left:var(--edge);right:var(--edge);
@@ -269,16 +301,19 @@ picture{display:contents}
 /* как это было: снимки прошлых поездок, одна серия */
 .gallery{background:var(--night);color:var(--on-night);padding-block:clamp(4rem,9vw,7rem)}
 .gallery h2{margin:0 0 clamp(1.75rem,4vw,3rem);font:600 clamp(1.75rem,4.5vw,3.2rem)/1.05 var(--f-display);letter-spacing:-.02em}
+/* журнальный разворот: на телефоне две колонки, ключевые кадры на всю ширину; на широком экране
+   снимки разного размера на сетке из 12 колонок со сдвигами по вертикали (--col, --shift из content.json) */
 .moments{columns:2;column-gap:10px}
 .moments figure{margin:0 0 14px;break-inside:avoid;min-width:0}
+.moments figure.wide{column-span:all;margin-bottom:18px}
 .moments img{display:block;width:100%;height:auto;border-radius:2px;background:#1B2427}
 .moments figcaption{padding-top:.45rem;font:400 .74rem/1.4 var(--f-mono);color:var(--on-night-soft)}
-/* шире телефона ряды одной высоты: ширина снимка пропорциональна его соотношению сторон --r, --per задаёт сколько «единиц» в ряду */
-@media (min-width:760px){
-  .moments{columns:auto;display:flex;flex-wrap:wrap;gap:22px 12px;--per:3.6}
-  .moments figure{margin:0;flex:var(--r) 1 calc(100% * var(--r) / var(--per))}
+@media (min-width:760px){.moments{column-gap:16px}.moments figure{margin-bottom:20px}}
+@media (min-width:980px){
+  .moments{columns:auto;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:clamp(2rem,4vw,3.5rem) clamp(12px,2vw,28px);align-items:start}
+  .moments figure,.moments figure.wide{grid-column:var(--col,auto / span 4);margin:var(--shift,0) 0 0}
+  .moments figcaption{font-size:.78rem}
 }
-@media (min-width:1100px){.moments{--per:4.9}}
 
 /* о нас */
 .about{padding-block:clamp(4rem,9vw,7rem);display:grid;gap:clamp(3rem,7vw,5rem)}
@@ -381,24 +416,34 @@ footer a{color:var(--ink-soft)}
 .dock.is-on{transform:none;visibility:visible;transition:transform .5s var(--ease)}
 .dock-text{font:600 .95rem/1.25 var(--f-body)}
 .dock .btn{flex-shrink:0;min-height:2.85rem;padding:.5rem 1.1rem;font-size:.95rem}
-@media (min-width:760px){.dock{display:none}}
+@media (min-width:1280px){.dock{display:none}}
+/* на широком экране (поля от 60px) вместо нижней плашки вертикальная кнопка у правого края */
+.side-cta{display:none}
+@media (min-width:1280px){
+  .side-cta{position:fixed;z-index:20;right:0;top:50%;display:block;padding:1.1rem .75rem;border-radius:4px 0 0 4px;
+    background:var(--fill);color:var(--on-fill);font:600 .95rem/1 var(--f-body);text-decoration:none;writing-mode:vertical-rl;
+    transform:translate(100%,-50%) rotate(180deg);visibility:hidden;transition:transform .5s var(--ease),visibility 0s linear .5s}
+  .side-cta.is-on{transform:translate(0,-50%) rotate(180deg);visibility:visible;transition:transform .5s var(--ease)}
+  .side-cta:hover{filter:brightness(1.08)}
+}
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .spine,.btn,.top a,.tripnav,.tripnav.is-on,.dock,.dock.is-on,.faq summary::after{transition:none}
+  .spine,.btn,.top a,.tripnav,.tripnav.is-on,.dock,.dock.is-on,.side-cta,.side-cta.is-on,.faq summary::after{transition:none}
+  .photo{transform:none}
   .btn:active{transform:none}
   .js .rv{transform:none;transition:opacity .7s var(--ease)}
   .spine{animation:none}
 }
 
-.t-dahab{--img:url("img/dahab-800.webp");--pos:50% 50%;--band:url("img/dahab-960.webp");--band-pos:50% 62%;--spine-pos:16% 50%}
-.t-patagonia{--img:url("img/patagonia-800.webp");--pos:30% 50%;--img2:url("img/patagonia-1200.webp");--band:url("img/patagonia-960.webp");--band-pos:50% 24%}
-.t-bali{--img:url("img/bali-800.webp");--pos:50% 55%;--band:url("img/bali-960.webp")}
-.t-cambodia{--img:url("img/cambodia-800.webp");--pos:50% 55%;--band:url("img/cambodia-960.webp");--band-pos:50% 48%}
-.t-kohrong{--img:url("img/kohrong-800.webp");--pos:30% 50%;--img2:url("img/kohrong-1200.webp");--band:url("img/kohrong-960.webp")}
-.t-china{--img:url("img/china-800.webp");--pos:50% 50%;--img2:url("img/china-1200.webp");--band:url("img/china-960.webp");--band-pos:50% 50%}
-.t-kanchenjunga{--img:url("img/kanchenjunga-800.webp");--pos:72% 40%;--img2:url("img/kanchenjunga-1200.webp");--band:url("img/kanchenjunga-960.webp");--band-pos:50% 36%}
-.t-tibet{--img:url("img/tibet-800.webp");--pos:50% 35%;--img2:url("img/tibet-1200.webp");--band:url("img/tibet-960.webp");--band-pos:50% 42%}
+.t-dahab{--img:url("img/dahab-800.webp");--pos:50% 50%;--spine-pos:16% 50%}
+.t-patagonia{--img:url("img/patagonia-800.webp");--pos:30% 50%;--img2:url("img/patagonia-1200.webp")}
+.t-bali{--img:url("img/bali-800.webp");--pos:50% 55%}
+.t-cambodia{--img:url("img/cambodia-800.webp");--pos:50% 55%}
+.t-kohrong{--img:url("img/kohrong-800.webp");--pos:30% 50%;--img2:url("img/kohrong-1200.webp")}
+.t-china{--img:url("img/china-800.webp");--pos:50% 50%;--img2:url("img/china-1200.webp")}
+.t-kanchenjunga{--img:url("img/kanchenjunga-800.webp");--pos:72% 40%;--img2:url("img/kanchenjunga-1200.webp")}
+.t-tibet{--img:url("img/tibet-800.webp");--pos:50% 35%;--img2:url("img/tibet-1200.webp")}
 </style>
 </head>
 <body>
@@ -413,7 +458,7 @@ footer a{color:var(--ink-soft)}
   <div class="intro">
     <header class="hero">
       <p class="eyebrow">Сезон 2026–2027 · восемь поездок</p>
-      <h1>Комфорт забывается.<br>Впечатления остаются.</h1>
+      <h1><span class="ln">Комфорт забывается.</span><br><span class="ln">Впечатления остаются.</span></h1>
       <p class="lead">Уже 20 лет мы ищем особые места и собираем маршруты, ради которых стоит лететь через полмира: утренняя пуджа в тибетском монастыре, рассвет над облаками на вулкане, кора вокруг Кайласа. Добавляем йогу, цигун и медитацию, чтобы поездка давала силы телу и голове. И едем небольшой компанией, в которую легко влиться.</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%9F%D0%BE%D0%BC%D0%BE%D0%B3%D0%B8%D1%82%D0%B5%20%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D0%BF%D0%BE%D0%B5%D0%B7%D0%B4%D0%BA%D1%83." target="_blank" rel="noopener">Помочь с выбором</a>
@@ -423,18 +468,27 @@ footer a{color:var(--ink-soft)}
 
     <nav class="spines-nav" aria-label="Все поездки сезона">
       <div class="spines">
-      <a class="spine t-dahab" href="#dahab" style="--i:0"><span class="spine-label"><span class="spine-name">Дахаб</span> <span class="spine-month">ноябрь</span></span><span class="sr">11–21 ноября 2026</span></a>
-      <a class="spine t-patagonia" href="#patagonia" style="--i:1"><span class="spine-label"><span class="spine-name">Патагония</span> <span class="spine-month">январь</span></span><span class="sr">3–15 января 2027</span></a>
-      <a class="spine t-bali" href="#bali" style="--i:2"><span class="spine-label"><span class="spine-name">Бали</span> <span class="spine-month">февраль</span></span><span class="sr">12–22 февраля 2027</span></a>
-      <a class="spine t-cambodia" href="#cambodia" style="--i:3"><span class="spine-label"><span class="spine-name">Камбоджа</span> <span class="spine-month">февраль</span></span><span class="sr">26 февраля – 8 марта 2027</span></a>
-      <a class="spine t-kohrong" href="#kohrong" style="--i:4"><span class="spine-label"><span class="spine-name">Ко Ронг</span> <span class="spine-month">март</span></span><span class="sr">8–15 марта 2027</span></a>
-      <a class="spine t-china" href="#china" style="--i:5"><span class="spine-label"><span class="spine-name">Китай</span> <span class="spine-month">март</span></span><span class="sr">23 марта – 2 апреля 2027</span></a>
-      <a class="spine t-kanchenjunga" href="#kanchenjunga" style="--i:6"><span class="spine-label"><span class="spine-name">Канченджанга</span> <span class="spine-month">апрель</span></span><span class="sr">5–20 апреля 2027</span></a>
-      <a class="spine t-tibet" href="#tibet" style="--i:7"><span class="spine-label"><span class="spine-name">Тибет</span> <span class="spine-month">август</span></span><span class="sr">12–29 августа 2027</span></a>
+      <a class="spine t-dahab" href="#dahab" style="--i:0"><picture><source media="(max-width:759px)" srcset="img/dahab-band.webp" type="image/webp"><img class="band" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="" fetchpriority="low" decoding="async"></picture><span class="spine-label"><span class="spine-name">Дахаб</span> <span class="spine-month">ноябрь</span></span><span class="sr">11–21 ноября 2026</span></a>
+      <a class="spine t-patagonia" href="#patagonia" style="--i:1"><picture><source media="(max-width:759px)" srcset="img/patagonia-band.webp" type="image/webp"><img class="band" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="" fetchpriority="low" decoding="async"></picture><span class="spine-label"><span class="spine-name">Патагония</span> <span class="spine-month">январь</span></span><span class="sr">3–15 января 2027</span></a>
+      <a class="spine t-bali" href="#bali" style="--i:2"><picture><source media="(max-width:759px)" srcset="img/bali-band.webp" type="image/webp"><img class="band" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="" fetchpriority="low" decoding="async"></picture><span class="spine-label"><span class="spine-name">Бали</span> <span class="spine-month">февраль</span></span><span class="sr">12–22 февраля 2027</span></a>
+      <a class="spine t-cambodia" href="#cambodia" style="--i:3"><picture><source media="(max-width:759px)" srcset="img/cambodia-band.webp" type="image/webp"><img class="band" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="" fetchpriority="low" decoding="async"></picture><span class="spine-label"><span class="spine-name">Камбоджа</span> <span class="spine-month">февраль</span></span><span class="sr">26 февраля – 8 марта 2027</span></a>
+      <a class="spine t-kohrong" href="#kohrong" style="--i:4"><picture><source media="(max-width:759px)" srcset="img/kohrong-band.webp" type="image/webp"><img class="band" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="" fetchpriority="low" decoding="async"></picture><span class="spine-label"><span class="spine-name">Ко Ронг</span> <span class="spine-month">март</span></span><span class="sr">8–15 марта 2027</span></a>
+      <a class="spine t-china" href="#china" style="--i:5"><picture><source media="(max-width:759px)" srcset="img/china-band.webp" type="image/webp"><img class="band" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="" fetchpriority="low" decoding="async"></picture><span class="spine-label"><span class="spine-name">Китай</span> <span class="spine-month">март</span></span><span class="sr">23 марта – 2 апреля 2027</span></a>
+      <a class="spine t-kanchenjunga" href="#kanchenjunga" style="--i:6"><picture><source media="(max-width:759px)" srcset="img/kanchenjunga-band.webp" type="image/webp"><img class="band" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="" fetchpriority="low" decoding="async"></picture><span class="spine-label"><span class="spine-name">Канченджанга</span> <span class="spine-month">апрель</span></span><span class="sr">5–20 апреля 2027</span></a>
+      <a class="spine t-tibet" href="#tibet" style="--i:7"><picture><source media="(max-width:759px)" srcset="img/tibet-band.webp" type="image/webp"><img class="band" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="" fetchpriority="low" decoding="async"></picture><span class="spine-label"><span class="spine-name">Тибет</span> <span class="spine-month">август</span></span><span class="sr">12–29 августа 2027</span></a>
       </div>
     </nav>
   </div>
 </div>
+
+<section class="wrap mood rv" aria-labelledby="mood-title">
+  <h2 id="mood-title">Мне нравится</h2>
+  <div>
+    <div class="mood-tags" role="group" aria-labelledby="mood-title"><button type="button" class="tag" data-mood="mountains" aria-pressed="false">горы</button><button type="button" class="tag" data-mood="sea" aria-pressed="false">море</button><button type="button" class="tag" data-mood="practice" aria-pressed="false">йога и практики</button><button type="button" class="tag" data-mood="culture" aria-pressed="false">храмы и культура</button><button type="button" class="tag" data-mood="moto" aria-pressed="false">мотоциклы</button></div>
+    <p class="mood-hint">Выберите, что вам ближе, и покажем подходящие поездки.</p>
+    <ul class="mood-list" aria-live="polite" hidden><li data-moods="sea practice" hidden><a href="#dahab"><b>Дахаб</b><span>ноябрь · «Йога у Красного моря»</span></a></li><li data-moods="mountains" hidden><a href="#patagonia"><b>Патагония</b><span>январь · «Край земли»</span></a></li><li data-moods="sea practice" hidden><a href="#bali"><b>Бали</b><span>февраль · «Соль. Рис. Тишина.»</span></a></li><li data-moods="moto culture" hidden><a href="#cambodia"><b>Камбоджа</b><span>февраль · «Дорога на юг»</span></a></li><li data-moods="sea practice" hidden><a href="#kohrong"><b>Ко Ронг</b><span>март · «Ретрит на острове»</span></a></li><li data-moods="culture mountains" hidden><a href="#china"><b>Китай</b><span>март · «Путь в Шангри-Ла»</span></a></li><li data-moods="mountains" hidden><a href="#kanchenjunga"><b>Канченджанга</b><span>апрель · «Пять сокровищ снегов»</span></a></li><li data-moods="mountains culture practice" hidden><a href="#tibet"><b>Тибет</b><span>август · «Путь к Кайласу»</span></a></li></ul>
+  </div>
+</section>
 
 <section class="wrap hot rv" aria-labelledby="hot-title">
   <div>
@@ -461,7 +515,7 @@ footer a{color:var(--ink-soft)}
       <span class="badges"><span class="stamp">11–21 ноября 2026</span><span class="chips"><span class="flag is-last">Последнее место</span><span class="status" hidden></span></span></span>
       <div class="cap rv">
         <span class="kicker">Йога-кэмп</span>
-        <h2>Дахаб</h2>
+        <h2 style="--w:4.034">Дахаб</h2>
         <span class="project">«Йога у Красного моря»</span>
       </div>
     </a>
@@ -486,7 +540,7 @@ footer a{color:var(--ink-soft)}
       <span class="badges"><span class="stamp">3–15 января 2027</span><span class="chips"><span class="flag is-last">Последнее место</span><span class="status" hidden></span></span></span>
       <div class="cap rv">
         <span class="kicker">Треккинг</span>
-        <h2>Патагония</h2>
+        <h2 style="--w:6.635">Патагония</h2>
         <span class="project">«Край земли»</span>
       </div>
     </a>
@@ -511,7 +565,7 @@ footer a{color:var(--ink-soft)}
       <span class="badges"><span class="stamp">12–22 февраля 2027</span><span class="chips"><span class="flag">Регистрация по ранней цене</span><span class="status" hidden></span></span></span>
       <div class="cap rv">
         <span class="kicker">Путешествие-практика</span>
-        <h2>Бали</h2>
+        <h2 style="--w:3.23">Бали</h2>
         <span class="project">«Соль. Рис. Тишина.»</span>
       </div>
     </a>
@@ -536,7 +590,7 @@ footer a{color:var(--ink-soft)}
       <span class="badges"><span class="stamp">26 февраля – 8 марта 2027</span><span class="chips"><span class="flag">Осталось 5 мест</span><span class="status" hidden></span></span></span>
       <div class="cap rv">
         <span class="kicker">Мототур</span>
-        <h2>Камбоджа</h2>
+        <h2 style="--w:6.83">Камбоджа</h2>
         <span class="project">«Дорога на юг»</span>
       </div>
     </a>
@@ -561,7 +615,7 @@ footer a{color:var(--ink-soft)}
       <span class="badges"><span class="stamp">8–15 марта 2027</span><span class="chips"><span class="status" hidden></span></span></span>
       <div class="cap rv">
         <span class="kicker">Ретрит</span>
-        <h2>Ко Ронг</h2>
+        <h2 style="--w:4.613">Ко Ронг</h2>
         <span class="project">«Ретрит на острове»</span>
       </div>
     </a>
@@ -586,7 +640,7 @@ footer a{color:var(--ink-soft)}
       <span class="badges"><span class="stamp">23 марта – 2 апреля 2027</span><span class="chips"><span class="flag">Регистрация по ранней цене</span><span class="status" hidden></span></span></span>
       <div class="cap rv">
         <span class="kicker">Авторское путешествие</span>
-        <h2>Китай</h2>
+        <h2 style="--w:3.862">Китай</h2>
         <span class="project">«Путь в Шангри-Ла»</span>
       </div>
     </a>
@@ -611,7 +665,7 @@ footer a{color:var(--ink-soft)}
       <span class="badges"><span class="stamp">5–20 апреля 2027</span><span class="chips"><span class="flag">3 места по ранней цене</span><span class="status" hidden></span></span></span>
       <div class="cap rv">
         <span class="kicker">Высокогорный трек</span>
-        <h2>Канченджанга</h2>
+        <h2 style="--w:9.304">Канченджанга</h2>
         <span class="project">«Пять сокровищ снегов»</span>
       </div>
     </a>
@@ -636,7 +690,7 @@ footer a{color:var(--ink-soft)}
       <span class="badges"><span class="stamp">12–29 августа 2027</span><span class="chips"><span class="flag">Регистрация по ранней цене</span><span class="status" hidden></span></span></span>
       <div class="cap rv">
         <span class="kicker">Паломничество</span>
-        <h2>Тибет</h2>
+        <h2 style="--w:3.616">Тибет</h2>
         <span class="project">«Путь к Кайласу»</span>
       </div>
     </a>
@@ -660,7 +714,7 @@ footer a{color:var(--ink-soft)}
 <section class="gallery" id="moments" aria-labelledby="moments-title">
   <div class="wrap">
     <h2 id="moments-title" class="rv">Как это было</h2>
-    <div class="moments"><figure class="rv" style="--r:1.5;--d:0ms"><picture><source srcset="img/moment-himalaya-sunrise-360.webp 360w, img/moment-himalaya-sunrise-640.webp 640w, img/moment-himalaya-sunrise-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 60vw, 378px" type="image/webp"><img src="img/moment-himalaya-sunrise.jpg" alt="Группа на утренней практике на рассвете, руки подняты к солнцу над гималайской долиной" width="960" height="640" loading="lazy" decoding="async"></picture><figcaption>Гималаи · утренняя практика на рассвете</figcaption></figure><figure class="rv" style="--r:0.8;--d:80ms"><picture><source srcset="img/moment-bhutan-yaks-360.webp 360w, img/moment-bhutan-yaks-640.webp 640w, img/moment-bhutan-yaks-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 32vw, 202px" type="image/webp"><img src="img/moment-bhutan-yaks.jpg" alt="Мотоциклы группы едут по горной дороге среди яков" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Бутан · яки на горной дороге</figcaption></figure><figure class="rv" style="--r:1.5;--d:160ms"><picture><source srcset="img/moment-bhutan-dochula-360.webp 360w, img/moment-bhutan-dochula-640.webp 640w, img/moment-bhutan-dochula-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 60vw, 378px" type="image/webp"><img src="img/moment-bhutan-dochula.jpg" alt="Мотоциклы у чортенов перевала Дочула" width="960" height="640" loading="lazy" decoding="async"></picture><figcaption>Мототур по Бутану · перевал Дочула</figcaption></figure><figure class="rv" style="--r:0.8;--d:240ms"><picture><source srcset="img/moment-wudang-taiji-360.webp 360w, img/moment-wudang-taiji-640.webp 640w, img/moment-wudang-taiji-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 32vw, 202px" type="image/webp"><img src="img/moment-wudang-taiji.jpg" alt="Девушка в белом костюме для тайцзи в низкой стойке у ворот храма Пурпурного облака" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Тайцзи у храма Пурпурного облака · Удан</figcaption></figure><figure class="rv" style="--r:0.8;--d:0ms"><picture><source srcset="img/moment-himalaya-group-360.webp 360w, img/moment-himalaya-group-640.webp 640w, img/moment-himalaya-group-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 32vw, 202px" type="image/webp"><img src="img/moment-himalaya-group.jpg" alt="Счастливая группа на фоне снежных вершин" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Гималаи · группа у снежных вершин</figcaption></figure><figure class="rv" style="--r:2;--d:80ms"><picture><source srcset="img/moment-bhutan-ridge-360.webp 360w, img/moment-bhutan-ridge-640.webp 640w, img/moment-bhutan-ridge-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 80vw, 504px" type="image/webp"><img src="img/moment-bhutan-ridge.jpg" alt="Мотоциклы группы в ряд на перевале на фоне гор" width="960" height="480" loading="lazy" decoding="async"></picture><figcaption>Бутан · группа на перевале</figcaption></figure><figure class="rv" style="--r:0.8;--d:160ms"><picture><source srcset="img/moment-china-circle-360.webp 360w, img/moment-china-circle-640.webp 640w, img/moment-china-circle-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 32vw, 202px" type="image/webp"><img src="img/moment-china-circle.jpg" alt="Двое практикуют на большом круге инь-ян в сумерках, вокруг триграммы багуа" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Дао-тур по Китаю · круг инь-ян в сумерках</figcaption></figure><figure class="rv" style="--r:0.8;--d:240ms"><picture><source srcset="img/moment-himalaya-qigong-360.webp 360w, img/moment-himalaya-qigong-640.webp 640w, img/moment-himalaya-qigong-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 32vw, 202px" type="image/webp"><img src="img/moment-himalaya-qigong.jpg" alt="Группа на практике цигун на террасе лоджи с видом на гималайские вершины" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Гималаи · цигун на террасе лоджи</figcaption></figure><figure class="rv" style="--r:1.5;--d:0ms"><picture><source srcset="img/moment-china-gate-360.webp 360w, img/moment-china-gate-640.webp 640w, img/moment-china-gate-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 60vw, 378px" type="image/webp"><img src="img/moment-china-gate.jpg" alt="Вся группа под резными воротами-пайфан, за ними горы в дымке" width="960" height="640" loading="lazy" decoding="async"></picture><figcaption>Дао-тур по Китаю · 2026</figcaption></figure><figure class="rv" style="--r:0.8;--d:80ms"><picture><source srcset="img/moment-himalaya-flags-360.webp 360w, img/moment-himalaya-flags-640.webp 640w, img/moment-himalaya-flags-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 32vw, 202px" type="image/webp"><img src="img/moment-himalaya-flags.jpg" alt="Группа на перевале среди молитвенных флагов" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Перевал в молитвенных флагах</figcaption></figure><figure class="rv" style="--r:1.5;--d:160ms"><picture><source srcset="img/moment-bhutan-morning-360.webp 360w, img/moment-bhutan-morning-640.webp 640w, img/moment-bhutan-morning-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 60vw, 378px" type="image/webp"><img src="img/moment-bhutan-morning.jpg" alt="Райдеры в шлемах на мотоциклах перед выездом" width="960" height="640" loading="lazy" decoding="async"></picture><figcaption>Бутан · утро перед выездом</figcaption></figure><figure class="rv" style="--r:0.8;--d:240ms"><picture><source srcset="img/moment-wudang-stairs-360.webp 360w, img/moment-wudang-stairs-640.webp 640w, img/moment-wudang-stairs-960.webp 960w" sizes="(max-width:759px) 50vw, (max-width:1099px) 32vw, 202px" type="image/webp"><img src="img/moment-wudang-stairs.jpg" alt="Крутая каменная лестница между стенами храма в тумане, на ступенях трое из группы" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Дао-тур по Китаю · лестница в тумане</figcaption></figure></div>
+    <div class="moments"><figure class="rv wide" style="--col:1 / 6;--shift:0;--d:0ms"><picture><source srcset="img/moment-himalaya-sunrise-360.webp 360w, img/moment-himalaya-sunrise-640.webp 640w, img/moment-himalaya-sunrise-960.webp 960w" sizes="(max-width:979px) 100vw, 483px" type="image/webp"><img src="img/moment-himalaya-sunrise.jpg" alt="Группа на утренней практике на рассвете, руки подняты к солнцу над гималайской долиной" width="960" height="640" loading="lazy" decoding="async"></picture><figcaption>Гималаи · утренняя практика на рассвете</figcaption></figure><figure class="rv" style="--col:7 / 10;--shift:4rem;--d:90ms"><picture><source srcset="img/moment-bhutan-yaks-360.webp 360w, img/moment-bhutan-yaks-640.webp 640w, img/moment-bhutan-yaks-960.webp 960w" sizes="(max-width:979px) 50vw, 290px" type="image/webp"><img src="img/moment-bhutan-yaks.jpg" alt="Мотоциклы группы едут по горной дороге среди яков" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Бутан · яки на горной дороге</figcaption></figure><figure class="rv" style="--col:10 / 13;--shift:1.5rem;--d:180ms"><picture><source srcset="img/moment-wudang-taiji-360.webp 360w, img/moment-wudang-taiji-640.webp 640w, img/moment-wudang-taiji-960.webp 960w" sizes="(max-width:979px) 50vw, 290px" type="image/webp"><img src="img/moment-wudang-taiji.jpg" alt="Девушка в белом костюме для тайцзи в низкой стойке у ворот храма Пурпурного облака" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Тайцзи у храма Пурпурного облака · Удан</figcaption></figure><figure class="rv" style="--col:2 / 5;--shift:2rem;--d:0ms"><picture><source srcset="img/moment-himalaya-group-360.webp 360w, img/moment-himalaya-group-640.webp 640w, img/moment-himalaya-group-960.webp 960w" sizes="(max-width:979px) 50vw, 290px" type="image/webp"><img src="img/moment-himalaya-group.jpg" alt="Счастливая группа на фоне снежных вершин" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Гималаи · группа у снежных вершин</figcaption></figure><figure class="rv" style="--col:6 / 11;--shift:0;--d:90ms"><picture><source srcset="img/moment-bhutan-dochula-360.webp 360w, img/moment-bhutan-dochula-640.webp 640w, img/moment-bhutan-dochula-960.webp 960w" sizes="(max-width:979px) 50vw, 483px" type="image/webp"><img src="img/moment-bhutan-dochula.jpg" alt="Мотоциклы у чортенов перевала Дочула" width="960" height="640" loading="lazy" decoding="async"></picture><figcaption>Мототур по Бутану · перевал Дочула</figcaption></figure><figure class="rv" style="--col:11 / 13;--shift:6rem;--d:180ms"><picture><source srcset="img/moment-china-circle-360.webp 360w, img/moment-china-circle-640.webp 640w, img/moment-china-circle-960.webp 960w" sizes="(max-width:979px) 50vw, 193px" type="image/webp"><img src="img/moment-china-circle.jpg" alt="Двое практикуют на большом круге инь-ян в сумерках, вокруг триграммы багуа" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Дао-тур по Китаю · круг инь-ян в сумерках</figcaption></figure><figure class="rv wide" style="--col:1 / 8;--shift:0;--d:0ms"><picture><source srcset="img/moment-bhutan-ridge-360.webp 360w, img/moment-bhutan-ridge-640.webp 640w, img/moment-bhutan-ridge-960.webp 960w" sizes="(max-width:979px) 100vw, 677px" type="image/webp"><img src="img/moment-bhutan-ridge.jpg" alt="Мотоциклы группы в ряд на перевале на фоне гор" width="960" height="480" loading="lazy" decoding="async"></picture><figcaption>Бутан · группа на перевале</figcaption></figure><figure class="rv" style="--col:9 / 12;--shift:3rem;--d:90ms"><picture><source srcset="img/moment-himalaya-qigong-360.webp 360w, img/moment-himalaya-qigong-640.webp 640w, img/moment-himalaya-qigong-960.webp 960w" sizes="(max-width:979px) 50vw, 290px" type="image/webp"><img src="img/moment-himalaya-qigong.jpg" alt="Группа на практике цигун на террасе лоджи с видом на гималайские вершины" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Гималаи · цигун на террасе лоджи</figcaption></figure><figure class="rv" style="--col:1 / 4;--shift:5rem;--d:180ms"><picture><source srcset="img/moment-himalaya-flags-360.webp 360w, img/moment-himalaya-flags-640.webp 640w, img/moment-himalaya-flags-960.webp 960w" sizes="(max-width:979px) 50vw, 290px" type="image/webp"><img src="img/moment-himalaya-flags.jpg" alt="Группа на перевале среди молитвенных флагов" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Перевал в молитвенных флагах</figcaption></figure><figure class="rv wide" style="--col:5 / 10;--shift:0;--d:0ms"><picture><source srcset="img/moment-china-gate-360.webp 360w, img/moment-china-gate-640.webp 640w, img/moment-china-gate-960.webp 960w" sizes="(max-width:979px) 100vw, 483px" type="image/webp"><img src="img/moment-china-gate.jpg" alt="Вся группа под резными воротами-пайфан, за ними горы в дымке" width="960" height="640" loading="lazy" decoding="async"></picture><figcaption>Дао-тур по Китаю · 2026</figcaption></figure><figure class="rv" style="--col:10 / 13;--shift:2rem;--d:90ms"><picture><source srcset="img/moment-wudang-stairs-360.webp 360w, img/moment-wudang-stairs-640.webp 640w, img/moment-wudang-stairs-960.webp 960w" sizes="(max-width:979px) 50vw, 290px" type="image/webp"><img src="img/moment-wudang-stairs.jpg" alt="Крутая каменная лестница между стенами храма в тумане, на ступенях трое из группы" width="960" height="1200" loading="lazy" decoding="async"></picture><figcaption>Дао-тур по Китаю · лестница в тумане</figcaption></figure><figure class="rv" style="--col:4 / 10;--shift:1rem;--d:180ms"><picture><source srcset="img/moment-bhutan-morning-360.webp 360w, img/moment-bhutan-morning-640.webp 640w, img/moment-bhutan-morning-960.webp 960w" sizes="(max-width:979px) 50vw, 580px" type="image/webp"><img src="img/moment-bhutan-morning.jpg" alt="Райдеры в шлемах на мотоциклах перед выездом" width="960" height="640" loading="lazy" decoding="async"></picture><figcaption>Бутан · утро перед выездом</figcaption></figure></div>
   </div>
 </section>
 
@@ -714,6 +768,8 @@ footer a{color:var(--ink-soft)}
   <span>Фото с Wikimedia Commons, кадрировано: Бали: <a href="https://commons.wikimedia.org/w/index.php?curid=60538665" target="_blank" rel="noopener">Putu Andika Panendra</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>; Яншо: <a href="https://commons.wikimedia.org/w/index.php?curid=17072137" target="_blank" rel="noopener">chensiyuan</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>; Кайлас: <a href="https://commons.wikimedia.org/wiki/File:Kailash-Tibet-27-Sept-2018.jpg" target="_blank" rel="noopener">Tibetissimo</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>; Ко Ронг: <a href="https://commons.wikimedia.org/wiki/File:Koh_Rong_-_Cambodia_(50925115453).jpg" target="_blank" rel="noopener">Rômulo Gama Ferreira</a>, <a href="https://creativecommons.org/licenses/by/2.0/" target="_blank" rel="noopener">CC BY 2.0</a>. Остальные снимки из материалов поездок.</span>
 </footer>
 
+<a class="side-cta" href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%9F%D0%BE%D0%BC%D0%BE%D0%B3%D0%B8%D1%82%D0%B5%20%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D0%BF%D0%BE%D0%B5%D0%B7%D0%B4%D0%BA%D1%83." target="_blank" rel="noopener">Помочь с выбором</a>
+
 <div class="dock">
   <span class="dock-text">Места заканчиваются</span>
   <a class="btn btn-primary" href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%9F%D0%BE%D0%BC%D0%BE%D0%B3%D0%B8%D1%82%D0%B5%20%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D0%BF%D0%BE%D0%B5%D0%B7%D0%B4%D0%BA%D1%83." target="_blank" rel="noopener">Помочь с выбором</a>
@@ -734,6 +790,28 @@ footer a{color:var(--ink-soft)}
     if(now>=s){badge.textContent='Идёт сейчас';badge.hidden=false;nextFound=true;return;}
     if(!nextFound){var d=Math.round((s-now)/DAY);badge.textContent='Старт через '+d+' '+plural(d);badge.hidden=false;nextFound=true;}
   });
+
+  // «Мне нравится»: один тег за раз, повторное нажатие снимает выбор
+  var tags=document.querySelectorAll('.tag'), mlist=document.querySelector('.mood-list'), mhint=document.querySelector('.mood-hint');
+  if(mlist)tags.forEach(function(tg){tg.addEventListener('click',function(){
+    var on=tg.getAttribute('aria-pressed')!=='true';
+    tags.forEach(function(x){x.setAttribute('aria-pressed','false');});
+    if(on)tg.setAttribute('aria-pressed','true');
+    mlist.hidden=!on; if(mhint)mhint.hidden=on;
+    mlist.querySelectorAll('li').forEach(function(li){li.hidden=!on||li.dataset.moods.split(' ').indexOf(tg.dataset.mood)<0;});
+  });});
+
+  // глубина в главах: фото движется медленнее страницы; только видимые главы, один расчёт на кадр
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&'IntersectionObserver' in window){
+    var vis=new Set(), tick=false;
+    var move=function(){tick=false;vis.forEach(function(ph){
+      var r=ph.getBoundingClientRect(), p=(r.top+r.height/2-innerHeight/2)/(innerHeight/2+r.height/2);
+      ph.style.setProperty('--py',(-p*r.height*.07).toFixed(1)+'px');
+    });};
+    var pio=new IntersectionObserver(function(es){es.forEach(function(en){en.isIntersecting?vis.add(en.target):vis.delete(en.target);});move();});
+    document.querySelectorAll('.trip-photo').forEach(function(ph){pio.observe(ph);});
+    addEventListener('scroll',function(){if(!tick){tick=true;requestAnimationFrame(move);}},{passive:true});
+  }
 
   // появление блоков и слов манифеста при прокрутке, один раз
   var rv=document.querySelectorAll('.rv'), words=document.querySelectorAll('.manifesto .w');
@@ -773,7 +851,8 @@ footer a{color:var(--ink-soft)}
   var dock=document.querySelector('.dock'), hero=document.querySelector('.masthead'), contact=document.querySelector('.contact');
   if(dock&&hero&&contact){
     var passed=false, reached=false;
-    var show=function(){dock.classList.toggle('is-on',passed&&!reached);};
+    var side=document.querySelector('.side-cta');
+    var show=function(){var on=passed&&!reached;dock.classList.toggle('is-on',on);if(side)side.classList.toggle('is-on',on);};
     new IntersectionObserver(function(es){var en=es[0];passed=!en.isIntersecting&&en.boundingClientRect.top<0;show();}).observe(hero);
     new IntersectionObserver(function(es){var en=es[0];reached=en.isIntersecting||en.boundingClientRect.top<0;show();}).observe(contact);
   }

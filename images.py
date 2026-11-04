@@ -4,7 +4,7 @@
     python3 images.py
 
   img/<id>.jpg (фото поездки, до 2400 px) -> img/<id>-1440.webp, -2400.webp  для широких экранов
-                                          -> img/<id>-960.webp  полоса первого экрана на телефоне
+                                          -> img/<id>-band.webp  полоса 960×240 для первого экрана на телефоне
                                             (2400 только если исходник от 1800 px)
                                           -> img/<id>-800.webp, -1200.webp  вертикальный кадр 4:5 по точке pos
                                             из content.json: фото-полосы и главы на телефоне
@@ -13,7 +13,8 @@
   contact.photo: img/<photo>.jpg         -> img/<photo>-bg-800.webp, -bg-1280.webp, фон блока контактов
   img/review-*.jpg                       -> .webp того же размера
   favicon.ico, apple-touch-icon.png      -> буква «П» шрифтом Unbounded, как в favicon.svg
-  img/og.jpg                             -> превью ссылки 1200×630: семь полос и заголовок
+  img/og.jpg                             -> превью ссылки 1200×630: полосы поездок и заголовок
+  tools/name-widths.json                 -> ширина названий поездок для build.py
 
 Все фото проходят одну цветокоррекцию (grade): снимки из разных поездок и с разных
 камер выглядят одной серией. Запускать после замены фото, смены pos или текста
@@ -100,8 +101,12 @@ def tour_images():
                 continue
             # шумный кадр: лёгкое шумоподавление вместо грубого сжатия, на экране разница не видна
             webp(sized(base, w), out, q, (budget * 3 // 2) if soft else budget, smooth=not soft)
-        # Полоса первого экрана на телефоне: всё фото шириной 960, лёгкое, полоса берёт из него тонкий срез
-        webp(sized(base, 960), IMG / f"{t['id']}-960.webp", 62, 60, smooth=True)
+        # Полоса первого экрана на телефоне: узкий кадр 960×240 вокруг bandPos (по умолчанию pos),
+        # полоса показывает именно его, поэтому файл в несколько раз легче целого фото
+        wide = sized(base, 960)
+        by = float(t.get("bandPos", t.get("pos", "50% 50%")).split()[1].rstrip("%")) / 100
+        top = round((wide.height - 240) * by)
+        webp(wide.crop((0, top, 960, top + 240)), IMG / f"{t['id']}-band.webp", 64, 30, smooth=True)
         # Кадр 4:5 режется там же, где его показал бы background-position: pos,
         # поэтому то же значение pos даёт на нём ту же картинку, что и на полном фото.
         # 800 для полос и карточек, 1200 для телефонов с плотным экраном, если высоты исходника хватает.
@@ -162,6 +167,16 @@ def icons():
     print("favicon.ico, apple-touch-icon.png")
 
 
+def name_widths():
+    """Ширина названий поездок в em Unbounded 600 (с letter-spacing -.03em и запасом) для build.py:
+    по ней название главы растягивается на всю ширину."""
+    font = ImageFont.truetype(str(FONTS / "Unbounded-600.ttf"), 100)
+    widths = {t["name"]: round(font.getlength(t["name"]) / 100 - .03 * len(t["name"]) + .06, 3) for t in C["tours"]}
+    out = ROOT / "tools" / "name-widths.json"
+    out.write_text(json.dumps(widths, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(f"{out.relative_to(ROOT)}  {len(widths)} названий")
+
+
 def og_image():
     W, H, GAP = 1200, 630, 6
     og = Image.new("RGB", (W, H), "#0B1011")
@@ -202,4 +217,5 @@ if __name__ == "__main__":
     contact_image()
     review_images()
     icons()
+    name_widths()
     og_image()

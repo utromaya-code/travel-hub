@@ -113,6 +113,11 @@ picture{display:contents}
 .hero{display:grid;gap:1.2rem;align-content:start;min-width:0}
 .eyebrow{margin:0;font:500 .95rem/1.4 var(--f-body);color:var(--night-accent)}
 .hero h1{margin:0;font:600 clamp(2rem,5.6vw,4.3rem)/1.05 var(--f-display);letter-spacing:-.02em;text-wrap:balance;max-width:17ch}
+/* строки заголовка со сдвигом, как в журнальной вёрстке: каждая следующая фраза чуть правее.
+   Заголовок остаётся одним блоком (быстрее отрисовка), отступ получает каждая строка фразы (box-decoration-break) */
+.hero h1 .ln{-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.hero h1 .ln:nth-of-type(2){padding-left:.8em}
+.hero h1 .ln:nth-of-type(3){padding-left:1.6em}
 .lead{margin:0;max-width:58ch;font-size:clamp(1.02rem,1.6vw,1.2rem);color:var(--on-night-soft)}
 .hero-cta{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.25rem;padding-top:.6rem}
 .hero-cta .btn{min-width:min(100%,15rem)}
@@ -123,6 +128,23 @@ picture{display:contents}
 .nf .hero{display:grid}
 .nf .hero>*{order:0}
 .notfound .brand{text-decoration:none;border:0;padding:0}
+
+/* мне нравится: теги настроения, под ними подходящие поездки */
+.mood{padding-block:clamp(3rem,7vw,5rem) 0;display:grid;gap:1rem}
+@media (min-width:980px){.mood{grid-template-columns:minmax(0,18.5rem) minmax(0,1fr);column-gap:clamp(2.5rem,4.5vw,4rem);align-items:start}}
+.mood h2{margin:0;font:600 1.15rem/1.25 var(--f-display);letter-spacing:-.01em}
+.mood-tags{display:flex;flex-wrap:wrap;gap:.5rem}
+.tag{appearance:none;cursor:pointer;padding:.6rem .95rem;border:1px solid var(--line);border-radius:4px;background:none;color:var(--ink);
+  font:500 1rem/1.2 var(--f-body);transition:border-color .3s var(--ease),background-color .3s var(--ease),color .3s var(--ease)}
+.tag:hover{border-color:var(--ink)}
+.tag[aria-pressed="true"]{background:var(--fill);border-color:var(--fill);color:var(--on-fill)}
+.mood-hint{margin:.75rem 0 0;color:var(--ink-soft);font-size:.95rem}
+.mood-list{list-style:none;margin:1rem 0 0;padding:0;border-top:1px solid var(--ink)}
+.mood-list li{border-bottom:1px solid var(--line)}
+.mood-list a{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:.1rem 1rem;padding:.7rem .1rem;text-decoration:none}
+.mood-list b{font:600 1.05rem/1.3 var(--f-body)}
+.mood-list span{color:var(--ink-soft);font-size:.95rem}
+.mood-list a:hover b{color:var(--stamp)}
 
 /* горящие места */
 .hot{padding-block:clamp(3rem,7vw,5rem) 0;min-width:0}
@@ -153,6 +175,7 @@ picture{display:contents}
 .spine-name{font:600 clamp(.92rem,2.1vw,1.45rem)/1 var(--f-display);letter-spacing:.01em}
 .spine-month{font:500 .8rem/1 var(--f-body);opacity:.8}
 .spine.is-past{filter:grayscale(.85) brightness(.8)}
+.band{display:none}
 @media (hover:hover) and (min-width:760px){
   .spines:hover .spine{flex-grow:.75}
   .spines .spine:hover,.spines .spine:focus-visible{flex-grow:3.2}
@@ -166,9 +189,9 @@ picture{display:contents}
 /* широкий экран: текст слева, полосы справа во всю высоту экрана до края */
 @media (min-width:980px){
   .masthead{display:grid;grid-template-rows:auto 1fr;min-height:min(100svh,58rem)}
-  .intro{grid-template-columns:minmax(0,29rem) minmax(0,1fr);column-gap:clamp(3rem,6vw,6rem);max-width:none;margin:0;padding:0 0 0 var(--edge)}
+  .intro{grid-template-columns:minmax(0,32rem) minmax(0,1fr);column-gap:clamp(3rem,6vw,6rem);max-width:none;margin:0;padding:0 0 0 var(--edge)}
   .hero{align-self:center;padding-block:2rem 3.5rem}
-  .hero h1{font-size:clamp(2.4rem,3.8vw,3.6rem)}
+  .hero h1{font-size:clamp(2.4rem,3.4vw,3.3rem)}
   .lead{font-size:1.08rem}
   .spines-nav{display:flex}
   .spines{flex:1 1 auto;height:auto;min-height:30rem;gap:3px}
@@ -178,7 +201,7 @@ picture{display:contents}
    все поездки видны сразу, ничего не обрезано. При открытии полосы выезжают по очереди. */
 @media (max-width:759px){
   .spines{display:grid;gap:3px;height:auto}
-  .spine{height:3.9rem;border-radius:4px;background-image:var(--band,var(--img));background-position:var(--band-pos,var(--pos));
+  .spine{height:3.9rem;border-radius:4px;background-image:none;
     animation:band-in .7s var(--ease) both;animation-delay:calc(var(--i,0) * 60ms + 150ms)}
   .spine::after{background:linear-gradient(90deg,rgba(6,10,12,.72) 0%,rgba(6,10,12,.3) 45%,rgba(6,10,12,.3) 62%,rgba(6,10,12,.62) 100%)}
   .spine-label{inset:0 1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;
@@ -187,6 +210,7 @@ picture{display:contents}
   .spine-month{font-size:.9rem;opacity:.9}
   .spine-label{text-shadow:0 1px 10px rgba(0,0,0,.45)}
   .spine:active{filter:brightness(1.15)}
+  .spine .band{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
   /* фото сразу под заголовком и кнопкой, длинный абзац после полос */
   .intro{row-gap:1.2rem}
   .hero{display:contents}
@@ -194,7 +218,8 @@ picture{display:contents}
   .spines-nav{order:2;margin-top:.6rem}
   .lead{order:3;margin-top:.8rem}
 }
-@keyframes band-in{from{opacity:0;transform:translateX(-1.25rem)}}
+/* только сдвиг, без прозрачности: полосы видны с первого кадра и не задерживают отрисовку */
+@keyframes band-in{from{transform:translateX(-1.25rem)}}
 
 /* строка поездок: появляется, пока на экране главы */
 .tripnav{position:fixed;z-index:20;top:env(safe-area-inset-top,0px);left:0;right:0;background:var(--paper);border-bottom:1px solid var(--line);
@@ -216,11 +241,18 @@ picture{display:contents}
 .trip-photo{position:relative;display:block;overflow:hidden;aspect-ratio:4/5;color:var(--on-photo);text-decoration:none;background:#2a3133}
 @media (min-width:600px){.trip-photo{aspect-ratio:auto;height:clamp(26rem,64vw,40rem)}}
 @media (min-width:1000px){.trip-photo{height:clamp(30rem,80svh,54rem)}}
-.photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--pos)}
+/* фото чуть выше рамки и при прокрутке движется медленнее текста: глубина, как в кино */
+.photo{position:absolute;left:0;top:-8%;width:100%;height:116%;object-fit:cover;object-position:var(--pos);
+  transform:translate3d(0,var(--py,0px),0);will-change:transform}
 .trip-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,var(--scrim) 0%,rgba(6,10,12,.45) 30%,rgba(6,10,12,0) 58%)}
-.cap{position:absolute;z-index:1;left:0;right:0;bottom:0;padding:0 var(--edge) clamp(1.5rem,4.5vw,3.5rem);display:grid;gap:.5rem;text-shadow:0 1px 14px rgba(0,0,0,.35)}
+.cap{position:absolute;z-index:1;left:0;right:0;bottom:0;padding:0 var(--edge) clamp(1.5rem,4.5vw,3.5rem);display:grid;gap:.5rem;text-shadow:0 1px 14px rgba(0,0,0,.35);
+  container-type:inline-size}
 .kicker{font:500 1rem/1.3 var(--f-body);opacity:.9}
-.trip h2{margin:0;font:600 clamp(1.85rem,8.6vw,7.5rem)/.95 var(--f-display);letter-spacing:-.03em}
+.trip h2{margin:0;font:600 clamp(1.85rem,8.6vw,7.5rem)/.9 var(--f-display);letter-spacing:-.03em;white-space:nowrap;--h2max:5.5rem}
+/* название поездки на всю ширину главы: --w ширина названия в em, короткие названия ограничены сверху */
+@supports (font-size:1cqi){.trip h2{font-size:min(calc(100cqi / var(--w,6)),var(--h2max))}}
+@media (min-width:600px){.trip h2{--h2max:9rem}}
+@media (min-width:1000px){.trip h2{--h2max:13rem}}
 .project{font:500 clamp(1.05rem,2vw,1.4rem)/1.3 var(--f-body)}
 /* даты слева, флажки справа: в одной строке, поэтому не наезжают друг на друга на любой ширине */
 .badges{position:absolute;z-index:1;top:clamp(1rem,3vw,2rem);left:var(--edge);right:var(--edge);
@@ -286,16 +318,19 @@ picture{display:contents}
 /* как это было: снимки прошлых поездок, одна серия */
 .gallery{background:var(--night);color:var(--on-night);padding-block:clamp(4rem,9vw,7rem)}
 .gallery h2{margin:0 0 clamp(1.75rem,4vw,3rem);font:600 clamp(1.75rem,4.5vw,3.2rem)/1.05 var(--f-display);letter-spacing:-.02em}
+/* журнальный разворот: на телефоне две колонки, ключевые кадры на всю ширину; на широком экране
+   снимки разного размера на сетке из 12 колонок со сдвигами по вертикали (--col, --shift из content.json) */
 .moments{columns:2;column-gap:10px}
 .moments figure{margin:0 0 14px;break-inside:avoid;min-width:0}
+.moments figure.wide{column-span:all;margin-bottom:18px}
 .moments img{display:block;width:100%;height:auto;border-radius:2px;background:#1B2427}
 .moments figcaption{padding-top:.45rem;font:400 .74rem/1.4 var(--f-mono);color:var(--on-night-soft)}
-/* шире телефона ряды одной высоты: ширина снимка пропорциональна его соотношению сторон --r, --per задаёт сколько «единиц» в ряду */
-@media (min-width:760px){
-  .moments{columns:auto;display:flex;flex-wrap:wrap;gap:22px 12px;--per:3.6}
-  .moments figure{margin:0;flex:var(--r) 1 calc(100% * var(--r) / var(--per))}
+@media (min-width:760px){.moments{column-gap:16px}.moments figure{margin-bottom:20px}}
+@media (min-width:980px){
+  .moments{columns:auto;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:clamp(2rem,4vw,3.5rem) clamp(12px,2vw,28px);align-items:start}
+  .moments figure,.moments figure.wide{grid-column:var(--col,auto / span 4);margin:var(--shift,0) 0 0}
+  .moments figcaption{font-size:.78rem}
 }
-@media (min-width:1100px){.moments{--per:4.9}}
 
 /* о нас */
 .about{padding-block:clamp(4rem,9vw,7rem);display:grid;gap:clamp(3rem,7vw,5rem)}
@@ -398,11 +433,21 @@ footer a{color:var(--ink-soft)}
 .dock.is-on{transform:none;visibility:visible;transition:transform .5s var(--ease)}
 .dock-text{font:600 .95rem/1.25 var(--f-body)}
 .dock .btn{flex-shrink:0;min-height:2.85rem;padding:.5rem 1.1rem;font-size:.95rem}
-@media (min-width:760px){.dock{display:none}}
+@media (min-width:1280px){.dock{display:none}}
+/* на широком экране (поля от 60px) вместо нижней плашки вертикальная кнопка у правого края */
+.side-cta{display:none}
+@media (min-width:1280px){
+  .side-cta{position:fixed;z-index:20;right:0;top:50%;display:block;padding:1.1rem .75rem;border-radius:4px 0 0 4px;
+    background:var(--fill);color:var(--on-fill);font:600 .95rem/1 var(--f-body);text-decoration:none;writing-mode:vertical-rl;
+    transform:translate(100%,-50%) rotate(180deg);visibility:hidden;transition:transform .5s var(--ease),visibility 0s linear .5s}
+  .side-cta.is-on{transform:translate(0,-50%) rotate(180deg);visibility:visible;transition:transform .5s var(--ease)}
+  .side-cta:hover{filter:brightness(1.08)}
+}
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .spine,.btn,.top a,.tripnav,.tripnav.is-on,.dock,.dock.is-on,.faq summary::after{transition:none}
+  .spine,.btn,.top a,.tripnav,.tripnav.is-on,.dock,.dock.is-on,.side-cta,.side-cta.is-on,.faq summary::after{transition:none}
+  .photo{transform:none}
   .btn:active{transform:none}
   .js .rv{transform:none;transition:opacity .7s var(--ease)}
   .spine{animation:none}
@@ -425,6 +470,28 @@ JS = r"""
     if(now>=s){badge.textContent='Идёт сейчас';badge.hidden=false;nextFound=true;return;}
     if(!nextFound){var d=Math.round((s-now)/DAY);badge.textContent='Старт через '+d+' '+plural(d);badge.hidden=false;nextFound=true;}
   });
+
+  // «Мне нравится»: один тег за раз, повторное нажатие снимает выбор
+  var tags=document.querySelectorAll('.tag'), mlist=document.querySelector('.mood-list'), mhint=document.querySelector('.mood-hint');
+  if(mlist)tags.forEach(function(tg){tg.addEventListener('click',function(){
+    var on=tg.getAttribute('aria-pressed')!=='true';
+    tags.forEach(function(x){x.setAttribute('aria-pressed','false');});
+    if(on)tg.setAttribute('aria-pressed','true');
+    mlist.hidden=!on; if(mhint)mhint.hidden=on;
+    mlist.querySelectorAll('li').forEach(function(li){li.hidden=!on||li.dataset.moods.split(' ').indexOf(tg.dataset.mood)<0;});
+  });});
+
+  // глубина в главах: фото движется медленнее страницы; только видимые главы, один расчёт на кадр
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&'IntersectionObserver' in window){
+    var vis=new Set(), tick=false;
+    var move=function(){tick=false;vis.forEach(function(ph){
+      var r=ph.getBoundingClientRect(), p=(r.top+r.height/2-innerHeight/2)/(innerHeight/2+r.height/2);
+      ph.style.setProperty('--py',(-p*r.height*.07).toFixed(1)+'px');
+    });};
+    var pio=new IntersectionObserver(function(es){es.forEach(function(en){en.isIntersecting?vis.add(en.target):vis.delete(en.target);});move();});
+    document.querySelectorAll('.trip-photo').forEach(function(ph){pio.observe(ph);});
+    addEventListener('scroll',function(){if(!tick){tick=true;requestAnimationFrame(move);}},{passive:true});
+  }
 
   // появление блоков и слов манифеста при прокрутке, один раз
   var rv=document.querySelectorAll('.rv'), words=document.querySelectorAll('.manifesto .w');
@@ -464,7 +531,8 @@ JS = r"""
   var dock=document.querySelector('.dock'), hero=document.querySelector('.masthead'), contact=document.querySelector('.contact');
   if(dock&&hero&&contact){
     var passed=false, reached=false;
-    var show=function(){dock.classList.toggle('is-on',passed&&!reached);};
+    var side=document.querySelector('.side-cta');
+    var show=function(){var on=passed&&!reached;dock.classList.toggle('is-on',on);if(side)side.classList.toggle('is-on',on);};
     new IntersectionObserver(function(es){var en=es[0];passed=!en.isIntersecting&&en.boundingClientRect.top<0;show();}).observe(hero);
     new IntersectionObserver(function(es){var en=es[0];reached=en.isIntersecting||en.boundingClientRect.top<0;show();}).observe(contact);
   }
@@ -536,10 +604,6 @@ def image_css(src):
         r = f'.t-{i}{{--img:url("{src(variant(i, 800))}");--pos:{t["pos"]}'
         if (IMG / f"{i}-1200.webp").exists():
             r += f';--img2:url("{src(i + "-1200.webp")}")'
-        if (IMG / f"{i}-960.webp").exists():
-            r += f';--band:url("{src(i + "-960.webp")}")'
-        if t.get("bandPos"):
-            r += f';--band-pos:{t["bandPos"]}'
         if t.get("spinePos"):
             r += f';--spine-pos:{t["spinePos"]}'
         rules.append(r + "}")
@@ -567,6 +631,16 @@ def render_photo(t, src, inline):
 
 
 LAST = ' class="is-last"'
+
+# Ширина названий поездок в em шрифта Unbounded 600: её замеряет images.py в tools/name-widths.json,
+# по ней название растягивается на всю ширину главы. Нет файла или названия: обычный размер.
+_WIDTHS_FILE = ROOT / "tools" / "name-widths.json"
+NAME_WIDTHS = json.loads(_WIDTHS_FILE.read_text(encoding="utf-8")) if _WIDTHS_FILE.exists() else {}
+
+
+def name_width(name):
+    w = NAME_WIDTHS.get(name)
+    return f' style="--w:{w}"' if w else ""
 
 
 def is_last(t):
@@ -613,13 +687,15 @@ def render_gallery(src, inline):
     figs = []
     for n, x in enumerate(g["items"]):
         w, h = (int(v) for v in x["ratio"].split(":"))
-        r = w / h
         attrs = (f'alt="{e(x["alt"])}" width="960" height="{round(960 * h / w)}" '
                  f'loading="lazy" decoding="async"')
-        # ширина снимка в ряду примерно r/2.5 экрана на планшете и r·1160/4.6 px на широком экране
-        sizes = f"(max-width:759px) 50vw, (max-width:1099px) {round(r * 40)}vw, {round(r * 1160 / 4.6)}px"
+        # ширина на сетке: столько колонок из 12, сколько занимает --col (на широком экране ~97px колонка)
+        a, z = (int(v) for v in x.get("col", "1 / 5").split("/"))
+        wide = x.get("wide")
+        sizes = (f"(max-width:979px) {'100vw' if wide else '50vw'}, {round((z - a) * 1160 / 12)}px")
         pic = variants(src, x["img"], (360, 640, 960), sizes, attrs, inline)
-        figs.append(f'<figure class="rv" style="--r:{r:.3g};--d:{n % 4 * 80}ms">{pic}<figcaption>{e(x["cap"])}</figcaption></figure>')
+        style = f'--col:{x.get("col", "auto / span 4")};--shift:{x.get("shift", "0")};--d:{n % 3 * 90}ms'
+        figs.append(f'<figure class="rv{" wide" if wide else ""}" style="{style}">{pic}<figcaption>{e(x["cap"])}</figcaption></figure>')
     return f"""<section class="gallery" id="moments" aria-labelledby="moments-title">
   <div class="wrap">
     <h2 id="moments-title" class="rv">{e(g["title"])}</h2>
@@ -637,6 +713,24 @@ def render_why():
     return f"""<section class="wrap why" id="why" aria-labelledby="why-title">
   <h2 id="why-title">{e(w["title"])}</h2>
   <div class="why-grid">{items}</div>
+</section>"""
+
+
+def render_mood():
+    m = C.get("mood")
+    if not m:
+        return ""
+    tags = "".join(f'<button type="button" class="tag" data-mood="{x["id"]}" aria-pressed="false">{e(x["label"])}</button>'
+                   for x in m["tags"])
+    rows = "".join(f'<li data-moods="{" ".join(t.get("moods", []))}" hidden><a href="#{t["id"]}"><b>{e(t["name"])}</b>'
+                   f'<span>{e(t["monthFull"])} · «{e(t["project"])}»</span></a></li>' for t in TOURS)
+    return f"""<section class="wrap mood rv" aria-labelledby="mood-title">
+  <h2 id="mood-title">{e(m["title"])}</h2>
+  <div>
+    <div class="mood-tags" role="group" aria-labelledby="mood-title">{tags}</div>
+    <p class="mood-hint">{e(m["hint"])}</p>
+    <ul class="mood-list" aria-live="polite" hidden>{rows}</ul>
+  </div>
 </section>"""
 
 
@@ -744,10 +838,24 @@ def render_contact(src, inline, choose, handle):
 </section>"""
 
 
+# пустая картинка 1×1: на широком экране полоса берёт фон из CSS, а картинка полосы телефона не грузится
+BLANK = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
+
+
+def band(t, src):
+    """Полоса первого экрана на телефоне: кадр 960×240 из images.py, только на узком экране.
+    Картинкой с низким приоритетом, чтобы восемь полос не задерживали шрифт заголовка."""
+    name = f'{t["id"]}-band.webp'
+    if not (IMG / name).exists():
+        return ""
+    return (f'<picture><source media="(max-width:759px)" srcset="{src(name)}" type="image/webp">'
+            f'<img class="band" src="{BLANK}" alt="" fetchpriority="low" decoding="async"></picture>')
+
+
 def render_body(src, inline=False):
     H, HOT = C["hero"], C["hot"]
     spines = "\n".join(
-        f'      <a class="spine t-{t["id"]}" href="#{t["id"]}" style="--i:{n}">'
+        f'      <a class="spine t-{t["id"]}" href="#{t["id"]}" style="--i:{n}">{band(t, src)}'
         f'<span class="spine-label"><span class="spine-name">{e(t["name"])}</span> <span class="spine-month">{e(t["monthFull"])}</span></span>'
         f'<span class="sr">{e(t["dates"])}</span></a>'
         for n, t in enumerate(TOURS))
@@ -776,7 +884,7 @@ def render_body(src, inline=False):
       <span class="badges"><span class="stamp">{e(t['dates'])}</span><span class="chips">{flag}<span class="status" hidden></span></span></span>
       <div class="cap rv">
         <span class="kicker">{e(t['kicker'])}</span>
-        <h2>{e(t['name'])}</h2>
+        <h2{name_width(t['name'])}>{e(t['name'])}</h2>
         <span class="project">«{e(t['project'])}»</span>
       </div>
     </a>
@@ -813,7 +921,7 @@ def render_body(src, inline=False):
   <div class="intro">
     <header class="hero">
       <p class="eyebrow">{e(H["eyebrow"])}</p>
-      <h1>{lines(H["title"])}</h1>
+      <h1>{"<br>".join(f'<span class="ln">{e(x)}</span>' for x in H["title"].split(chr(10)))}</h1>
       <p class="lead">{e(H["lead"])}</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="{choose}" target="_blank" rel="noopener">{e(H["cta"])}</a>
@@ -828,6 +936,8 @@ def render_body(src, inline=False):
     </nav>
   </div>
 </div>
+
+{render_mood()}
 
 <section class="wrap hot rv" aria-labelledby="hot-title">
   <div>
@@ -863,6 +973,8 @@ def render_body(src, inline=False):
   <span>Фото с Wikimedia Commons, кадрировано: {credits}. Остальные снимки из материалов поездок.</span>
 </footer>
 
+<a class="side-cta" href="{choose}" target="_blank" rel="noopener">{e(C['sideCta'])}</a>
+
 <div class="dock">
   <span class="dock-text">{e(C["dock"]["label"])}</span>
   <a class="btn btn-primary" href="{choose}" target="_blank" rel="noopener">{e(H["cta"])}</a>
@@ -896,8 +1008,6 @@ def build(inline_out=None):
     # первая полоса первого экрана: фон из CSS браузер находит поздно, поэтому заранее
     first = TOURS[0]["id"]
     fonts += f'<link rel="preload" href="{src(variant(first, 800))}" as="image" fetchpriority="high" media="(min-width:760px)">'
-    if (IMG / f"{first}-960.webp").exists():
-        fonts += f'<link rel="preload" href="{src(first + "-960.webp")}" as="image" fetchpriority="high" media="(max-width:759px)">'
 
     site = META["siteUrl"].rstrip("/")
     # Версия в адресе картинки: Telegram кэширует превью, новая картинка получит новый адрес.
