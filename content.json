@@ -226,8 +226,10 @@
       "text": "Неделя на острове в Сиамском заливе: сразу после мототура по Камбодже или отдельно от него. Йога, цигун и медитация утром и вечером, между ними море и свободное время. Белые пляжи, джунгли и почти нет дорог, остров так и не стал курортом. Живём в отеле 4★ у самого моря, с бассейном и завтраками. Подходит для любого уровня.",
       "url": "https://cambodiamoto.ru/retreat/",
       "domain": "cambodiamoto.ru/retreat",
-      "alt": "Прозрачная зелёная вода у пляжа Ко Ронга, на берегу деревья",
-      "pos": "30% 50%",
+      "alt": "Два шезлонга в тени дерева у тихого моря, вдали острова. Ко Ронг Самлоем, соседний остров",
+      "pos": "68% 50%",
+      "spinePos": "62% 50%",
+      "bandPos": "50% 72%",
       "seats": null,
       "urgency": "",
       "hot": "",
@@ -412,11 +414,11 @@
       "source": "https://commons.wikimedia.org/wiki/File:Kailash-Tibet-27-Sept-2018.jpg"
     },
     {
-      "what": "Ко Ронг",
-      "author": "Rômulo Gama Ferreira",
-      "license": "CC BY 2.0",
-      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
-      "source": "https://commons.wikimedia.org/wiki/File:Koh_Rong_-_Cambodia_(50925115453).jpg"
+      "what": "Ко Ронг Самлоем",
+      "author": "Wikirictor",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "source": "https://commons.wikimedia.org/wiki/File:Cambodia_island_paradise_koh_rong_sanloem.jpg"
     }
   ],
   "about": {
