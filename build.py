@@ -325,12 +325,10 @@ picture{display:contents}
 .moments figure{margin:0 0 14px;break-inside:avoid;min-width:0}
 .moments figure.wide{column-span:all;margin-bottom:18px}
 .moments img{display:block;width:100%;height:auto;border-radius:2px;background:#1B2427}
-.moments figcaption{padding-top:.45rem;font:400 .74rem/1.4 var(--f-mono);color:var(--on-night-soft)}
 @media (min-width:760px){.moments{column-gap:16px}.moments figure{margin-bottom:20px}}
 @media (min-width:980px){
   .moments{columns:auto;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:clamp(2rem,4vw,3.5rem) clamp(12px,2vw,28px);align-items:start}
   .moments figure,.moments figure.wide{grid-column:var(--col,auto / span 4);margin:var(--shift,0) 0 0}
-  .moments figcaption{font-size:.78rem}
 }
 
 /* о нас */
@@ -737,7 +735,8 @@ def render_gallery(src, inline):
         sizes = (f"(max-width:979px) {'100vw' if wide else '50vw'}, {round((z - a) * 1160 / 12)}px")
         pic = variants(src, x["img"], (360, 640, 960), sizes, attrs, inline)
         style = f'--col:{x.get("col", "auto / span 4")};--shift:{x.get("shift", "0")};--d:{n % 3 * 90}ms'
-        figs.append(f'<figure class="rv{" wide" if wide else ""}" style="{style}">{pic}<figcaption>{e(x["cap"])}</figcaption></figure>')
+        # без подписей: коллаж; место съёмки остаётся в cap в content.json и в alt
+        figs.append(f'<figure class="rv{" wide" if wide else ""}" style="{style}">{pic}</figure>')
     return f"""<section class="gallery" id="moments" aria-labelledby="moments-title">
   <div class="wrap">
     <h2 id="moments-title" class="rv">{e(g["title"])}</h2>
