@@ -123,8 +123,13 @@ def gallery_images():
     for x in C["gallery"]["items"]:
         # лёгкое шумоподавление: снимки с телефона без него весят вдвое больше
         im = crop(source(x["img"]), x["ratio"], x).filter(ImageFilter.MedianFilter(3))
+        last = 0
         for w, budget in ((360, 28), (640, 64), (960, 130)):
-            webp(sized(im, w), IMG / f"{x['img']}-{w}.webp", 66, budget)
+            out = sized(im, w)
+            if out.width == last:  # исходник уже, чем эта ширина: тот же файл не дублируем
+                continue
+            last = out.width
+            webp(out, IMG / f"{x['img']}-{w}.webp", 66, budget)
 
 
 def team_images():
