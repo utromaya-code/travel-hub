@@ -375,9 +375,40 @@ picture{display:contents}
 /* фраза-манифест: слова проявляются по очереди при прокрутке */
 .manifesto{padding-block:clamp(5rem,12vw,9rem)}
 .manifesto-text{margin:0;max-width:22ch;font:600 clamp(2rem,5.4vw,4.3rem)/1.08 var(--f-display);letter-spacing:-.02em;text-wrap:balance}
-.js .manifesto .w{opacity:.28;transition:opacity .5s var(--ease)}
+.js .manifesto .w{opacity:.48;transition:opacity .5s var(--ease)}
 .js .manifesto .w.on{opacity:1}
 .manifesto-note{margin:1.75rem 0 0;font:500 .95rem/1.4 var(--f-mono);color:var(--stamp)}
+
+/* знак «пустой круг» (шуньята, санскр. «пустое», ноль): тонкое кольцо с разрывом, рисуется один раз */
+.ring{display:block;overflow:visible;pointer-events:none}
+.ring circle{fill:none;stroke:currentColor;stroke-width:1.5;vector-effect:non-scaling-stroke;stroke-linecap:round;
+  stroke-dasharray:92 100;transform:rotate(-58deg);transform-origin:50% 50%}
+@keyframes ring-draw{from{stroke-dasharray:0 100}}
+.brand .ring{display:inline-block;width:.95em;height:.95em;margin-right:.45em;vertical-align:-.12em}
+.brand .ring circle{stroke-width:2}
+/* большое кольцо за заголовком первого экрана */
+.intro.has-ring{position:relative;overflow:clip}
+.intro.has-ring>*{position:relative;z-index:1}
+.intro>.hero-ring{position:absolute;z-index:0;color:var(--on-night);opacity:.2;width:min(78vw,24rem);right:-18vw;top:-1rem}
+.hero-ring circle{animation:ring-draw 2.2s var(--ease) .3s both}
+@media (min-width:980px){.intro>.hero-ring{width:34rem;right:auto;left:calc(var(--edge) - 7rem);top:50%;transform:translateY(-55%)}}
+
+/* почему шуньята: текст и рассвет, кольцо вокруг солнца */
+.meaning{padding-block:clamp(4rem,9vw,7rem);display:grid;gap:2rem}
+@media (min-width:980px){.meaning{grid-template-columns:minmax(0,5fr) minmax(0,7fr);column-gap:clamp(2.5rem,5vw,5rem);align-items:start}}
+.meaning-word{margin:0 0 .75rem;font:500 .95rem/1.4 var(--f-mono);color:var(--stamp)}
+.meaning h2{margin:0 0 1.25rem;font:600 clamp(1.9rem,4.4vw,3.4rem)/1.05 var(--f-display);letter-spacing:-.02em}
+.meaning-text p{margin:0 0 1rem;max-width:56ch;font-size:clamp(1.03rem,1.4vw,1.15rem);line-height:1.65}
+.meaning-zero{display:flex;gap:.75rem;align-items:flex-start;margin-top:1.75rem!important;padding-top:1.25rem;border-top:1px solid var(--line);
+  color:var(--ink-soft);font-size:.95rem!important}
+.meaning-zero .ring{flex:0 0 1.6rem;height:1.6rem;color:var(--stamp)}
+.meaning figure{margin:0}
+.meaning-photo{position:relative}
+.meaning-photo img{display:block;width:100%;height:auto;border-radius:2px;background:var(--line)}
+.meaning-photo .ring{position:absolute;left:var(--rx);top:var(--ry);width:var(--rd);aspect-ratio:1;transform:translate(-50%,-50%);color:#fff}
+.meaning-photo .ring circle{stroke-width:2;stroke-dasharray:0 100}
+.meaning figure.in .ring circle{stroke-dasharray:92 100;transition:stroke-dasharray 2s var(--ease) .4s}
+.meaning figcaption{padding-top:.6rem;font:400 .8rem/1.4 var(--f-mono);color:var(--ink-soft)}
 
 /* плашка на страницах для просмотра вариантов */
 .pv{background:var(--fill);color:var(--on-fill);font:500 .85rem/1.3 var(--f-body)}
@@ -451,6 +482,8 @@ footer a{color:var(--ink-soft)}
   .photo{transform:none}
   .btn:active{transform:none}
   .js .rv{transform:none;transition:opacity .7s var(--ease)}
+  .hero-ring circle{animation:none}
+  .meaning-photo .ring circle{stroke-dasharray:92 100;transition:none}
   .spine{animation:none}
 }
 """
@@ -693,7 +726,8 @@ def render_gallery(src, inline):
     if not g or not g["items"]:
         return ""
     figs = []
-    for n, x in enumerate(g["items"]):
+    items = [x for x in g["items"] if x["img"] not in C.get("galleryExclude", ())]
+    for n, x in enumerate(items):
         w, h = (int(v) for v in x["ratio"].split(":"))
         attrs = (f'alt="{e(x["alt"])}" width="960" height="{round(960 * h / w)}" '
                  f'loading="lazy" decoding="async"')
@@ -751,6 +785,36 @@ def render_principles():
     return f"""<section class="wrap principles" id="why" aria-labelledby="principles-title">
   <h2 id="principles-title" class="rv">{e(p["title"])}</h2>
   <ol>{items}</ol>
+</section>"""
+
+
+RING = '<svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" pathLength="100"/></svg>'
+HERO_RING = RING.replace('class="ring"', 'class="ring hero-ring"')
+
+
+def render_meaning(src, inline):
+    """Почему шуньята: что значит слово и при чём тут путешествия; фото с кольцом вокруг солнца."""
+    m = C.get("meaning")
+    if not m:
+        return ""
+    paras = "".join(f"<p>{e(x)}</p>" for x in m["paragraphs"])
+    zero = f'<p class="meaning-zero">{RING}<span>{e(m["zero"])}</span></p>' if m.get("zero") else ""
+    ph, fig = m.get("photo"), ""
+    if ph:
+        w, h = (int(v) for v in ph["ratio"].split(":"))
+        attrs = f'alt="{e(ph["alt"])}" width="960" height="{round(960 * h / w)}" loading="lazy" decoding="async"'
+        pic = variants(src, ph["img"], (360, 640, 960), "(max-width:979px) 100vw, 680px", attrs, inline)
+        r = ph.get("ring", {})
+        style = f' style="--rx:{r["x"]};--ry:{r["y"]};--rd:{r["d"]}"' if r else ""
+        fig = (f'<figure class="rv"><div class="meaning-photo"{style}>{pic}{RING if r else ""}</div>'
+               f'<figcaption>{e(ph["cap"])}</figcaption></figure>')
+    return f"""<section class="wrap meaning" id="shunyata" aria-labelledby="meaning-title">
+  <div class="meaning-text rv">
+    <p class="meaning-word">{e(m["word"])}</p>
+    <h2 id="meaning-title">{e(m["title"])}</h2>
+    {paras}{zero}
+  </div>
+  {fig}
 </section>"""
 
 
@@ -925,11 +989,11 @@ def render_body(src, inline=False):
     return f"""{C.get("previewBar", "")}
 <div class="masthead">
   <div class="wrap top">
-    <span class="brand">{e(C['brand'])} <b>· сезон 26/27</b></span>
+    <span class="brand">{RING if C.get("ring") else ""}{e(C['brand'])} <b>· {e(C.get("brandSub", "сезон 26/27"))}</b></span>
     <nav aria-label="Разделы"><a href="#about">О нас</a><a href="https://t.me/{handle}" target="_blank" rel="noopener">@{handle}</a></nav>
   </div>
 
-  <div class="intro">
+  <div class="intro{" has-ring" if C.get("ring") else ""}">{HERO_RING if C.get("ring") else ""}
     <header class="hero">
       <p class="eyebrow">{e(H["eyebrow"])}</p>
       <h1>{"<br>".join(f'<span class="ln">{e(x)}</span>' for x in H["title"].split(chr(10)))}</h1>
@@ -968,6 +1032,8 @@ def render_body(src, inline=False):
 {render_gallery(src, inline)}
 
 {render_manifesto()}
+
+{render_meaning(src, inline)}
 
 {render_about(src, inline)}
 
@@ -1077,7 +1143,11 @@ def build_previews(src, head, script):
                f'<nav aria-label="Варианты">{links}<a href="./">{e(P["current"])}</a></nav></div></div>')
         c = copy.deepcopy(base)
         c["hero"].update({k: v[k] for k in ("eyebrow", "title", "lead")})
-        c.update(brand=P["brand"], manifesto=P["manifesto"], principles=P["principles"], previewBar=bar)
+        c.update(brand=v.get("brand", P["brand"]), manifesto=v.get("manifesto", P["manifesto"]),
+                 principles=P["principles"], previewBar=bar)
+        for k in ("brandSub", "ring", "meaning", "galleryExclude"):
+            if k in v:
+                c[k] = v[k]
         C = c
         try:
             body = render_body(src)

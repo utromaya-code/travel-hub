@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Путешествия в пустоту · вариант 1 из 3 · Путешествия 2026–2027</title>
+<title>Путешествия в пустоту · вариант 1 из 4 · Путешествия 2026–2027</title>
 <meta name="robots" content="noindex">
 <meta name="description" content="Авторские путешествия, 20 лет опыта: особые места, практики в дороге и небольшие группы. Дахаб, Патагония, Бали, Камбоджа, ретрит на Ко Ронге, Китай, Канченджанга и Тибет в сезоне 2026–2027.">
 <link rel="canonical" href="https://utromaya-code.github.io/travel-hub/">
@@ -358,9 +358,40 @@ picture{display:contents}
 /* фраза-манифест: слова проявляются по очереди при прокрутке */
 .manifesto{padding-block:clamp(5rem,12vw,9rem)}
 .manifesto-text{margin:0;max-width:22ch;font:600 clamp(2rem,5.4vw,4.3rem)/1.08 var(--f-display);letter-spacing:-.02em;text-wrap:balance}
-.js .manifesto .w{opacity:.28;transition:opacity .5s var(--ease)}
+.js .manifesto .w{opacity:.48;transition:opacity .5s var(--ease)}
 .js .manifesto .w.on{opacity:1}
 .manifesto-note{margin:1.75rem 0 0;font:500 .95rem/1.4 var(--f-mono);color:var(--stamp)}
+
+/* знак «пустой круг» (шуньята, санскр. «пустое», ноль): тонкое кольцо с разрывом, рисуется один раз */
+.ring{display:block;overflow:visible;pointer-events:none}
+.ring circle{fill:none;stroke:currentColor;stroke-width:1.5;vector-effect:non-scaling-stroke;stroke-linecap:round;
+  stroke-dasharray:92 100;transform:rotate(-58deg);transform-origin:50% 50%}
+@keyframes ring-draw{from{stroke-dasharray:0 100}}
+.brand .ring{display:inline-block;width:.95em;height:.95em;margin-right:.45em;vertical-align:-.12em}
+.brand .ring circle{stroke-width:2}
+/* большое кольцо за заголовком первого экрана */
+.intro.has-ring{position:relative;overflow:clip}
+.intro.has-ring>*{position:relative;z-index:1}
+.intro>.hero-ring{position:absolute;z-index:0;color:var(--on-night);opacity:.2;width:min(78vw,24rem);right:-18vw;top:-1rem}
+.hero-ring circle{animation:ring-draw 2.2s var(--ease) .3s both}
+@media (min-width:980px){.intro>.hero-ring{width:34rem;right:auto;left:calc(var(--edge) - 7rem);top:50%;transform:translateY(-55%)}}
+
+/* почему шуньята: текст и рассвет, кольцо вокруг солнца */
+.meaning{padding-block:clamp(4rem,9vw,7rem);display:grid;gap:2rem}
+@media (min-width:980px){.meaning{grid-template-columns:minmax(0,5fr) minmax(0,7fr);column-gap:clamp(2.5rem,5vw,5rem);align-items:start}}
+.meaning-word{margin:0 0 .75rem;font:500 .95rem/1.4 var(--f-mono);color:var(--stamp)}
+.meaning h2{margin:0 0 1.25rem;font:600 clamp(1.9rem,4.4vw,3.4rem)/1.05 var(--f-display);letter-spacing:-.02em}
+.meaning-text p{margin:0 0 1rem;max-width:56ch;font-size:clamp(1.03rem,1.4vw,1.15rem);line-height:1.65}
+.meaning-zero{display:flex;gap:.75rem;align-items:flex-start;margin-top:1.75rem!important;padding-top:1.25rem;border-top:1px solid var(--line);
+  color:var(--ink-soft);font-size:.95rem!important}
+.meaning-zero .ring{flex:0 0 1.6rem;height:1.6rem;color:var(--stamp)}
+.meaning figure{margin:0}
+.meaning-photo{position:relative}
+.meaning-photo img{display:block;width:100%;height:auto;border-radius:2px;background:var(--line)}
+.meaning-photo .ring{position:absolute;left:var(--rx);top:var(--ry);width:var(--rd);aspect-ratio:1;transform:translate(-50%,-50%);color:#fff}
+.meaning-photo .ring circle{stroke-width:2;stroke-dasharray:0 100}
+.meaning figure.in .ring circle{stroke-dasharray:92 100;transition:stroke-dasharray 2s var(--ease) .4s}
+.meaning figcaption{padding-top:.6rem;font:400 .8rem/1.4 var(--f-mono);color:var(--ink-soft)}
 
 /* плашка на страницах для просмотра вариантов */
 .pv{background:var(--fill);color:var(--on-fill);font:500 .85rem/1.3 var(--f-body)}
@@ -434,6 +465,8 @@ footer a{color:var(--ink-soft)}
   .photo{transform:none}
   .btn:active{transform:none}
   .js .rv{transform:none;transition:opacity .7s var(--ease)}
+  .hero-ring circle{animation:none}
+  .meaning-photo .ring circle{stroke-dasharray:92 100;transition:none}
   .spine{animation:none}
 }
 
@@ -449,7 +482,7 @@ footer a{color:var(--ink-soft)}
 </head>
 <body>
 <a class="skip" href="#trips">Перейти к поездкам</a>
-<div class="pv"><div class="wrap pv-in"><span>Черновик позиционирования · вариант 1 из 3</span><nav aria-label="Варианты"><a href="variant-1.html" aria-current="page">1</a><a href="variant-2.html">2</a><a href="variant-3.html">3</a><a href="./">Текущий сайт</a></nav></div></div>
+<div class="pv"><div class="wrap pv-in"><span>Черновик позиционирования · вариант 1 из 4</span><nav aria-label="Варианты"><a href="variant-1.html" aria-current="page">1</a><a href="variant-2.html">2</a><a href="variant-3.html">3</a><a href="variant-4.html">4</a><a href="./">Текущий сайт</a></nav></div></div>
 <div class="masthead">
   <div class="wrap top">
     <span class="brand">Клуб путешествий <b>· сезон 26/27</b></span>
@@ -460,7 +493,7 @@ footer a{color:var(--ink-soft)}
     <header class="hero">
       <p class="eyebrow">Клуб путешествий · сезон 2026–2027</p>
       <h1><span class="ln">Путешествия</span><br><span class="ln">в пустоту</span></h1>
-      <p class="lead">Пустота в хорошем смысле: когда стихает шум и остаётся главное. 20 лет мы сами ездим туда, где это случается: кора вокруг Кайласа, монастыри Тибета, рассвет над облаками на Батуре. С нами практика, профессионалы и небольшая компания.</p>
+      <p class="lead">Пустота в хорошем смысле: когда стихает шум и остаётся главное. 20 лет мы сами ездим туда, где это случается: кора вокруг Кайласа, монастыри Тибета, рассвет в Гималаях, дороги Бутана. С нами практика, профессионалы и небольшая компания.</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%9F%D0%BE%D0%BC%D0%BE%D0%B3%D0%B8%D1%82%D0%B5%20%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D0%BF%D0%BE%D0%B5%D0%B7%D0%B4%D0%BA%D1%83." target="_blank" rel="noopener">Помочь с выбором</a>
         <span>Расскажем про сложность и группу в Telegram</span>
@@ -723,6 +756,8 @@ footer a{color:var(--ink-soft)}
   <p class="manifesto-text"><span class="w">Мы</span> <span class="w">ведём</span> <span class="w">туда,</span> <span class="w">где</span> <span class="w">стихает</span> <span class="w">шум</span><br><span class="w">и</span> <span class="w">остаётся</span> <span class="w">настоящее.</span></p>
   <p class="manifesto-note rv">Сами мы называем это пустотой.</p>
 </section>
+
+
 
 <section class="wrap about" id="about" aria-labelledby="about-title">
   <div class="about-head rv">
