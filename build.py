@@ -5,7 +5,8 @@
     python3 build.py --inline OUT    -> одна страница с картинками внутри (для превью)
 
 Места, цены и ранние тарифы меняются в content.json:
-  seats   {"left": осталось, "total": всего или null, "of": "по ранней цене" или ""}
+  seats   {"left": осталось, "total": всего или null, "of": "по ранней цене", "по 4 100 €" или ""}
+  waitlist true: мест нет, кнопка «Записаться в лист ожидания» (тексты в waitlist), seats.left 0
   tiers   ступени цены, state: sold (продано) / now (сейчас) / next (потом) / option (вариант)
   callout {"title", "text"} плашка в правой колонке, когда мест не знаем (например, ранняя регистрация)
           при seats.left = 1 колонка, флажок на фото и строка в «Места заканчиваются» выделены как последнее место
@@ -559,6 +560,8 @@ def tg(text):
 
 
 def tg_book(t):
+    if t.get("waitlist"):
+        return tg(f"Здравствуйте! Хочу в лист ожидания: {t['name']}, «{t['project']}», {t['dates']}.")
     return tg(f"Здравствуйте! Хочу забронировать место: {t['name']}, «{t['project']}», {t['dates']}.")
 
 
@@ -655,10 +658,15 @@ def render_seats(t):
         if not c:
             return ""
         return f'<div class="seats"><strong>{e(c["title"])}</strong><span class="seats-note">{e(c["text"])}</span></div>'
+    if t.get("waitlist"):
+        W = C["waitlist"]
+        return f'<div class="seats"><strong>{e(W["title"])}</strong><span class="seats-note">{e(W["text"])}</span></div>'
     left, total, of = s["left"], s.get("total"), s.get("of", "")
     word = seats_word(left)
+    # of: «по ранней цене», «по 4 100 €»: с ним «По ранней цене осталось 1 место из 5»
+    lead = f"{of[:1].upper()}{of[1:]} осталось" if of else "Осталось"
     if total:
-        label = f"{'По ранней цене о' if of else 'О'}сталось {left} {word} из {total}"
+        label = f"{lead} {left} {word} из {total}"
         dots = "".join('<span class="dot free"></span>' if i >= total - left else '<span class="dot"></span>'
                        for i in range(total))
         meter = f'<span class="dots" aria-hidden="true">{dots}</span>'
@@ -877,6 +885,9 @@ def render_body(src, inline=False):
                 if t.get("urgency") else "")
         micro = ("Заявка ни к чему не обязывает. " +
                  (f"Место закрепляет предоплата {t['deposit']}." if t.get("deposit") else "Место закрепляет предоплата."))
+        book = "Забронировать место"
+        if t.get("waitlist"):
+            micro, book = C["waitlist"]["micro"], C["waitlist"]["button"]
         trips.append(f"""
   <article class="trip t-{t['id']}" id="{t['id']}" data-start="{t['start']}" data-end="{t['end']}">
     <a class="trip-photo" href="{e(t['url'])}" target="_blank" rel="noopener" aria-label="{e(t['name'])}: открыть сайт поездки">
@@ -897,7 +908,7 @@ def render_body(src, inline=False):
       <div class="aside">
         {render_seats(t)}
         {render_ladder(t)}
-        <a class="btn btn-primary" href="{e(tg_book(t))}" target="_blank" rel="noopener">Забронировать место</a>
+        <a class="btn btn-primary" href="{e(tg_book(t))}" target="_blank" rel="noopener">{e(book)}</a>
         <p class="micro">{e(micro)}</p>
         <a class="more" href="{e(t['url'])}" target="_blank" rel="noopener">{e(C['tripLink'])} {e(t['domain'])} ↗</a>
       </div>
