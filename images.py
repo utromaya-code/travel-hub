@@ -12,8 +12,8 @@
   about.team:    img/<img>.jpg           -> img/<img>-400.webp, -800.webp, кадр 4:5 по точке pos
   contact.photo: img/<photo>.jpg         -> img/<photo>-bg-800.webp, -bg-1280.webp, фон блока контактов
   img/review-*.jpg                       -> .webp того же размера
-  favicon.ico, apple-touch-icon.png      -> буква «П» шрифтом Unbounded, как в favicon.svg
-  img/og.jpg                             -> превью ссылки 1200×630: полосы поездок и заголовок
+  favicon.ico, apple-touch-icon.png      -> знак клуба: белое кольцо на синем, как в favicon.svg
+  img/og.jpg                             -> превью ссылки 1200×630: полосы поездок, знак клуба и заголовок
   tools/name-widths.json                 -> ширина названий поездок для build.py
 
 Все фото проходят одну цветокоррекцию (grade): снимки из разных поездок и с разных
@@ -21,6 +21,7 @@
 превью, затем python3 build.py.
 """
 import json
+from datetime import date
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont, ImageOps
@@ -154,21 +155,29 @@ def review_images():
         webp(grade(Image.open(f)), f.with_suffix(".webp"), 72)
 
 
-def letter(size, radius):
-    """Синий квадрат с белой «П» из Unbounded, та же геометрия, что в favicon.svg."""
-    im = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+def ring(d, box, width, fill):
+    """Знак клуба: кольцо с небольшим разрывом справа сверху, как .ring в build.py и в favicon.svg.
+    Рисуется в 4 раза крупнее и уменьшается, чтобы край был гладким."""
+    x0, y0, x1, y1 = box
+    d.arc((x0, y0, x1, y1), start=-58, end=-58 + 331, fill=fill, width=width)
+
+
+def mark(size, radius):
+    """Синий квадрат с белым кольцом: значок сайта."""
+    k = 4
+    im = Image.new("RGBA", (size * k, size * k), (0, 0, 0, 0))
     d = ImageDraw.Draw(im)
-    d.rounded_rectangle((0, 0, size - 1, size - 1), radius=radius, fill=BLUE)
-    font = ImageFont.truetype(str(FONTS / "Unbounded-600.ttf"), round(size * 0.667))
-    x0, y0, x1, y1 = d.textbbox((0, 0), "П", font=font)
-    d.text(((size - (x1 - x0)) / 2 - x0, (size - (y1 - y0)) / 2 - y0), "П", font=font, fill="white")
-    return im
+    d.rounded_rectangle((0, 0, size * k - 1, size * k - 1), radius=radius * k, fill=BLUE)
+    r, w = size * k * 0.27, round(size * k * 0.095)
+    c = size * k / 2
+    ring(d, (c - r, c - r, c + r, c + r), w, "white")
+    return im.resize((size, size), Image.LANCZOS)
 
 
 def icons():
-    letter(512, 112).save(ROOT / "favicon.ico", sizes=[(16, 16), (32, 32), (48, 48)])
+    mark(512, 112).save(ROOT / "favicon.ico", sizes=[(16, 16), (32, 32), (48, 48)])
     # iOS сам скругляет углы, поэтому квадрат без скругления и без прозрачности
-    letter(180, 0).convert("RGB").save(ROOT / "apple-touch-icon.png", optimize=True)
+    mark(180, 0).convert("RGB").save(ROOT / "apple-touch-icon.png", optimize=True)
     print("favicon.ico, apple-touch-icon.png")
 
 
@@ -185,9 +194,11 @@ def name_widths():
 def og_image():
     W, H, GAP = 1200, 630, 6
     og = Image.new("RGB", (W, H), "#0B1011")
-    n = len(C["tours"])
+    # только поездки, которые ещё впереди, как на странице (build.py)
+    tours = [t for t in C["tours"] if t["end"] >= date.today().isoformat()]
+    n = len(tours)
     sw = (W - GAP * (n - 1)) / n
-    for i, t in enumerate(C["tours"]):
+    for i, t in enumerate(tours):
         im = source(t["id"])
         x0, x1 = round(i * (sw + GAP)), round(i * (sw + GAP) + sw)
         scaled = im.resize((round(im.width * H / im.height), H), Image.LANCZOS)
@@ -199,6 +210,13 @@ def og_image():
         k = max(0.0, (y / H - 0.25) / 0.75)
         shade.putpixel((0, y), round(255 * (0.30 + 0.55 * k ** 1.3)))
     og = Image.composite(Image.new("RGB", (W, H), (6, 10, 12)), og, shade.resize((W, H)))
+
+    # знак клуба над заголовком, рисуется крупнее и уменьшается для гладкого края
+    k, size = 4, 92
+    mk = Image.new("L", (size * k, size * k), 0)
+    ring(ImageDraw.Draw(mk), (4 * k, 4 * k, (size - 4) * k, (size - 4) * k), 7 * k, 255)
+    mk = mk.resize((size, size), Image.LANCZOS)
+    og.paste(Image.new("RGB", (size, size), "white"), (64, 176), mk)
 
     d = ImageDraw.Draw(og)
     head = ImageFont.truetype(str(FONTS / "Unbounded-600.ttf"), 104)

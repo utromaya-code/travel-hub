@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Собирает index.html витрины путешествий из content.json.
+"""Собирает index.html клуба путешествий Шуньята из content.json.
 
     python3 build.py                 -> index.html (картинки из папки img/)
     python3 build.py --inline OUT    -> одна страница с картинками внутри (для превью)
@@ -9,30 +9,38 @@
   waitlist true: мест нет, кнопка «Записаться в лист ожидания» (тексты в waitlist), seats.left 0
   tiers   ступени цены, state: sold (продано) / now (сейчас) / next (потом) / option (вариант)
   callout {"title", "text"} плашка в правой колонке, когда мест не знаем (например, ранняя регистрация)
-          при seats.left = 1 колонка, флажок на фото и строка в «Места заканчиваются» выделены как последнее место
-  urgency надпись на фото, hot + hotOrder строка в блоке «Места заканчиваются»
+          при seats.left = 1 колонка, флажок на фото и строка в «Поездках по месяцам» выделены как последнее место
+  urgency надпись на фото, hot статус поездки в «Поездках по месяцам» (там поездки идут по датам)
   pos     точка кадра для фото поездки; spinePos (необязательно) то же для узкой полосы на первом экране
   reviews отзывы {"name", "trip", "text", "photo": имя файла в img/ без расширения или пусто};
           пока список пустой, секции на странице нет
-  gallery снимки прошлых поездок «Как это было»: img, ratio (3:2, 4:5, 2:1), pos, cap, alt
+  gallery снимки прошлых поездок «Как это было»: img, ratio (3:2, 4:5, 2:1), pos, col, shift, wide, cap, alt
+  season  «Поездки по месяцам»: заголовок, фильтр «Мне нравится» (tags; у поездки moods)
+  manifesto, meaning, principles  манифест, «Почему Шуньята» с целью клуба, «Как мы путешествуем»
   contact.photo фон блока контактов, файл из img/ без расширения
 
 WebP-версии фото, иконки и img/og.jpg готовит python3 images.py (нужен Pillow).
 Если WebP для поездки ещё нет, страница возьмёт исходный img/<id>.jpg.
 """
 import base64
-import copy
 import hashlib
 import html
 import json
 import sys
+from datetime import date
 from pathlib import Path
 from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parent
 IMG = ROOT / "img"
 C = json.loads((ROOT / "content.json").read_text(encoding="utf-8"))
-META, TOURS = C["meta"], C["tours"]
+META = C["meta"]
+# Прошедшие поездки (end раньше дня сборки) на сайт не попадают: записаться на них уже нельзя.
+# Между сборками скрипт на странице помечает их «Состоялось» и убирает из «Поездок по месяцам».
+TODAY = date.today().isoformat()
+TOURS = [t for t in C["tours"] if t["end"] >= TODAY]
+COUNT_WORDS = {1: "одна поездка", 2: "две поездки", 3: "три поездки", 4: "четыре поездки", 5: "пять поездок",
+               6: "шесть поездок", 7: "семь поездок", 8: "восемь поездок", 9: "девять поездок", 10: "десять поездок"}
 
 # Шрифты лежат в fonts/ (файлы Google Fonts, лицензия OFL рядом): без внешнего CSS, который задерживал первую отрисовку.
 # Превью --inline берёт их с Google Fonts, потому что открывается без папки fonts/.
@@ -57,7 +65,8 @@ FONT_FACES = """
 PRELOAD = ("unbounded-cyrillic", "onest-cyrillic", "onest-latin")
 
 CSS = r"""
-/* Витрина сезона: тёмный первый экран с фото-полосами всех поездок, горящие места, главы-поездки на всю ширину, снимки прошлых поездок. */
+/* Клуб путешествий Шуньята: тёмный первый экран с фото-полосами поездок, сезон по месяцам, главы-поездки на всю ширину,
+   манифест и «Почему Шуньята», снимки прошлых поездок, о клубе. */
 :root{
   --paper:#F0F3F2; --surface:#FFFFFF; --ink:#111A1C; --ink-soft:#4C5A5D; --line:#D2DAD9;
   --stamp:#1D3EC4; --on-stamp:#FFFFFF; --stamp-wash:rgba(29,62,196,.08);
@@ -130,39 +139,34 @@ picture{display:contents}
 .nf .hero>*{order:0}
 .notfound .brand{text-decoration:none;border:0;padding:0}
 
-/* мне нравится: теги настроения, под ними подходящие поездки */
-.mood{padding-block:clamp(3rem,7vw,5rem) 0;display:grid;gap:1rem}
-@media (min-width:980px){.mood{grid-template-columns:minmax(0,18.5rem) minmax(0,1fr);column-gap:clamp(2.5rem,4.5vw,4rem);align-items:start}}
-.mood h2{margin:0;font:600 1.15rem/1.25 var(--f-display);letter-spacing:-.01em}
-.mood-tags{display:flex;flex-wrap:wrap;gap:.5rem}
-.tag{appearance:none;cursor:pointer;padding:.6rem .95rem;border:1px solid var(--line);border-radius:4px;background:none;color:var(--ink);
-  font:500 1rem/1.2 var(--f-body);transition:border-color .3s var(--ease),background-color .3s var(--ease),color .3s var(--ease)}
+/* поездки по месяцам: весь сезон по порядку дат, сверху фильтр «Мне нравится» */
+.season{padding-block:clamp(3rem,7vw,5rem) 0;display:grid;gap:1.25rem}
+@media (min-width:980px){.season{grid-template-columns:minmax(0,18.5rem) minmax(0,1fr);column-gap:clamp(2.5rem,4.5vw,4rem);align-items:start}}
+.season h2{margin:0 0 .6rem;font:600 clamp(1.5rem,2.8vw,2.1rem)/1.1 var(--f-display);letter-spacing:-.015em;text-wrap:balance}
+.season-lead{margin:0;max-width:34ch;color:var(--ink-soft);font-size:.95rem}
+.season-filter{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin:0 0 1.1rem}
+.season-filter>span{margin-right:.25rem;color:var(--ink-soft);font-size:.95rem}
+.tag{appearance:none;cursor:pointer;padding:.55rem .9rem;border:1px solid var(--line);border-radius:4px;background:none;color:var(--ink);
+  font:500 .95rem/1.2 var(--f-body);transition:border-color .3s var(--ease),background-color .3s var(--ease),color .3s var(--ease)}
 .tag:hover{border-color:var(--ink)}
 .tag[aria-pressed="true"]{background:var(--fill);border-color:var(--fill);color:var(--on-fill)}
-.mood-hint{margin:.75rem 0 0;color:var(--ink-soft);font-size:.95rem}
-.mood-list{list-style:none;margin:1rem 0 0;padding:0;border-top:1px solid var(--ink)}
-.mood-list li{border-bottom:1px solid var(--line)}
-.mood-list a{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:.1rem 1rem;padding:.7rem .1rem;text-decoration:none}
-.mood-list b{font:600 1.05rem/1.3 var(--f-body)}
-.mood-list span{color:var(--ink-soft);font-size:.95rem}
-.mood-list a:hover b{color:var(--stamp)}
-
-/* горящие места */
-.hot{padding-block:clamp(3rem,7vw,5rem) 0;min-width:0}
-.hot h2{margin:0 0 .35rem;font:600 1.15rem/1.25 var(--f-display);letter-spacing:-.01em}
-.hot>div>p{margin:0 0 .9rem;color:var(--ink-soft);font-size:.95rem}
-.hot ul{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink)}
-.hot li{border-bottom:1px solid var(--line);break-inside:avoid}
-.hot a{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:.1rem 1rem;padding:.65rem .1rem;text-decoration:none}
-.hot a:hover .hot-name{color:var(--stamp)}
-.hot-name{font:600 1rem/1.3 var(--f-body)}
-.hot-name small{font:400 .78rem/1 var(--f-mono);color:var(--ink-soft);margin-left:.2rem;letter-spacing:.04em}
-.hot-what{margin-left:auto;font:500 .9rem/1.3 var(--f-body);color:var(--stamp);text-align:right}
-.hot li.is-last .hot-what{padding:.3rem .5rem;border-radius:3px;background:var(--fill);color:var(--on-fill)}
-@media (min-width:980px){
-  .hot{display:grid;grid-template-columns:minmax(0,18.5rem) minmax(0,1fr);column-gap:clamp(2.5rem,4.5vw,4rem);align-items:start}
+.season-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink)}
+.season-list li{border-bottom:1px solid var(--line)}
+.season-list li.is-past{display:none}
+.season-list a{display:grid;grid-template-columns:4.75rem minmax(0,1fr);align-items:baseline;gap:.2rem 1rem;padding:.85rem .1rem;text-decoration:none}
+.se-month{grid-row:span 3;font:500 .85rem/1.5 var(--f-mono);color:var(--ink-soft)}
+.se-name b{font:600 1.08rem/1.3 var(--f-body)}
+.se-name small{display:block;margin-top:.1rem;color:var(--ink-soft);font-size:.9rem}
+.se-dates{color:var(--ink-soft);font-size:.92rem;font-variant-numeric:tabular-nums}
+.se-what{justify-self:start;font:500 .9rem/1.3 var(--f-body);color:var(--stamp)}
+.season-list li.is-last .se-what{padding:.3rem .5rem;border-radius:3px;background:var(--fill);color:var(--on-fill)}
+.season-list a:hover .se-name b{color:var(--stamp)}
+@media (min-width:760px){
+  .season-list a{grid-template-columns:7.5rem minmax(0,1fr) 12rem 13.5rem;align-items:center}
+  .se-month{white-space:nowrap}
+  .se-month{grid-row:auto}
+  .se-what{justify-self:end;text-align:right}
 }
-@media (min-width:1200px){.hot ul{columns:2;column-gap:2.5rem}}
 
 /* корешки */
 .spines-nav{min-width:0}
@@ -335,9 +339,12 @@ picture{display:contents}
 .about{padding-block:clamp(4rem,9vw,7rem);display:grid;gap:clamp(3rem,7vw,5rem)}
 .about-head{display:grid;gap:1.5rem 4rem}
 @media (min-width:980px){.about-head{grid-template-columns:auto minmax(0,1fr);align-items:start}}
-.year{margin:0;display:grid;gap:.4rem}
-.year b{font:600 clamp(5.5rem,17vw,12.5rem)/.82 var(--f-display);letter-spacing:-.05em;color:var(--stamp)}
-.year span{font:500 .95rem/1.4 var(--f-body);color:var(--ink-soft)}
+/* опыт в цифрах: две большие цифры, под каждой подпись */
+.stats{margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:1.5rem clamp(2rem,5vw,3.5rem);align-content:start}
+@media (min-width:980px){.stats{flex-direction:column}}
+.stats li{display:grid;gap:.5rem}
+.stats b{font:600 clamp(4.5rem,13vw,9.5rem)/.82 var(--f-display);letter-spacing:-.05em;color:var(--stamp)}
+.stats span{max-width:14ch;font:500 .95rem/1.4 var(--f-body);color:var(--ink-soft)}
 .about-text{display:grid;gap:1rem;min-width:0}
 .about-text h2{margin:0 0 .25rem;font:600 clamp(1.6rem,3.8vw,2.7rem)/1.08 var(--f-display);letter-spacing:-.02em;text-wrap:balance;max-width:20ch}
 .about-text p{margin:0;max-width:62ch;font-size:clamp(1.03rem,1.4vw,1.15rem);line-height:1.65}
@@ -352,13 +359,7 @@ picture{display:contents}
 .person p:last-child{margin:0;color:var(--ink-soft);font-size:.95rem;line-height:1.55}
 .guests{margin:2rem 0 0;max-width:72ch;padding-top:1.25rem;border-top:1px solid var(--line);color:var(--ink-soft)}
 
-/* почему с нами */
-.why{padding-block:clamp(3.5rem,8vw,6rem);border-top:1px solid var(--line)}
-.why h2,.reviews h2,.faq h2{margin:0 0 1.75rem;font:600 clamp(1.5rem,3.6vw,2.4rem)/1.1 var(--f-display);letter-spacing:-.015em;text-wrap:balance}
-.why-grid{display:grid;gap:2rem clamp(1.5rem,3vw,2.75rem);grid-template-columns:repeat(auto-fit,minmax(min(100%,17rem),1fr))}
-.why-item{display:grid;gap:.5rem;align-content:start;padding-top:1rem;border-top:2px solid var(--stamp);min-width:0}
-.why-item h3{margin:0;font:600 1.12rem/1.3 var(--f-body)}
-.why-item p{margin:0;color:var(--ink-soft);line-height:1.6}
+.reviews h2,.faq h2{margin:0 0 1.75rem;font:600 clamp(1.5rem,3.6vw,2.4rem)/1.1 var(--f-display);letter-spacing:-.015em;text-wrap:balance}
 
 /* как мы путешествуем: принципы списком, без одинаковых карточек */
 .principles{padding-block:clamp(3.5rem,8vw,6rem);border-top:1px solid var(--line);display:grid;gap:1.5rem}
@@ -397,6 +398,8 @@ picture{display:contents}
 .meaning-word{margin:0 0 .75rem;font:500 .95rem/1.4 var(--f-mono);color:var(--stamp)}
 .meaning h2{margin:0 0 1.25rem;font:600 clamp(1.9rem,4.4vw,3.4rem)/1.05 var(--f-display);letter-spacing:-.02em}
 .meaning-text p{margin:0 0 1rem;max-width:56ch;font-size:clamp(1.03rem,1.4vw,1.15rem);line-height:1.65}
+.meaning-goal{margin-top:1.75rem;padding-top:1.5rem;border-top:1px solid var(--ink)}
+.meaning-goal h3{margin:0 0 .9rem;font:600 clamp(1.2rem,2.2vw,1.55rem)/1.2 var(--f-display);letter-spacing:-.01em}
 .meaning-zero{display:flex;gap:.75rem;align-items:flex-start;margin-top:1.75rem!important;padding-top:1.25rem;border-top:1px solid var(--line);
   color:var(--ink-soft);font-size:.95rem!important}
 .meaning-zero .ring{flex:0 0 1.6rem;height:1.6rem;color:var(--stamp)}
@@ -407,13 +410,6 @@ picture{display:contents}
 .meaning-photo .ring circle{stroke-width:2;stroke-dasharray:0 100}
 .meaning figure.in .ring circle{stroke-dasharray:92 100;transition:stroke-dasharray 2s var(--ease) .4s}
 .meaning figcaption{padding-top:.6rem;font:400 .8rem/1.4 var(--f-mono);color:var(--ink-soft)}
-
-/* плашка на страницах для просмотра вариантов */
-.pv{background:var(--fill);color:var(--on-fill);font:500 .85rem/1.3 var(--f-body)}
-.pv-in{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.5rem 1rem;padding-block:.55rem}
-.pv nav{display:flex;flex-wrap:wrap;gap:.35rem}
-.pv a{padding:.3rem .55rem;border:1px solid currentColor;border-radius:4px;text-decoration:none}
-.pv a[aria-current]{background:var(--on-fill);color:var(--fill)}
 
 /* что говорят участники */
 .reviews{padding-block:clamp(3.5rem,8vw,6rem);border-top:1px solid var(--line)}
@@ -498,19 +494,18 @@ JS = r"""
     if(!badge||isNaN(s))return;
     if(now>e){badge.textContent='Состоялось';badge.hidden=false;if(spine)spine.classList.add('is-past');if(link)link.classList.add('is-past');
       var f=t.querySelector('.flag'); if(f)f.hidden=true;
-      var hot=document.querySelector('.hot a[href="#'+t.id+'"]'); if(hot)hot.parentNode.hidden=true; return;}
+      var row=document.querySelector('.season-list a[href="#'+t.id+'"]'); if(row)row.parentNode.classList.add('is-past'); return;}
     if(now>=s){badge.textContent='Идёт сейчас';badge.hidden=false;nextFound=true;return;}
     if(!nextFound){var d=Math.round((s-now)/DAY);badge.textContent='Старт через '+d+' '+plural(d);badge.hidden=false;nextFound=true;}
   });
 
-  // «Мне нравится»: один тег за раз, повторное нажатие снимает выбор
-  var tags=document.querySelectorAll('.tag'), mlist=document.querySelector('.mood-list'), mhint=document.querySelector('.mood-hint');
-  if(mlist)tags.forEach(function(tg){tg.addEventListener('click',function(){
+  // «Мне нравится»: один тег за раз оставляет в списке подходящие поездки, повторное нажатие показывает все
+  var tags=document.querySelectorAll('.tag'), rows=document.querySelectorAll('.season-list li');
+  tags.forEach(function(tg){tg.addEventListener('click',function(){
     var on=tg.getAttribute('aria-pressed')!=='true';
     tags.forEach(function(x){x.setAttribute('aria-pressed','false');});
     if(on)tg.setAttribute('aria-pressed','true');
-    mlist.hidden=!on; if(mhint)mhint.hidden=on;
-    mlist.querySelectorAll('li').forEach(function(li){li.hidden=!on||li.dataset.moods.split(' ').indexOf(tg.dataset.mood)<0;});
+    rows.forEach(function(li){li.hidden=on&&li.dataset.moods.split(' ').indexOf(tg.dataset.mood)<0;});
   });});
 
   // глубина в главах: фото движется медленнее страницы; только видимые главы, один расчёт на кадр
@@ -724,8 +719,7 @@ def render_gallery(src, inline):
     if not g or not g["items"]:
         return ""
     figs = []
-    items = [x for x in g["items"] if x["img"] not in C.get("galleryExclude", ())]
-    for n, x in enumerate(items):
+    for n, x in enumerate(g["items"]):
         w, h = (int(v) for v in x["ratio"].split(":"))
         attrs = (f'alt="{e(x["alt"])}" width="960" height="{round(960 * h / w)}" '
                  f'loading="lazy" decoding="async"')
@@ -745,32 +739,28 @@ def render_gallery(src, inline):
 </section>"""
 
 
-def render_why():
-    w = C.get("why")
-    if not w:
-        return ""
-    items = "".join(f'<div class="why-item rv" style="--d:{n % 3 * 80}ms"><h3>{e(x["t"])}</h3><p>{e(x["d"])}</p></div>'
-                    for n, x in enumerate(w["items"]))
-    return f"""<section class="wrap why" id="why" aria-labelledby="why-title">
-  <h2 id="why-title">{e(w["title"])}</h2>
-  <div class="why-grid">{items}</div>
-</section>"""
-
-
-def render_mood():
-    m = C.get("mood")
-    if not m:
-        return ""
+def render_season():
+    S = C["season"]
     tags = "".join(f'<button type="button" class="tag" data-mood="{x["id"]}" aria-pressed="false">{e(x["label"])}</button>'
-                   for x in m["tags"])
-    rows = "".join(f'<li data-moods="{" ".join(t.get("moods", []))}" hidden><a href="#{t["id"]}"><b>{e(t["name"])}</b>'
-                   f'<span>{e(t["monthFull"])} · «{e(t["project"])}»</span></a></li>' for t in TOURS)
-    return f"""<section class="wrap mood rv" aria-labelledby="mood-title">
-  <h2 id="mood-title">{e(m["title"])}</h2>
+                   for x in S.get("tags", []))
+    rows = []
+    for t in sorted(TOURS, key=lambda t: t["start"]):
+        year = t["start"][:4]
+        rows.append(f'<li{LAST if is_last(t) else ""} data-moods="{" ".join(t.get("moods", []))}"><a href="#{t["id"]}">'
+                    f'<span class="se-month">{e(t["monthFull"])} {year}</span>'
+                    f'<span class="se-name"><b>{e(t["name"])}</b><small>«{e(t["project"])}»</small></span>'
+                    f'<span class="se-dates">{e(t["dates"])}</span>'
+                    f'<span class="se-what">{e(t.get("hot", ""))}</span></a></li>')
+    flt = (f'<div class="season-filter" role="group" aria-label="{e(S["filter"])}"><span>{e(S["filter"])}:</span>{tags}</div>'
+           if tags else "")
+    return f"""<section class="wrap season rv" id="season" aria-labelledby="season-title">
   <div>
-    <div class="mood-tags" role="group" aria-labelledby="mood-title">{tags}</div>
-    <p class="mood-hint">{e(m["hint"])}</p>
-    <ul class="mood-list" aria-live="polite" hidden>{rows}</ul>
+    <h2 id="season-title">{e(S["title"])}</h2>
+    <p class="season-lead">{e(S["lead"])}</p>
+  </div>
+  <div>
+    {flt}
+    <ul class="season-list" aria-live="polite">{"".join(rows)}</ul>
   </div>
 </section>"""
 
@@ -798,6 +788,9 @@ def render_meaning(src, inline):
         return ""
     paras = "".join(f"<p>{e(x)}</p>" for x in m["paragraphs"])
     zero = f'<p class="meaning-zero">{RING}<span>{e(m["zero"])}</span></p>' if m.get("zero") else ""
+    g = m.get("goal")
+    goal = (f'<div class="meaning-goal"><h3>{e(g["title"])}</h3>' + "".join(f"<p>{e(x)}</p>" for x in g["paragraphs"]) + "</div>"
+            if g else "")
     ph, fig = m.get("photo"), ""
     if ph:
         w, h = (int(v) for v in ph["ratio"].split(":"))
@@ -811,7 +804,7 @@ def render_meaning(src, inline):
   <div class="meaning-text rv">
     <p class="meaning-word">{e(m["word"])}</p>
     <h2 id="meaning-title">{e(m["title"])}</h2>
-    {paras}{zero}
+    {paras}{goal}{zero}
   </div>
   {fig}
 </section>"""
@@ -871,7 +864,7 @@ def render_about(src, inline):
     guests = f'\n    <p class="guests">{e(a["guests"])}</p>' if a.get("guests") else ""
     return f"""<section class="wrap about" id="about" aria-labelledby="about-title">
   <div class="about-head rv">
-    <p class="year"><b>{e(a["since"])}</b><span>{e(a.get("sinceLabel", ""))}</span></p>
+    <ul class="stats">{"".join(f'<li><b>{e(x["num"])}</b><span>{e(x["label"])}</span></li>' for x in a["stats"])}</ul>
     <div class="about-text">
       <h2 id="about-title">{e(a["title"])}</h2>
       {paras}
@@ -924,17 +917,12 @@ def band(t, src):
 
 
 def render_body(src, inline=False):
-    H, HOT = C["hero"], C["hot"]
+    H = C["hero"]
     spines = "\n".join(
         f'      <a class="spine t-{t["id"]}" href="#{t["id"]}" style="--i:{n}">{band(t, src)}'
         f'<span class="spine-label"><span class="spine-name">{e(t["name"])}</span> <span class="spine-month">{e(t["monthFull"])}</span></span>'
         f'<span class="sr">{e(t["dates"])}</span></a>'
         for n, t in enumerate(TOURS))
-
-    hot = sorted((t for t in TOURS if t.get("hot")), key=lambda t: t["hotOrder"])
-    hot_rows = "\n".join(
-        f'    <li{LAST if is_last(t) else ""}><a href="#{t["id"]}"><span class="hot-name">{e(t["name"])} <small>{e(t["monthFull"])}</small></span>'
-        f'<span class="hot-what">{e(t["hot"])}</span></a></li>' for t in hot)
 
     nav_links = "".join(f'<a href="#{t["id"]}">{e(t["name"])} <small>{e(t["monthFull"])}</small></a>' for t in TOURS)
 
@@ -985,16 +973,16 @@ def render_body(src, inline=False):
 
     handle = META["telegram"]
     choose = e(tg(H["ctaMessage"]))
-    return f"""{C.get("previewBar", "")}
+    return f"""
 <div class="masthead">
   <div class="wrap top">
-    <span class="brand">{RING if C.get("ring") else ""}{e(C['brand'])} <b>· {e(C.get("brandSub", "сезон 26/27"))}</b></span>
-    <nav aria-label="Разделы"><a href="#about">О нас</a><a href="https://t.me/{handle}" target="_blank" rel="noopener">@{handle}</a></nav>
+    <span class="brand">{RING if C.get("ring") else ""}<b>{e(C["brandSub"])}</b> {e(C["brand"])}</span>
+    <nav aria-label="Разделы"><a href="#season">{e(C["nav"]["season"])}</a><a href="#about">{e(C["nav"]["about"])}</a><a href="https://t.me/{handle}" target="_blank" rel="noopener">@{handle}</a></nav>
   </div>
 
   <div class="intro{" has-ring" if C.get("ring") else ""}">{HERO_RING if C.get("ring") else ""}
     <header class="hero">
-      <p class="eyebrow">{e(H["eyebrow"])}</p>
+      <p class="eyebrow">{e(H["eyebrow"].replace("{count}", COUNT_WORDS.get(len(TOURS), f"{len(TOURS)} поездок")))}</p>
       <h1>{"<br>".join(f'<span class="ln">{e(x)}</span>' for x in H["title"].split(chr(10)))}</h1>
       <p class="lead">{e(H["lead"])}</p>
       <div class="hero-cta">
@@ -1011,17 +999,7 @@ def render_body(src, inline=False):
   </div>
 </div>
 
-{render_mood()}
-
-<section class="wrap hot rv" aria-labelledby="hot-title">
-  <div>
-    <h2 id="hot-title">{e(HOT["title"])}</h2>
-    <p>{e(HOT["lead"])}</p>
-  </div>
-  <ul>
-{hot_rows}
-  </ul>
-</section>
+{render_season()}
 
 <nav class="tripnav" aria-label="{e(C["tripNav"])}"><div class="wrap tripnav-in">{nav_links}</div></nav>
 
@@ -1036,7 +1014,7 @@ def render_body(src, inline=False):
 
 {render_about(src, inline)}
 
-{render_principles() or render_why()}
+{render_principles()}
 
 {render_reviews(src)}
 
@@ -1045,7 +1023,7 @@ def render_body(src, inline=False):
 {render_contact(src, inline, choose, handle)}
 
 <footer class="wrap">
-  <span>Андрей Баранов · авторские путешествия · 2026–2027. Места и цены на {e(META.get('updated', ''))}.</span>
+  <span>{e(C["brandSub"])} {e(C["brand"])} · Андрей Баранов · 2026–2027. Места и цены на {e(META.get('updated', ''))}.</span>
   <span>Фото с Wikimedia Commons, кадрировано: {credits}. Остальные снимки из материалов поездок.</span>
 </footer>
 
@@ -1123,39 +1101,6 @@ def build(inline_out=None):
 
     (ROOT / "index.html").write_text(f"{head(META['title'])}\n{body}\n{script}\n</body>\n</html>\n", encoding="utf-8")
     build_404(site, fonts, style)
-    build_previews(src, head, script)
-
-
-def build_previews(src, head, script):
-    """Страницы для просмотра вариантов позиционирования: variant-1.html… Основная страница их не видит,
-    поисковикам они закрыты (noindex)."""
-    global C
-    base, P = C, C.get("previews")
-    if not P:
-        return
-    total = len(P["variants"])
-    for i, v in enumerate(P["variants"], 1):
-        here = ' aria-current="page"'
-        links = "".join(f'<a href="{x["slug"]}.html"{here if x is v else ""}>{k}</a>'
-                        for k, x in enumerate(P["variants"], 1))
-        bar = (f'<div class="pv"><div class="wrap pv-in"><span>{e(P["note"])} · вариант {i} из {total}</span>'
-               f'<nav aria-label="Варианты">{links}<a href="./">{e(P["current"])}</a></nav></div></div>')
-        c = copy.deepcopy(base)
-        c["hero"].update({k: v[k] for k in ("eyebrow", "title", "lead")})
-        c.update(brand=v.get("brand", P["brand"]), manifesto=v.get("manifesto", P["manifesto"]),
-                 principles=P["principles"], previewBar=bar)
-        for k in ("brandSub", "ring", "meaning", "galleryExclude"):
-            if k in v:
-                c[k] = v[k]
-        C = c
-        try:
-            body = render_body(src)
-        finally:
-            C = base
-        title = f"{v['name']} · вариант {i} из {total} · {META['title']}"
-        robots = '\n<meta name="robots" content="noindex">'
-        (ROOT / f"{v['slug']}.html").write_text(f"{head(title, robots)}\n{body}\n{script}\n</body>\n</html>\n",
-                                                encoding="utf-8")
 
 
 def build_404(site, fonts, style):
@@ -1177,7 +1122,7 @@ def build_404(site, fonts, style):
 <body>
 <div class="masthead notfound">
   <div class="wrap top">
-    <a class="brand" href="./">Авторские путешествия <b>· сезон 26/27</b></a>
+    <a class="brand" href="./">{RING}<b>{e(C["brandSub"])}</b> {e(C["brand"])}</a>
     <nav aria-label="Разделы"><a href="https://t.me/{handle}" target="_blank" rel="noopener">@{handle}</a></nav>
   </div>
   <main class="wrap nf"><div class="hero">
