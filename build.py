@@ -8,15 +8,15 @@
   seats   {"left": осталось, "total": всего или null, "of": "по ранней цене", "по 4 100 €" или ""}
   waitlist true: мест нет, кнопка «Записаться в лист ожидания» (тексты в waitlist), seats.left 0
   tiers   ступени цены, state: sold (продано) / now (сейчас) / next (потом) / option (вариант)
-  callout {"title", "text"} плашка в правой колонке, когда мест не знаем (например, ранняя регистрация)
+  callout {"title", "text"} плашка в правой колонке с необязательной подписью
           при seats.left = 1 колонка, флажок на фото и строка в «Поездках по месяцам» выделены как последнее место
   urgency надпись на фото, hot статус поездки в «Поездках по месяцам» (там поездки идут по датам)
   pos     точка кадра для фото поездки; spinePos (необязательно) то же для узкой полосы на первом экране
   reviews отзывы {"name", "trip", "text", "photo": имя файла в img/ без расширения или пусто};
           пока список пустой, секции на странице нет
   gallery снимки прошлых поездок «Как это было»: img, ratio (3:2, 4:5, 2:1), pos, col, shift, wide, cap, alt
-  season  «Поездки по месяцам»: заголовок, фильтр «Мне нравится» (tags; у поездки moods)
-  manifesto, meaning, principles  манифест, «Почему Шуньята» с целью клуба, «Как мы путешествуем»
+  season  «Поездки по месяцам»: заголовок и фильтр (tags; у поездки moods)
+  manifesto, meaning, principles  фраза о маршруте, «Почему „Шуньята“», «Как мы путешествуем»
   contact.photo фон блока контактов, файл из img/ без расширения
 
 WebP-версии фото, иконки и img/og.jpg готовит python3 images.py (нужен Pillow).
@@ -39,8 +39,6 @@ META = C["meta"]
 # Между сборками скрипт на странице помечает их «Состоялось» и убирает из «Поездок по месяцам».
 TODAY = date.today().isoformat()
 TOURS = [t for t in C["tours"] if t["end"] >= TODAY]
-COUNT_WORDS = {1: "одна поездка", 2: "две поездки", 3: "три поездки", 4: "четыре поездки", 5: "пять поездок",
-               6: "шесть поездок", 7: "семь поездок", 8: "восемь поездок", 9: "девять поездок", 10: "десять поездок"}
 
 # Шрифты лежат в fonts/ (файлы Google Fonts, лицензия OFL рядом): без внешнего CSS, который задерживал первую отрисовку.
 # Превью --inline берёт их с Google Fonts, потому что открывается без папки fonts/.
@@ -100,9 +98,6 @@ p{text-wrap:pretty}
 .skip{position:absolute;z-index:30;left:var(--gutter);top:.75rem;padding:.6rem .9rem;border-radius:4px;background:var(--fill);color:var(--on-fill);
   font:600 .95rem/1.2 var(--f-body);text-decoration:none;transform:translateY(-200%)}
 .skip:focus{transform:none}
-/* появление при прокрутке: только когда работает JS, один раз; --d задаёт небольшую очередь внутри ряда */
-.js .rv{opacity:0;transform:translateY(2rem);transition:opacity .7s var(--ease),transform .7s var(--ease);transition-delay:var(--d,0s)}
-.js .rv.in{opacity:1;transform:none}
 :focus-visible{outline:2px solid var(--stamp);outline-offset:3px;border-radius:4px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .wrap{max-width:1240px;margin-inline:auto;padding-inline:var(--gutter)}
@@ -129,9 +124,8 @@ picture{display:contents}
 .hero h1 .ln:nth-of-type(2){padding-left:.8em}
 .hero h1 .ln:nth-of-type(3){padding-left:1.6em}
 .lead{margin:0;max-width:58ch;font-size:clamp(1.02rem,1.6vw,1.2rem);color:var(--on-night-soft)}
-.hero-cta{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.25rem;padding-top:.6rem}
+.hero-cta{display:flex;align-items:center;padding-top:.6rem}
 .hero-cta .btn{min-width:min(100%,15rem)}
-.hero-cta span{font-size:.9rem;color:var(--on-night-soft)}
 
 .masthead.notfound{min-height:100svh;display:flex;flex-direction:column}
 .nf{flex:1;width:100%;display:grid;align-content:center;padding-block:3rem 5rem}
@@ -139,11 +133,10 @@ picture{display:contents}
 .nf .hero>*{order:0}
 .notfound .brand{text-decoration:none;border:0;padding:0}
 
-/* поездки по месяцам: весь сезон по порядку дат, сверху фильтр «Мне нравится» */
+/* поездки по месяцам: весь сезон по порядку дат, сверху фильтр */
 .season{padding-block:clamp(3rem,7vw,5rem) 0;display:grid;gap:1.25rem}
 @media (min-width:980px){.season{grid-template-columns:minmax(0,18.5rem) minmax(0,1fr);column-gap:clamp(2.5rem,4.5vw,4rem);align-items:start}}
-.season h2{margin:0 0 .6rem;font:600 clamp(1.5rem,2.8vw,2.1rem)/1.1 var(--f-display);letter-spacing:-.015em;text-wrap:balance}
-.season-lead{margin:0;max-width:34ch;color:var(--ink-soft);font-size:.95rem}
+.season h2{margin:0;font:600 clamp(1.5rem,2.8vw,2.1rem)/1.1 var(--f-display);letter-spacing:-.015em;text-wrap:balance}
 .season-filter{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin:0 0 1.1rem}
 .season-filter>span{margin-right:.25rem;color:var(--ink-soft);font-size:.95rem}
 .tag{appearance:none;cursor:pointer;padding:.55rem .9rem;border:1px solid var(--line);border-radius:4px;background:none;color:var(--ink);
@@ -172,7 +165,7 @@ picture{display:contents}
 .spines-nav{min-width:0}
 .spines{display:flex;gap:clamp(4px,.8vw,8px);height:clamp(300px,42vw,460px)}
 .spine{position:relative;flex:1 1 0;min-width:0;overflow:hidden;border-radius:4px;text-decoration:none;color:var(--on-photo);
-  background:#2a3133 var(--img) var(--pos)/cover no-repeat;transition:flex-grow .6s var(--ease)}
+  background:#2a3133 var(--img) var(--pos)/cover no-repeat;transition:flex-grow 150ms ease-out}
 .spine::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(6,10,12,.82) 0%,rgba(6,10,12,.15) 55%,rgba(6,10,12,.05) 100%)}
 /* название и месяц одной вертикальной строкой снизу вверх: месяц никогда не шире полосы */
 .spine-label{position:absolute;z-index:1;left:50%;bottom:1.2rem;display:flex;align-items:center;gap:.6rem;white-space:nowrap;
@@ -203,11 +196,10 @@ picture{display:contents}
   .spine{border-radius:0}
 }
 /* на телефоне те же полосы, повёрнутые на 90°: восемь горизонтальных фото-полос одна под другой,
-   все поездки видны сразу, ничего не обрезано. При открытии полосы выезжают по очереди. */
+   все поездки видны сразу, ничего не обрезано. */
 @media (max-width:759px){
   .spines{display:grid;gap:3px;height:auto}
-  .spine{height:3.9rem;border-radius:4px;background-image:none;
-    animation:band-in .7s var(--ease) both;animation-delay:calc(var(--i,0) * 60ms + 150ms)}
+  .spine{height:3.9rem;border-radius:4px;background-image:none}
   .spine::after{background:linear-gradient(90deg,rgba(6,10,12,.72) 0%,rgba(6,10,12,.3) 45%,rgba(6,10,12,.3) 62%,rgba(6,10,12,.62) 100%)}
   .spine-label{inset:0 1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;
     writing-mode:horizontal-tb;transform:none}
@@ -223,8 +215,6 @@ picture{display:contents}
   .spines-nav{order:2;margin-top:.6rem}
   .lead{order:3;margin-top:.8rem}
 }
-/* только сдвиг, без прозрачности: полосы видны с первого кадра и не задерживают отрисовку */
-@keyframes band-in{from{transform:translateX(-1.25rem)}}
 
 /* строка поездок: появляется, пока на экране главы */
 .tripnav{position:fixed;z-index:20;top:env(safe-area-inset-top,0px);left:0;right:0;background:var(--paper);border-bottom:1px solid var(--line);
@@ -246,9 +236,8 @@ picture{display:contents}
 .trip-photo{position:relative;display:block;overflow:hidden;aspect-ratio:4/5;color:var(--on-photo);text-decoration:none;background:#2a3133}
 @media (min-width:600px){.trip-photo{aspect-ratio:auto;height:clamp(26rem,64vw,40rem)}}
 @media (min-width:1000px){.trip-photo{height:clamp(30rem,80svh,54rem)}}
-/* фото чуть выше рамки и при прокрутке движется медленнее текста: глубина, как в кино */
-.photo{position:absolute;left:0;top:-8%;width:100%;height:116%;object-fit:cover;object-position:var(--pos);
-  transform:translate3d(0,var(--py,0px),0);will-change:transform}
+/* Фото чуть выше рамки, чтобы сохранить исходное кадрирование. */
+.photo{position:absolute;left:0;top:-8%;width:100%;height:116%;object-fit:cover;object-position:var(--pos)}
 .trip-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,var(--scrim) 0%,rgba(6,10,12,.45) 30%,rgba(6,10,12,0) 58%)}
 .cap{position:absolute;z-index:1;left:0;right:0;bottom:0;padding:0 var(--edge) clamp(1.5rem,4.5vw,3.5rem);display:grid;gap:.5rem;text-shadow:0 1px 14px rgba(0,0,0,.35);
   container-type:inline-size}
@@ -371,35 +360,27 @@ picture{display:contents}
 .principles h3{margin:0;font:600 clamp(1.15rem,2vw,1.45rem)/1.25 var(--f-display);letter-spacing:-.01em;text-wrap:balance}
 .principles li p{margin:0;color:var(--ink-soft);line-height:1.6}
 
-/* фраза-манифест: слова проявляются по очереди при прокрутке */
+/* Фраза о свободном времени в маршруте */
 .manifesto{padding-block:clamp(5rem,12vw,9rem)}
 .manifesto-text{margin:0;max-width:22ch;font:600 clamp(2rem,5.4vw,4.3rem)/1.08 var(--f-display);letter-spacing:-.02em;text-wrap:balance}
-.js .manifesto .w{opacity:.48;transition:opacity .5s var(--ease)}
-.js .manifesto .w.on{opacity:1}
-.manifesto-note{margin:1.75rem 0 0;font:500 .95rem/1.4 var(--f-mono);color:var(--stamp)}
 
-/* знак «пустой круг» (шуньята, санскр. «пустое», ноль): тонкое кольцо с разрывом, рисуется один раз */
+/* Знак клуба: тонкое кольцо с разрывом */
 .ring{display:block;overflow:visible;pointer-events:none}
 .ring circle{fill:none;stroke:currentColor;stroke-width:1.5;vector-effect:non-scaling-stroke;stroke-linecap:round;
   stroke-dasharray:92 100;transform:rotate(-58deg);transform-origin:50% 50%}
-@keyframes ring-draw{from{stroke-dasharray:0 100}}
 .brand .ring{display:inline-block;width:.95em;height:.95em;margin-right:.45em;vertical-align:-.12em}
 .brand .ring circle{stroke-width:2}
 /* большое кольцо за заголовком первого экрана */
 .intro.has-ring{position:relative;overflow:clip}
 .intro.has-ring>*{position:relative;z-index:1}
 .intro>.hero-ring{position:absolute;z-index:0;color:var(--on-night);opacity:.2;width:min(78vw,24rem);right:-18vw;top:-1rem}
-.hero-ring circle{animation:ring-draw 2.2s var(--ease) .3s both}
 @media (min-width:980px){.intro>.hero-ring{width:34rem;right:auto;left:calc(var(--edge) - 7rem);top:50%;transform:translateY(-55%)}}
 
 /* почему шуньята: текст и рассвет, кольцо вокруг солнца */
 .meaning{padding-block:clamp(4rem,9vw,7rem);display:grid;gap:2rem}
 @media (min-width:980px){.meaning{grid-template-columns:minmax(0,5fr) minmax(0,7fr);column-gap:clamp(2.5rem,5vw,5rem);align-items:start}}
-.meaning-word{margin:0 0 .75rem;font:500 .95rem/1.4 var(--f-mono);color:var(--stamp)}
 .meaning h2{margin:0 0 1.25rem;font:600 clamp(1.9rem,4.4vw,3.4rem)/1.05 var(--f-display);letter-spacing:-.02em}
 .meaning-text p{margin:0 0 1rem;max-width:56ch;font-size:clamp(1.03rem,1.4vw,1.15rem);line-height:1.65}
-.meaning-goal{margin-top:1.75rem;padding-top:1.5rem;border-top:1px solid var(--ink)}
-.meaning-goal h3{margin:0 0 .9rem;font:600 clamp(1.2rem,2.2vw,1.55rem)/1.2 var(--f-display);letter-spacing:-.01em}
 .meaning-zero{display:flex;gap:.75rem;align-items:flex-start;margin-top:1.75rem!important;padding-top:1.25rem;border-top:1px solid var(--line);
   color:var(--ink-soft);font-size:.95rem!important}
 .meaning-zero .ring{flex:0 0 1.6rem;height:1.6rem;color:var(--stamp)}
@@ -407,8 +388,7 @@ picture{display:contents}
 .meaning-photo{position:relative}
 .meaning-photo img{display:block;width:100%;height:auto;border-radius:2px;background:var(--line)}
 .meaning-photo .ring{position:absolute;left:var(--rx);top:var(--ry);width:var(--rd);aspect-ratio:1;transform:translate(-50%,-50%);color:#fff}
-.meaning-photo .ring circle{stroke-width:2;stroke-dasharray:0 100}
-.meaning figure.in .ring circle{stroke-dasharray:92 100;transition:stroke-dasharray 2s var(--ease) .4s}
+.meaning-photo .ring circle{stroke-width:2}
 .meaning figcaption{padding-top:.6rem;font:400 .8rem/1.4 var(--f-mono);color:var(--ink-soft)}
 
 /* что говорят участники */
@@ -425,8 +405,7 @@ picture{display:contents}
 /* частые сомнения */
 .faq{padding-block:clamp(3.5rem,8vw,6rem);border-top:1px solid var(--line);display:grid;gap:1.5rem}
 @media (min-width:980px){.faq{grid-template-columns:22rem minmax(0,1fr);gap:4.5rem}}
-.faq-head h2{margin-bottom:.75rem}
-.faq-head p{margin:0;color:var(--ink-soft);max-width:40ch}
+.faq-head h2{margin:0}
 .faq-list{border-top:1px solid var(--ink);min-width:0}
 .faq details{border-bottom:1px solid var(--line)}
 .faq summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1rem;align-items:baseline;padding:1.05rem .1rem;font:600 1.08rem/1.35 var(--f-body)}
@@ -473,12 +452,7 @@ footer a{color:var(--ink-soft)}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   .spine,.btn,.top a,.tripnav,.tripnav.is-on,.dock,.dock.is-on,.side-cta,.side-cta.is-on,.faq summary::after{transition:none}
-  .photo{transform:none}
   .btn:active{transform:none}
-  .js .rv{transform:none;transition:opacity .7s var(--ease)}
-  .hero-ring circle{animation:none}
-  .meaning-photo .ring circle{stroke-dasharray:92 100;transition:none}
-  .spine{animation:none}
 }
 """
 
@@ -499,7 +473,7 @@ JS = r"""
     if(!nextFound){var d=Math.round((s-now)/DAY);badge.textContent='Старт через '+d+' '+plural(d);badge.hidden=false;nextFound=true;}
   });
 
-  // «Мне нравится»: один тег за раз оставляет в списке подходящие поездки, повторное нажатие показывает все
+  // Один тег оставляет в списке подходящие поездки, повторное нажатие показывает все
   var tags=document.querySelectorAll('.tag'), rows=document.querySelectorAll('.season-list li');
   tags.forEach(function(tg){tg.addEventListener('click',function(){
     var on=tg.getAttribute('aria-pressed')!=='true';
@@ -508,33 +482,7 @@ JS = r"""
     rows.forEach(function(li){li.hidden=on&&li.dataset.moods.split(' ').indexOf(tg.dataset.mood)<0;});
   });});
 
-  // глубина в главах: фото движется медленнее страницы; только видимые главы, один расчёт на кадр
-  if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&'IntersectionObserver' in window){
-    var vis=new Set(), tick=false;
-    var move=function(){tick=false;vis.forEach(function(ph){
-      var r=ph.getBoundingClientRect(), p=(r.top+r.height/2-innerHeight/2)/(innerHeight/2+r.height/2);
-      ph.style.setProperty('--py',(-p*r.height*.07).toFixed(1)+'px');
-    });};
-    var pio=new IntersectionObserver(function(es){es.forEach(function(en){en.isIntersecting?vis.add(en.target):vis.delete(en.target);});move();});
-    document.querySelectorAll('.trip-photo').forEach(function(ph){pio.observe(ph);});
-    addEventListener('scroll',function(){if(!tick){tick=true;requestAnimationFrame(move);}},{passive:true});
-  }
-
-  // появление блоков и слов манифеста при прокрутке, один раз
-  var rv=document.querySelectorAll('.rv'), words=document.querySelectorAll('.manifesto .w');
-  if(!('IntersectionObserver' in window)){
-    rv.forEach(function(el){el.classList.add('in');}); words.forEach(function(w){w.classList.add('on');}); return;
-  }
-  var rio=new IntersectionObserver(function(es){es.forEach(function(en){
-    if(en.isIntersecting){en.target.classList.add('in');rio.unobserve(en.target);}
-  });},{rootMargin:'0px 0px -8% 0px'});
-  rv.forEach(function(el){rio.observe(el);});
-  var wio=new IntersectionObserver(function(es){var k=0;es.forEach(function(en){
-    if(!en.isIntersecting)return;
-    en.target.style.transitionDelay=(k++*70)+'ms'; en.target.classList.add('on'); wio.unobserve(en.target);
-  });},{rootMargin:'0px 0px -35% 0px'});
-  words.forEach(function(w){wio.observe(w);});
-
+  if(!('IntersectionObserver' in window))return;
   var smooth=!matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // строка поездок видна, пока главы пересекают верх экрана; текущая глава подсвечена
@@ -567,8 +515,6 @@ JS = r"""
 """
 
 e = html.escape
-# класс js на <html> до отрисовки: блоки, которые проявляются при прокрутке, прячутся только когда скрипт точно работает
-JS_FLAG = "<script>document.documentElement.classList.add('js')</script>"
 STATE = {"sold": "продано", "now": "сейчас", "next": "потом", "option": ""}
 
 
@@ -683,10 +629,11 @@ def render_seats(t):
         c = t.get("callout")
         if not c:
             return ""
-        return f'<div class="seats"><strong>{e(c["title"])}</strong><span class="seats-note">{e(c["text"])}</span></div>'
+        note = f'<span class="seats-note">{e(c["text"])}</span>' if c.get("text") else ""
+        return f'<div class="seats"><strong>{e(c["title"])}</strong>{note}</div>'
     if t.get("waitlist"):
         W = C["waitlist"]
-        return f'<div class="seats"><strong>{e(W["title"])}</strong><span class="seats-note">{e(W["text"])}</span></div>'
+        return f'<div class="seats"><strong>{e(W["title"])}</strong></div>'
     left, total, of = s["left"], s.get("total"), s.get("of", "")
     word = seats_word(left)
     # of: «по ранней цене», «по 4 100 €»: с ним «По ранней цене осталось 1 место из 5»
@@ -719,7 +666,7 @@ def render_gallery(src, inline):
     if not g or not g["items"]:
         return ""
     figs = []
-    for n, x in enumerate(g["items"]):
+    for x in g["items"]:
         w, h = (int(v) for v in x["ratio"].split(":"))
         attrs = (f'alt="{e(x["alt"])}" width="960" height="{round(960 * h / w)}" '
                  f'loading="lazy" decoding="async"')
@@ -728,12 +675,13 @@ def render_gallery(src, inline):
         wide = x.get("wide")
         sizes = (f"(max-width:979px) {'100vw' if wide else '50vw'}, {round((z - a) * 1160 / 12)}px")
         pic = variants(src, x["img"], (360, 640, 960), sizes, attrs, inline)
-        style = f'--col:{x.get("col", "auto / span 4")};--shift:{x.get("shift", "0")};--d:{n % 3 * 90}ms'
+        style = f'--col:{x.get("col", "auto / span 4")};--shift:{x.get("shift", "0")}'
         # без подписей: коллаж; место съёмки остаётся в cap в content.json и в alt
-        figs.append(f'<figure class="rv{" wide" if wide else ""}" style="{style}">{pic}</figure>')
+        cls = ' class="wide"' if wide else ''
+        figs.append(f'<figure{cls} style="{style}">{pic}</figure>')
     return f"""<section class="gallery" id="moments" aria-labelledby="moments-title">
   <div class="wrap">
-    <h2 id="moments-title" class="rv">{e(g["title"])}</h2>
+    <h2 id="moments-title">{e(g["title"])}</h2>
     <div class="moments">{"".join(figs)}</div>
   </div>
 </section>"""
@@ -753,10 +701,9 @@ def render_season():
                     f'<span class="se-what">{e(t.get("hot", ""))}</span></a></li>')
     flt = (f'<div class="season-filter" role="group" aria-label="{e(S["filter"])}"><span>{e(S["filter"])}:</span>{tags}</div>'
            if tags else "")
-    return f"""<section class="wrap season rv" id="season" aria-labelledby="season-title">
+    return f"""<section class="wrap season" id="season" aria-labelledby="season-title">
   <div>
     <h2 id="season-title">{e(S["title"])}</h2>
-    <p class="season-lead">{e(S["lead"])}</p>
   </div>
   <div>
     {flt}
@@ -769,10 +716,10 @@ def render_principles():
     p = C.get("principles")
     if not p:
         return ""
-    items = "".join(f'<li class="rv" style="--d:{n * 80}ms"><h3>{e(x["t"])}</h3><p>{e(x["d"])}</p></li>'
-                    for n, x in enumerate(p["items"]))
+    items = "".join(f'<li><h3>{e(x["t"])}</h3><p>{e(x["d"])}</p></li>'
+                    for x in p["items"])
     return f"""<section class="wrap principles" id="why" aria-labelledby="principles-title">
-  <h2 id="principles-title" class="rv">{e(p["title"])}</h2>
+  <h2 id="principles-title">{e(p["title"])}</h2>
   <ol>{items}</ol>
 </section>"""
 
@@ -788,9 +735,6 @@ def render_meaning(src, inline):
         return ""
     paras = "".join(f"<p>{e(x)}</p>" for x in m["paragraphs"])
     zero = f'<p class="meaning-zero">{RING}<span>{e(m["zero"])}</span></p>' if m.get("zero") else ""
-    g = m.get("goal")
-    goal = (f'<div class="meaning-goal"><h3>{e(g["title"])}</h3>' + "".join(f"<p>{e(x)}</p>" for x in g["paragraphs"]) + "</div>"
-            if g else "")
     ph, fig = m.get("photo"), ""
     if ph:
         w, h = (int(v) for v in ph["ratio"].split(":"))
@@ -798,13 +742,12 @@ def render_meaning(src, inline):
         pic = variants(src, ph["img"], (360, 640, 960), "(max-width:979px) 100vw, 680px", attrs, inline)
         r = ph.get("ring", {})
         style = f' style="--rx:{r["x"]};--ry:{r["y"]};--rd:{r["d"]}"' if r else ""
-        fig = (f'<figure class="rv"><div class="meaning-photo"{style}>{pic}{RING if r else ""}</div>'
+        fig = (f'<figure><div class="meaning-photo"{style}>{pic}{RING if r else ""}</div>'
                f'<figcaption>{e(ph["cap"])}</figcaption></figure>')
     return f"""<section class="wrap meaning" id="shunyata" aria-labelledby="meaning-title">
-  <div class="meaning-text rv">
-    <p class="meaning-word">{e(m["word"])}</p>
+  <div class="meaning-text">
     <h2 id="meaning-title">{e(m["title"])}</h2>
-    {paras}{goal}{zero}
+    {paras}{zero}
   </div>
   {fig}
 </section>"""
@@ -814,11 +757,8 @@ def render_manifesto():
     m = C.get("manifesto")
     if not m:
         return ""
-    text = "<br>".join(" ".join(f'<span class="w">{e(w)}</span>' for w in line.split())
-                       for line in m["text"].split("\n"))
     return f"""<section class="wrap manifesto">
-  <p class="manifesto-text">{text}</p>
-  <p class="manifesto-note rv">{e(m["note"])}</p>
+  <p class="manifesto-text">{lines(m["text"])}</p>
 </section>"""
 
 
@@ -828,8 +768,8 @@ def render_faq():
         return ""
     items = "".join(f'<details><summary>{e(x["q"])}</summary><p>{e(x["a"])}</p></details>' for x in f["items"])
     return f"""<section class="wrap faq" id="faq" aria-labelledby="faq-title">
-  <div class="faq-head rv"><h2 id="faq-title">{e(f["title"])}</h2><p>{e(f["lead"])}</p></div>
-  <div class="faq-list rv">{items}</div>
+  <div class="faq-head"><h2 id="faq-title">{e(f["title"])}</h2></div>
+  <div class="faq-list">{items}</div>
 </section>"""
 
 
@@ -841,7 +781,7 @@ def render_reviews(src):
     for r in items:
         photo = (picture(src, r["photo"], 'alt="" width="96" height="96" loading="lazy" decoding="async"')
                  if r.get("photo") else "")
-        cards.append(f'<figure class="review rv"><blockquote><p>{e(r["text"])}</p></blockquote>'
+        cards.append(f'<figure class="review"><blockquote><p>{e(r["text"])}</p></blockquote>'
                      f'<figcaption>{photo}<span><b>{e(r["name"])}</b><small>{e(r["trip"])}</small></span></figcaption></figure>')
     return f"""<section class="wrap reviews" id="reviews" aria-labelledby="reviews-title">
   <h2 id="reviews-title">{e(C.get("reviewsTitle", "Что говорят участники"))}</h2>
@@ -856,14 +796,14 @@ def render_about(src, inline):
     paras = "".join(f"<p>{e(p)}</p>" for p in a["paragraphs"])
     places = "".join(f"<li>{e(x)}</li>" for x in a["places"])
     team = []
-    for n, x in enumerate(a["team"]):
+    for x in a["team"]:
         attrs = f'alt="{e(x["name"])}" width="800" height="1000" loading="lazy" decoding="async"'
         pic = variants(src, x["img"], (400, 800), "(max-width:599px) 100vw, (max-width:979px) 50vw, 380px", attrs, inline)
-        team.append(f'<article class="person rv" style="--d:{n * 100}ms">{pic}<h3>{e(x["name"])}</h3>'
+        team.append(f'<article class="person">{pic}<h3>{e(x["name"])}</h3>'
                     f'<p class="role">{e(x["role"])}</p><p>{e(x["bio"])}</p></article>')
     guests = f'\n    <p class="guests">{e(a["guests"])}</p>' if a.get("guests") else ""
     return f"""<section class="wrap about" id="about" aria-labelledby="about-title">
-  <div class="about-head rv">
+  <div class="about-head">
     <ul class="stats">{"".join(f'<li><b>{e(x["num"])}</b><span>{e(x["label"])}</span></li>' for x in a["stats"])}</ul>
     <div class="about-text">
       <h2 id="about-title">{e(a["title"])}</h2>
@@ -887,7 +827,7 @@ def render_contact(src, inline, choose, handle):
         bg = f'<div class="contact-bg" aria-hidden="true">{pic}</div>'
     return f"""<section class="contact" aria-labelledby="contact-title">
   {bg}
-  <div class="wrap rv">
+  <div class="wrap">
     <div>
       <h2 id="contact-title">{e(CT["title"])}</h2>
       <p>{e(CT["text"])}</p>
@@ -919,10 +859,10 @@ def band(t, src):
 def render_body(src, inline=False):
     H = C["hero"]
     spines = "\n".join(
-        f'      <a class="spine t-{t["id"]}" href="#{t["id"]}" style="--i:{n}">{band(t, src)}'
+        f'      <a class="spine t-{t["id"]}" href="#{t["id"]}">{band(t, src)}'
         f'<span class="spine-label"><span class="spine-name">{e(t["name"])}</span> <span class="spine-month">{e(t["monthFull"])}</span></span>'
         f'<span class="sr">{e(t["dates"])}</span></a>'
-        for n, t in enumerate(TOURS))
+        for t in TOURS)
 
     nav_links = "".join(f'<a href="#{t["id"]}">{e(t["name"])} <small>{e(t["monthFull"])}</small></a>' for t in TOURS)
 
@@ -934,23 +874,25 @@ def render_body(src, inline=False):
         dl = "".join(f"<dt>{k}</dt><dd>{v}</dd>" for k, v in facts)
         flag = (f'<span class="flag{" is-last" if is_last(t) else ""}">{e(t["urgency"])}</span>'
                 if t.get("urgency") else "")
-        micro = ("Заявка ни к чему не обязывает. " +
-                 (f"Место закрепляет предоплата {t['deposit']}." if t.get("deposit") else "Место закрепляет предоплата."))
         book = "Забронировать место"
+        micro = ""
         if t.get("waitlist"):
-            micro, book = C["waitlist"]["micro"], C["waitlist"]["button"]
+            book = C["waitlist"]["button"]
+        else:
+            deposit = f' {e(t["deposit"])}' if t.get("deposit") else ""
+            micro = f'\n        <p class="micro">Место закрепляет предоплата{deposit}.</p>'
         trips.append(f"""
   <article class="trip t-{t['id']}" id="{t['id']}" data-start="{t['start']}" data-end="{t['end']}">
     <a class="trip-photo" href="{e(t['url'])}" target="_blank" rel="noopener" aria-label="{e(t['name'])}: открыть сайт поездки">
       {render_photo(t, src, inline)}
       <span class="badges"><span class="stamp">{e(t['dates'])}</span><span class="chips">{flag}<span class="status" hidden></span></span></span>
-      <div class="cap rv">
+      <div class="cap">
         <span class="kicker">{e(t['kicker'])}</span>
         <h2{name_width(t['name'])}>{e(t['name'])}</h2>
         <span class="project">«{e(t['project'])}»</span>
       </div>
     </a>
-    <div class="wrap trip-body rv">
+    <div class="wrap trip-body">
       <p class="route">{e(t['route'])}</p>
       <div class="trip-main">
         <p class="trip-text">{e(t['text'])}</p>
@@ -959,9 +901,8 @@ def render_body(src, inline=False):
       <div class="aside">
         {render_seats(t)}
         {render_ladder(t)}
-        <a class="btn btn-primary" href="{e(tg_book(t))}" target="_blank" rel="noopener">{e(book)}</a>
-        <p class="micro">{e(micro)}</p>
-        <a class="more" href="{e(t['url'])}" target="_blank" rel="noopener">{e(C['tripLink'])} {e(t['domain'])} ↗</a>
+        <a class="btn btn-primary" href="{e(tg_book(t))}" target="_blank" rel="noopener">{e(book)}</a>{micro}
+        <a class="more" href="{e(t['url'])}" target="_blank" rel="noopener">{e(C['tripLink'])} · {e(t['domain'])} <span aria-hidden="true">↗</span></a>
       </div>
     </div>
   </article>""")
@@ -982,12 +923,11 @@ def render_body(src, inline=False):
 
   <div class="intro{" has-ring" if C.get("ring") else ""}">{HERO_RING if C.get("ring") else ""}
     <header class="hero">
-      <p class="eyebrow">{e(H["eyebrow"].replace("{count}", COUNT_WORDS.get(len(TOURS), f"{len(TOURS)} поездок")))}</p>
+      <p class="eyebrow">{e(H["eyebrow"])}</p>
       <h1>{"<br>".join(f'<span class="ln">{e(x)}</span>' for x in H["title"].split(chr(10)))}</h1>
       <p class="lead">{e(H["lead"])}</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="{choose}" target="_blank" rel="noopener">{e(H["cta"])}</a>
-        <span>{e(H["ctaNote"])}</span>
       </div>
     </header>
 
@@ -1053,7 +993,7 @@ def build(inline_out=None):
         fonts = (f'<link rel="preconnect" href="https://fonts.googleapis.com">'
                  f'<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
                  f'<link rel="stylesheet" href="{FONTS}">')
-        page = f"<title>{e(META['title'])}</title>\n{JS_FLAG}\n{fonts}\n{style}\n{body}\n{script}\n"
+        page = f"<title>{e(META['title'])}</title>\n{fonts}\n{style}\n{body}\n{script}\n"
         Path(inline_out).write_text(page, encoding="utf-8")
         return
 
@@ -1092,7 +1032,6 @@ def build(inline_out=None):
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="{e(C['og']['alt'])}">
 <meta name="twitter:card" content="summary_large_image">
-{JS_FLAG}
 {fonts}
 {style}
 </head>

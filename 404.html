@@ -60,9 +60,6 @@ p{text-wrap:pretty}
 .skip{position:absolute;z-index:30;left:var(--gutter);top:.75rem;padding:.6rem .9rem;border-radius:4px;background:var(--fill);color:var(--on-fill);
   font:600 .95rem/1.2 var(--f-body);text-decoration:none;transform:translateY(-200%)}
 .skip:focus{transform:none}
-/* появление при прокрутке: только когда работает JS, один раз; --d задаёт небольшую очередь внутри ряда */
-.js .rv{opacity:0;transform:translateY(2rem);transition:opacity .7s var(--ease),transform .7s var(--ease);transition-delay:var(--d,0s)}
-.js .rv.in{opacity:1;transform:none}
 :focus-visible{outline:2px solid var(--stamp);outline-offset:3px;border-radius:4px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .wrap{max-width:1240px;margin-inline:auto;padding-inline:var(--gutter)}
@@ -89,9 +86,8 @@ picture{display:contents}
 .hero h1 .ln:nth-of-type(2){padding-left:.8em}
 .hero h1 .ln:nth-of-type(3){padding-left:1.6em}
 .lead{margin:0;max-width:58ch;font-size:clamp(1.02rem,1.6vw,1.2rem);color:var(--on-night-soft)}
-.hero-cta{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.25rem;padding-top:.6rem}
+.hero-cta{display:flex;align-items:center;padding-top:.6rem}
 .hero-cta .btn{min-width:min(100%,15rem)}
-.hero-cta span{font-size:.9rem;color:var(--on-night-soft)}
 
 .masthead.notfound{min-height:100svh;display:flex;flex-direction:column}
 .nf{flex:1;width:100%;display:grid;align-content:center;padding-block:3rem 5rem}
@@ -99,11 +95,10 @@ picture{display:contents}
 .nf .hero>*{order:0}
 .notfound .brand{text-decoration:none;border:0;padding:0}
 
-/* поездки по месяцам: весь сезон по порядку дат, сверху фильтр «Мне нравится» */
+/* поездки по месяцам: весь сезон по порядку дат, сверху фильтр */
 .season{padding-block:clamp(3rem,7vw,5rem) 0;display:grid;gap:1.25rem}
 @media (min-width:980px){.season{grid-template-columns:minmax(0,18.5rem) minmax(0,1fr);column-gap:clamp(2.5rem,4.5vw,4rem);align-items:start}}
-.season h2{margin:0 0 .6rem;font:600 clamp(1.5rem,2.8vw,2.1rem)/1.1 var(--f-display);letter-spacing:-.015em;text-wrap:balance}
-.season-lead{margin:0;max-width:34ch;color:var(--ink-soft);font-size:.95rem}
+.season h2{margin:0;font:600 clamp(1.5rem,2.8vw,2.1rem)/1.1 var(--f-display);letter-spacing:-.015em;text-wrap:balance}
 .season-filter{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin:0 0 1.1rem}
 .season-filter>span{margin-right:.25rem;color:var(--ink-soft);font-size:.95rem}
 .tag{appearance:none;cursor:pointer;padding:.55rem .9rem;border:1px solid var(--line);border-radius:4px;background:none;color:var(--ink);
@@ -132,7 +127,7 @@ picture{display:contents}
 .spines-nav{min-width:0}
 .spines{display:flex;gap:clamp(4px,.8vw,8px);height:clamp(300px,42vw,460px)}
 .spine{position:relative;flex:1 1 0;min-width:0;overflow:hidden;border-radius:4px;text-decoration:none;color:var(--on-photo);
-  background:#2a3133 var(--img) var(--pos)/cover no-repeat;transition:flex-grow .6s var(--ease)}
+  background:#2a3133 var(--img) var(--pos)/cover no-repeat;transition:flex-grow 150ms ease-out}
 .spine::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(6,10,12,.82) 0%,rgba(6,10,12,.15) 55%,rgba(6,10,12,.05) 100%)}
 /* название и месяц одной вертикальной строкой снизу вверх: месяц никогда не шире полосы */
 .spine-label{position:absolute;z-index:1;left:50%;bottom:1.2rem;display:flex;align-items:center;gap:.6rem;white-space:nowrap;
@@ -163,11 +158,10 @@ picture{display:contents}
   .spine{border-radius:0}
 }
 /* на телефоне те же полосы, повёрнутые на 90°: восемь горизонтальных фото-полос одна под другой,
-   все поездки видны сразу, ничего не обрезано. При открытии полосы выезжают по очереди. */
+   все поездки видны сразу, ничего не обрезано. */
 @media (max-width:759px){
   .spines{display:grid;gap:3px;height:auto}
-  .spine{height:3.9rem;border-radius:4px;background-image:none;
-    animation:band-in .7s var(--ease) both;animation-delay:calc(var(--i,0) * 60ms + 150ms)}
+  .spine{height:3.9rem;border-radius:4px;background-image:none}
   .spine::after{background:linear-gradient(90deg,rgba(6,10,12,.72) 0%,rgba(6,10,12,.3) 45%,rgba(6,10,12,.3) 62%,rgba(6,10,12,.62) 100%)}
   .spine-label{inset:0 1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;
     writing-mode:horizontal-tb;transform:none}
@@ -183,8 +177,6 @@ picture{display:contents}
   .spines-nav{order:2;margin-top:.6rem}
   .lead{order:3;margin-top:.8rem}
 }
-/* только сдвиг, без прозрачности: полосы видны с первого кадра и не задерживают отрисовку */
-@keyframes band-in{from{transform:translateX(-1.25rem)}}
 
 /* строка поездок: появляется, пока на экране главы */
 .tripnav{position:fixed;z-index:20;top:env(safe-area-inset-top,0px);left:0;right:0;background:var(--paper);border-bottom:1px solid var(--line);
@@ -206,9 +198,8 @@ picture{display:contents}
 .trip-photo{position:relative;display:block;overflow:hidden;aspect-ratio:4/5;color:var(--on-photo);text-decoration:none;background:#2a3133}
 @media (min-width:600px){.trip-photo{aspect-ratio:auto;height:clamp(26rem,64vw,40rem)}}
 @media (min-width:1000px){.trip-photo{height:clamp(30rem,80svh,54rem)}}
-/* фото чуть выше рамки и при прокрутке движется медленнее текста: глубина, как в кино */
-.photo{position:absolute;left:0;top:-8%;width:100%;height:116%;object-fit:cover;object-position:var(--pos);
-  transform:translate3d(0,var(--py,0px),0);will-change:transform}
+/* Фото чуть выше рамки, чтобы сохранить исходное кадрирование. */
+.photo{position:absolute;left:0;top:-8%;width:100%;height:116%;object-fit:cover;object-position:var(--pos)}
 .trip-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,var(--scrim) 0%,rgba(6,10,12,.45) 30%,rgba(6,10,12,0) 58%)}
 .cap{position:absolute;z-index:1;left:0;right:0;bottom:0;padding:0 var(--edge) clamp(1.5rem,4.5vw,3.5rem);display:grid;gap:.5rem;text-shadow:0 1px 14px rgba(0,0,0,.35);
   container-type:inline-size}
@@ -331,35 +322,27 @@ picture{display:contents}
 .principles h3{margin:0;font:600 clamp(1.15rem,2vw,1.45rem)/1.25 var(--f-display);letter-spacing:-.01em;text-wrap:balance}
 .principles li p{margin:0;color:var(--ink-soft);line-height:1.6}
 
-/* фраза-манифест: слова проявляются по очереди при прокрутке */
+/* Фраза о свободном времени в маршруте */
 .manifesto{padding-block:clamp(5rem,12vw,9rem)}
 .manifesto-text{margin:0;max-width:22ch;font:600 clamp(2rem,5.4vw,4.3rem)/1.08 var(--f-display);letter-spacing:-.02em;text-wrap:balance}
-.js .manifesto .w{opacity:.48;transition:opacity .5s var(--ease)}
-.js .manifesto .w.on{opacity:1}
-.manifesto-note{margin:1.75rem 0 0;font:500 .95rem/1.4 var(--f-mono);color:var(--stamp)}
 
-/* знак «пустой круг» (шуньята, санскр. «пустое», ноль): тонкое кольцо с разрывом, рисуется один раз */
+/* Знак клуба: тонкое кольцо с разрывом */
 .ring{display:block;overflow:visible;pointer-events:none}
 .ring circle{fill:none;stroke:currentColor;stroke-width:1.5;vector-effect:non-scaling-stroke;stroke-linecap:round;
   stroke-dasharray:92 100;transform:rotate(-58deg);transform-origin:50% 50%}
-@keyframes ring-draw{from{stroke-dasharray:0 100}}
 .brand .ring{display:inline-block;width:.95em;height:.95em;margin-right:.45em;vertical-align:-.12em}
 .brand .ring circle{stroke-width:2}
 /* большое кольцо за заголовком первого экрана */
 .intro.has-ring{position:relative;overflow:clip}
 .intro.has-ring>*{position:relative;z-index:1}
 .intro>.hero-ring{position:absolute;z-index:0;color:var(--on-night);opacity:.2;width:min(78vw,24rem);right:-18vw;top:-1rem}
-.hero-ring circle{animation:ring-draw 2.2s var(--ease) .3s both}
 @media (min-width:980px){.intro>.hero-ring{width:34rem;right:auto;left:calc(var(--edge) - 7rem);top:50%;transform:translateY(-55%)}}
 
 /* почему шуньята: текст и рассвет, кольцо вокруг солнца */
 .meaning{padding-block:clamp(4rem,9vw,7rem);display:grid;gap:2rem}
 @media (min-width:980px){.meaning{grid-template-columns:minmax(0,5fr) minmax(0,7fr);column-gap:clamp(2.5rem,5vw,5rem);align-items:start}}
-.meaning-word{margin:0 0 .75rem;font:500 .95rem/1.4 var(--f-mono);color:var(--stamp)}
 .meaning h2{margin:0 0 1.25rem;font:600 clamp(1.9rem,4.4vw,3.4rem)/1.05 var(--f-display);letter-spacing:-.02em}
 .meaning-text p{margin:0 0 1rem;max-width:56ch;font-size:clamp(1.03rem,1.4vw,1.15rem);line-height:1.65}
-.meaning-goal{margin-top:1.75rem;padding-top:1.5rem;border-top:1px solid var(--ink)}
-.meaning-goal h3{margin:0 0 .9rem;font:600 clamp(1.2rem,2.2vw,1.55rem)/1.2 var(--f-display);letter-spacing:-.01em}
 .meaning-zero{display:flex;gap:.75rem;align-items:flex-start;margin-top:1.75rem!important;padding-top:1.25rem;border-top:1px solid var(--line);
   color:var(--ink-soft);font-size:.95rem!important}
 .meaning-zero .ring{flex:0 0 1.6rem;height:1.6rem;color:var(--stamp)}
@@ -367,8 +350,7 @@ picture{display:contents}
 .meaning-photo{position:relative}
 .meaning-photo img{display:block;width:100%;height:auto;border-radius:2px;background:var(--line)}
 .meaning-photo .ring{position:absolute;left:var(--rx);top:var(--ry);width:var(--rd);aspect-ratio:1;transform:translate(-50%,-50%);color:#fff}
-.meaning-photo .ring circle{stroke-width:2;stroke-dasharray:0 100}
-.meaning figure.in .ring circle{stroke-dasharray:92 100;transition:stroke-dasharray 2s var(--ease) .4s}
+.meaning-photo .ring circle{stroke-width:2}
 .meaning figcaption{padding-top:.6rem;font:400 .8rem/1.4 var(--f-mono);color:var(--ink-soft)}
 
 /* что говорят участники */
@@ -385,8 +367,7 @@ picture{display:contents}
 /* частые сомнения */
 .faq{padding-block:clamp(3.5rem,8vw,6rem);border-top:1px solid var(--line);display:grid;gap:1.5rem}
 @media (min-width:980px){.faq{grid-template-columns:22rem minmax(0,1fr);gap:4.5rem}}
-.faq-head h2{margin-bottom:.75rem}
-.faq-head p{margin:0;color:var(--ink-soft);max-width:40ch}
+.faq-head h2{margin:0}
 .faq-list{border-top:1px solid var(--ink);min-width:0}
 .faq details{border-bottom:1px solid var(--line)}
 .faq summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1rem;align-items:baseline;padding:1.05rem .1rem;font:600 1.08rem/1.35 var(--f-body)}
@@ -433,12 +414,7 @@ footer a{color:var(--ink-soft)}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   .spine,.btn,.top a,.tripnav,.tripnav.is-on,.dock,.dock.is-on,.side-cta,.side-cta.is-on,.faq summary::after{transition:none}
-  .photo{transform:none}
   .btn:active{transform:none}
-  .js .rv{transform:none;transition:opacity .7s var(--ease)}
-  .hero-ring circle{animation:none}
-  .meaning-photo .ring circle{stroke-dasharray:92 100;transition:none}
-  .spine{animation:none}
 }
 
 .t-patagonia{--img:url("img/patagonia-800.webp");--pos:30% 50%;--img2:url("img/patagonia-1200.webp")}
