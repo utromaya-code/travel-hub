@@ -6,6 +6,8 @@ if (viewer && typeof viewer.showModal === 'function' && galleryLinks.length) {
   const caption = viewer.querySelector('figcaption');
   const close = viewer.querySelector('.lightbox-close');
   let active = 0;
+  let opener;
+  let backdropPointerDown = false;
 
   function displayPhoto(index) {
     active = (index + galleryLinks.length) % galleryLinks.length;
@@ -19,6 +21,7 @@ if (viewer && typeof viewer.showModal === 'function' && galleryLinks.length) {
     link.addEventListener('click', (event) => {
       if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
       event.preventDefault();
+      opener = link;
       displayPhoto(index);
       viewer.showModal();
       close.focus();
@@ -27,8 +30,16 @@ if (viewer && typeof viewer.showModal === 'function' && galleryLinks.length) {
   close.addEventListener('click', () => viewer.close());
   viewer.querySelector('.previous').addEventListener('click', () => displayPhoto(active - 1));
   viewer.querySelector('.next').addEventListener('click', () => displayPhoto(active + 1));
+  viewer.addEventListener('pointerdown', (event) => {
+    backdropPointerDown = event.target === viewer;
+  });
   viewer.addEventListener('click', (event) => {
-    if (event.target === viewer) viewer.close();
+    if (event.target === viewer && backdropPointerDown) viewer.close();
+    backdropPointerDown = false;
+  });
+  viewer.addEventListener('close', () => {
+    backdropPointerDown = false;
+    opener?.focus();
   });
   viewer.addEventListener('keydown', (event) => {
     if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
