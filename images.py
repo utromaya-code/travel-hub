@@ -4,24 +4,22 @@
     python3 images.py
 
   img/<id>.jpg (фото поездки, до 2400 px) -> img/<id>-1440.webp, -2400.webp  для широких экранов
-                                          -> img/<id>-band.webp  полоса 960×240 для первого экрана на телефоне
                                             (2400 только если исходник от 1800 px)
                                           -> img/<id>-800.webp, -1200.webp  вертикальный кадр 4:5 по точке pos
-                                            из content.json: фото-полосы и главы на телефоне
+                                          -> img/<id>-card-480.webp, -960.webp  карточки каталога
+  hero.cover                            -> широкий и вертикальный кадры обложки
   gallery.items: img/<img>.jpg           -> img/<img>-360/640/960.webp в пропорции ratio по точке pos
   about.team:    img/<img>.jpg           -> img/<img>-400.webp, -800.webp, кадр 4:5 по точке pos
   contact.photo: img/<photo>.jpg         -> img/<photo>-bg-800.webp, -bg-1280.webp, фон блока контактов
   img/review-*.jpg                       -> .webp того же размера
-  favicon.ico, apple-touch-icon.png      -> знак клуба: белое кольцо на синем, как в favicon.svg
-  img/og.jpg                             -> превью ссылки 1200×630: полосы поездок, знак клуба и заголовок
-  tools/name-widths.json                 -> ширина названий поездок для build.py
+  favicon.ico, apple-touch-icon.png      -> знак клуба: белое кольцо, как в favicon.svg
+  img/og.jpg                             -> превью ссылки 1200×630: фотография обложки и название клуба
 
 Все фото проходят одну цветокоррекцию (grade): снимки из разных поездок и с разных
 камер выглядят одной серией. Запускать после замены фото, смены pos или текста
 превью, затем python3 build.py.
 """
 import json
-from datetime import date
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont, ImageOps
@@ -31,7 +29,7 @@ IMG = ROOT / "img"
 FONTS = ROOT / "tools" / "fonts"
 C = json.loads((ROOT / "content.json").read_text(encoding="utf-8"))
 OG = C["og"]
-BLUE = "#1D3EC4"
+ACCENT = "#873B30"
 
 
 def pos(item):
@@ -102,15 +100,9 @@ def tour_images():
                 continue
             # шумный кадр: лёгкое шумоподавление вместо грубого сжатия, на экране разница не видна
             webp(sized(base, w), out, q, (budget * 3 // 2) if soft else budget, smooth=not soft)
-        # Полоса первого экрана на телефоне: узкий кадр 960×240 вокруг bandPos (по умолчанию pos),
-        # полоса показывает именно его, поэтому файл в несколько раз легче целого фото
-        wide = sized(base, 960)
-        by = float(t.get("bandPos", t.get("pos", "50% 50%")).split()[1].rstrip("%")) / 100
-        top = round((wide.height - 240) * by)
-        webp(wide.crop((0, top, 960, top + 240)), IMG / f"{t['id']}-band.webp", 64, 30, smooth=True)
         # Кадр 4:5 режется там же, где его показал бы background-position: pos,
         # поэтому то же значение pos даёт на нём ту же картинку, что и на полном фото.
-        # 800 для полос и карточек, 1200 для телефонов с плотным экраном, если высоты исходника хватает.
+        # 800 для телефона, 1200 для экрана с высокой плотностью, если высоты исходника хватает.
         cw = min(base.width, round(base.height * 4 / 5))
         left = round((base.width - cw) * pos(t)[0])
         tall = base.crop((left, 0, left + cw, base.height))
@@ -118,6 +110,29 @@ def tour_images():
             if w == 1200 and tall.width < 1000:
                 continue
             webp(sized(tall, w), IMG / f"{t['id']}-{w}.webp", 66, budget, smooth=True)
+
+
+def catalog_images():
+    for tour in C["tours"]:
+        im = crop(source(tour["id"]), "16:10", tour)
+        for width, budget in ((480, 28), (960, 68)):
+            if im.width >= width:
+                webp(sized(im, width), IMG / f"{tour['id']}-card-{width}.webp", 70, budget)
+
+
+def cover_images():
+    cover = C["hero"]["cover"]
+    name = cover["img"]
+    im = source(name)
+    wide = crop(im, "16:9", {"pos": cover["widePos"]})
+    tall = crop(im, "4:5", {"pos": cover["tallPos"]})
+    for suffix, image, widths in (
+        ("", wide, ((960, 64), (1600, 140))),
+        ("-portrait", tall, ((640, 42), (960, 72))),
+    ):
+        for width, budget in widths:
+            if image.width >= width:
+                webp(sized(image, width), IMG / f"{name}-cover{suffix}-{width}.webp", 73, budget)
 
 
 def gallery_images():
@@ -163,11 +178,11 @@ def ring(d, box, width, fill):
 
 
 def mark(size, radius):
-    """Синий квадрат с белым кольцом: значок сайта."""
+    """Значок сайта с белым кольцом."""
     k = 4
     im = Image.new("RGBA", (size * k, size * k), (0, 0, 0, 0))
     d = ImageDraw.Draw(im)
-    d.rounded_rectangle((0, 0, size * k - 1, size * k - 1), radius=radius * k, fill=BLUE)
+    d.rounded_rectangle((0, 0, size * k - 1, size * k - 1), radius=radius * k, fill=ACCENT)
     r, w = size * k * 0.27, round(size * k * 0.095)
     c = size * k / 2
     ring(d, (c - r, c - r, c + r, c + r), w, "white")
@@ -181,34 +196,14 @@ def icons():
     print("favicon.ico, apple-touch-icon.png")
 
 
-def name_widths():
-    """Ширина названий поездок в em Unbounded 600 (с letter-spacing -.03em и запасом) для build.py:
-    по ней название главы растягивается на всю ширину."""
-    font = ImageFont.truetype(str(FONTS / "Unbounded-600.ttf"), 100)
-    widths = {t["name"]: round(font.getlength(t["name"]) / 100 - .03 * len(t["name"]) + .06, 3) for t in C["tours"]}
-    out = ROOT / "tools" / "name-widths.json"
-    out.write_text(json.dumps(widths, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"{out.relative_to(ROOT)}  {len(widths)} названий")
-
-
 def og_image():
-    W, H, GAP = 1200, 630, 6
-    og = Image.new("RGB", (W, H), "#0B1011")
-    # только поездки, которые ещё впереди, как на странице (build.py)
-    tours = [t for t in C["tours"] if t["end"] >= date.today().isoformat()]
-    n = len(tours)
-    sw = (W - GAP * (n - 1)) / n
-    for i, t in enumerate(tours):
-        im = source(t["id"])
-        x0, x1 = round(i * (sw + GAP)), round(i * (sw + GAP) + sw)
-        scaled = im.resize((round(im.width * H / im.height), H), Image.LANCZOS)
-        left = round((scaled.width - (x1 - x0)) * pos(t)[0])
-        og.paste(scaled.crop((left, 0, left + x1 - x0, H)), (x0, 0))
-    # затемнение сильнее к низу, чтобы читался текст
+    W, H = 1200, 630
+    cover = C["hero"]["cover"]
+    og = ImageOps.fit(source(cover["img"]), (W, H), centering=pos({"pos": cover["widePos"]}))
     shade = Image.new("L", (1, H))
     for y in range(H):
-        k = max(0.0, (y / H - 0.25) / 0.75)
-        shade.putpixel((0, y), round(255 * (0.30 + 0.55 * k ** 1.3)))
+        k = max(0.0, (y / H - 0.18) / 0.82)
+        shade.putpixel((0, y), round(255 * (0.12 + 0.74 * k ** 1.15)))
     og = Image.composite(Image.new("RGB", (W, H), (6, 10, 12)), og, shade.resize((W, H)))
 
     # знак клуба над заголовком, рисуется крупнее и уменьшается для гладкого края
@@ -216,29 +211,27 @@ def og_image():
     mk = Image.new("L", (size * k, size * k), 0)
     ring(ImageDraw.Draw(mk), (4 * k, 4 * k, (size - 4) * k, (size - 4) * k), 7 * k, 255)
     mk = mk.resize((size, size), Image.LANCZOS)
-    og.paste(Image.new("RGB", (size, size), "white"), (64, 176), mk)
+    og.paste(Image.new("RGB", (size, size), "white"), (64, 250), mk)
 
     d = ImageDraw.Draw(og)
     head = ImageFont.truetype(str(FONTS / "Unbounded-600.ttf"), 104)
     sub = ImageFont.truetype(str(FONTS / "Unbounded-500.ttf"), 30)
-    x, y = 64, 300
+    x, y = 64, 366
     for line in OG["title"].split("\n"):
         d.text((x, y), line, font=head, fill="white")
         y += 110
-    bx0, by0, bx1, by1 = d.textbbox((0, 0), OG["subtitle"], font=sub)
-    top = y + 20
-    d.rounded_rectangle((x, top, x + bx1 + 36, top + by1 - by0 + 24), radius=6, fill=BLUE)
-    d.text((x + 18, top + 12 - by0), OG["subtitle"], font=sub, fill="white")
+    d.text((x, y + 14), OG["subtitle"], font=sub, fill="#F9F5ED")
     og.save(IMG / "og.jpg", "JPEG", quality=82, optimize=True, progressive=True)
     print(f"img/og.jpg  {(IMG / 'og.jpg').stat().st_size // 1024} КБ")
 
 
 if __name__ == "__main__":
     tour_images()
+    catalog_images()
+    cover_images()
     gallery_images()
     team_images()
     contact_image()
     review_images()
     icons()
-    name_widths()
     og_image()
