@@ -17,7 +17,7 @@
   gallery снимки прошлых поездок «Как это было»: img, ratio (3:2, 4:5, 2:1), pos, col, shift, wide, cap, alt
   hero.cover  фото обложки, подпись и точки кадрирования
   season  каталог: заголовок и фильтр (tags; у поездки moods)
-  manifesto, meaning, principles  фраза о маршруте, «Почему „Шуньята“», «Как мы путешествуем»
+  meaning, principles  «Почему „Шуньята“», «Как мы путешествуем»
   contact.photo фон блока контактов, файл из img/ без расширения
 
 WebP-версии фото, иконки и img/og.jpg готовит python3 images.py (нужен Pillow).
@@ -59,7 +59,7 @@ FONT_FACES = """
 
 CSS = r"""
 /* Клуб путешествий Шуньята: фотографическая обложка, каталог поездок, подробности маршрутов,
-   манифест и «Почему Шуньята», снимки прошлых поездок, о клубе. */
+   «Почему Шуньята», снимки прошлых поездок, о клубе. */
 :root{
   --paper:#F7F4EE; --surface:#FFFDF8; --ink:#211D19; --ink-soft:#585048; --line:#D9D1C6;
   --stamp:#873B30; --stamp-wash:rgba(135,59,48,.08);
@@ -260,6 +260,9 @@ picture{display:contents}
 .btn-ghost{border:1.5px solid var(--ink);color:var(--ink)}
 .btn-ghost:hover{background:var(--ink);color:var(--paper)}
 .aside .btn-primary{margin-top:.35rem}
+.trip-contacts{display:grid;gap:.8rem;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--line)}
+.trip-contacts p{margin:0;color:var(--ink-soft);line-height:1.5}
+.trip-contacts a{font-weight:600;text-underline-offset:.2em}
 .micro{margin:0;font-size:.82rem;line-height:1.45;color:var(--ink-soft);text-align:center}
 .more{justify-self:center;margin-top:.35rem;font:500 .95rem/1.4 var(--f-body);color:var(--ink);text-align:center;
   text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.3em;text-decoration-color:var(--line);
@@ -318,8 +321,6 @@ picture{display:contents}
 .principles li p{margin:0;color:var(--ink-soft);line-height:1.6}
 
 /* Фраза о свободном времени в маршруте */
-.manifesto{padding-block:clamp(5rem,12vw,9rem)}
-.manifesto-text{margin:0;max-width:22ch;font:400 clamp(2rem,5.4vw,4.3rem)/1.08 var(--f-display);letter-spacing:-.02em;text-wrap:balance}
 
 /* Знак клуба: тонкое кольцо с разрывом */
 .ring{display:block;overflow:visible;pointer-events:none}
@@ -717,15 +718,6 @@ def render_meaning(src, inline):
 </section>"""
 
 
-def render_manifesto():
-    m = C.get("manifesto")
-    if not m:
-        return ""
-    return f"""<section class="wrap manifesto">
-  <p class="manifesto-text">{lines(m["text"])}</p>
-</section>"""
-
-
 def render_faq():
     f = C.get("faq")
     if not f:
@@ -827,6 +819,18 @@ def render_brand(link=False):
             f'<small>{e(C["brandSub"])}</small></{end}>')
 
 
+def render_trip_contacts(t):
+    handle = t.get("practiceContact")
+    if not handle:
+        return ""
+    message = quote(f"Здравствуйте, Илья! Хочу обсудить поездку «{t['project']}» и договориться о коротком звонке.")
+    return f'''
+        <div class="trip-contacts" aria-label="Контакты по поездке">
+          <p>Маршрут, билеты и бронь: <a href="{e(tg_book(t))}" target="_blank" rel="noopener">написать Андрею</a>.</p>
+          <p>Сомневаетесь, подойдёт ли вам маршрут по нагрузке, уровню практики или самочувствию? <a href="https://t.me/{e(handle)}?text={e(message)}" target="_blank" rel="noopener">Напишите Илье Баринову</a> и договоритесь о 10-минутном созвоне.</p>
+        </div>'''
+
+
 def render_body(src, inline=False):
     H = C["hero"]
     nav_links = "".join(f'<a href="#{t["id"]}">{e(t["name"])} <small>{e(t["monthFull"])}</small></a>' for t in TOURS)
@@ -846,6 +850,8 @@ def render_body(src, inline=False):
         else:
             deposit = f' {e(t["deposit"])}' if t.get("deposit") else ""
             micro = f'\n        <p class="micro">Место закрепляет предоплата{deposit}.</p>'
+        seats = render_seats(t)
+        seats_row = f"\n        {seats}" if seats else ""
         trips.append(f"""
   <article class="trip t-{t['id']}" id="{t['id']}" data-start="{t['start']}" data-end="{t['end']}">
     <a class="trip-photo" href="{e(t['url'])}" target="_blank" rel="noopener" aria-label="{e(t['name'])}: открыть сайт поездки">
@@ -863,11 +869,10 @@ def render_body(src, inline=False):
         <p class="trip-text">{e(t['text'])}</p>
         <dl class="facts">{dl}</dl>
       </div>
-      <div class="aside">
-        {render_seats(t)}
+      <div class="aside">{seats_row}
         {render_ladder(t)}
         <a class="btn btn-primary" href="{e(tg_book(t))}" target="_blank" rel="noopener">{e(book)}</a>{micro}
-        <a class="more" href="{e(t['url'])}" target="_blank" rel="noopener">{e(C['tripLink'])} · {e(t['domain'])} <span aria-hidden="true">↗</span></a>
+        <a class="more" href="{e(t['url'])}" target="_blank" rel="noopener">{e(C['tripLink'])} · {e(t['domain'])} <span aria-hidden="true">↗</span></a>{render_trip_contacts(t)}
       </div>
     </div>
   </article>""")
@@ -906,16 +911,14 @@ def render_body(src, inline=False):
 
 {render_season(src, inline)}
 
+{render_meaning(src, inline)}
+
 <nav class="tripnav" aria-label="{e(C["tripNav"])}"><div class="wrap tripnav-in">{nav_links}</div></nav>
 
 <main class="trips" id="trips">{''.join(trips)}
 </main>
 
 {render_gallery(src, inline)}
-
-{render_manifesto()}
-
-{render_meaning(src, inline)}
 
 {render_about(src, inline)}
 

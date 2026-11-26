@@ -16,10 +16,10 @@
 <meta property="og:url" content="https://shunyata-club.ru/">
 <meta property="og:title" content="Клуб путешествий Шуньята · сезон 2026–2027">
 <meta property="og:description" content="Клуб путешествий «Шуньята». Авторские поездки небольшими группами. Сезон 2026–2027: Патагония, Бали, Камбоджа, Ко Ронг, Китай, Канченджанга и Тибет.">
-<meta property="og:image" content="https://shunyata-club.ru/img/og.jpg?v=4e6fba51">
+<meta property="og:image" content="https://shunyata-club.ru/img/og.jpg?v=a2938961">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Горы Патагонии и название клуба путешествий «Шуньята»">
+<meta property="og:image:alt" content="Снежные Гималаи и название клуба путешествий «Шуньята»">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preload" href="fonts/noto-serif-display.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="fonts/onest-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -37,7 +37,7 @@
 @font-face{font-family:"Onest";font-style:normal;font-weight:400 600;font-display:swap;src:url(fonts/onest-latin.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 
 /* Клуб путешествий Шуньята: фотографическая обложка, каталог поездок, подробности маршрутов,
-   манифест и «Почему Шуньята», снимки прошлых поездок, о клубе. */
+   «Почему Шуньята», снимки прошлых поездок, о клубе. */
 :root{
   --paper:#F7F4EE; --surface:#FFFDF8; --ink:#211D19; --ink-soft:#585048; --line:#D9D1C6;
   --stamp:#873B30; --stamp-wash:rgba(135,59,48,.08);
@@ -238,6 +238,9 @@ picture{display:contents}
 .btn-ghost{border:1.5px solid var(--ink);color:var(--ink)}
 .btn-ghost:hover{background:var(--ink);color:var(--paper)}
 .aside .btn-primary{margin-top:.35rem}
+.trip-contacts{display:grid;gap:.8rem;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--line)}
+.trip-contacts p{margin:0;color:var(--ink-soft);line-height:1.5}
+.trip-contacts a{font-weight:600;text-underline-offset:.2em}
 .micro{margin:0;font-size:.82rem;line-height:1.45;color:var(--ink-soft);text-align:center}
 .more{justify-self:center;margin-top:.35rem;font:500 .95rem/1.4 var(--f-body);color:var(--ink);text-align:center;
   text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.3em;text-decoration-color:var(--line);
@@ -296,8 +299,6 @@ picture{display:contents}
 .principles li p{margin:0;color:var(--ink-soft);line-height:1.6}
 
 /* Фраза о свободном времени в маршруте */
-.manifesto{padding-block:clamp(5rem,12vw,9rem)}
-.manifesto-text{margin:0;max-width:22ch;font:400 clamp(2rem,5.4vw,4.3rem)/1.08 var(--f-display);letter-spacing:-.02em;text-wrap:balance}
 
 /* Знак клуба: тонкое кольцо с разрывом */
 .ring{display:block;overflow:visible;pointer-events:none}
@@ -406,7 +407,7 @@ footer a{color:var(--ink-soft)}
     </nav>
   </div>
   <div class="feature">
-    <picture><source media="(max-width:699px)" srcset="img/patagonia-cover-portrait-640.webp 640w, img/patagonia-cover-portrait-960.webp 960w" sizes="calc(100vw - 24px)" type="image/webp"><source srcset="img/patagonia-cover-960.webp 960w, img/patagonia-cover-1600.webp 1600w" sizes="(max-width:1690px) 95vw, 1600px" type="image/webp"><img src="img/patagonia.jpg" alt="Гранитные пики Фицроя на рассвете отражаются в озере" width="1600" height="900" fetchpriority="high" loading="eager"></picture>
+    <picture><source media="(max-width:699px)" srcset="img/himalaya-gokyo-cover-portrait-640.webp 640w, img/himalaya-gokyo-cover-portrait-960.webp 960w" sizes="calc(100vw - 24px)" type="image/webp"><source srcset="img/himalaya-gokyo-cover-960.webp 960w, img/himalaya-gokyo-cover-1600.webp 1600w" sizes="(max-width:1690px) 95vw, 1600px" type="image/webp"><img src="img/himalaya-gokyo.jpg" alt="Заснеженные вершины над бирюзовым озером Гокио в Непале" width="1600" height="900" fetchpriority="high" loading="eager"></picture>
     <header class="hero">
       <p class="eyebrow">Сезон 2026–2027</p>
       <h1><span class="ln">Путешествия</span> <span class="ln">в глубину</span></h1>
@@ -416,7 +417,7 @@ footer a{color:var(--ink-soft)}
         <a class="hero-consult" href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%9F%D0%BE%D0%BC%D0%BE%D0%B3%D0%B8%D1%82%D0%B5%20%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D0%BF%D0%BE%D0%B5%D0%B7%D0%B4%D0%BA%D1%83." target="_blank" rel="noopener">Спросить Андрея</a>
       </div>
     </header>
-    <p class="cover-caption">Патагония, Аргентина</p>
+    <p class="cover-caption">Озеро Гокио, Гималаи</p>
   </div>
 </div>
 
@@ -460,10 +461,10 @@ footer a{color:var(--ink-soft)}
 </li><li data-moods="culture mountains">
   <a href="#china">
     <div class="season-card-media t-china"><picture><source srcset="img/china-card-480.webp 480w, img/china-card-960.webp 960w" sizes="(max-width:619px) 92vw, (max-width:999px) 46vw, (max-width:1239px) 31vw, 370px" type="image/webp"><img src="img/china.jpg" alt="" loading="lazy" decoding="async" width="960" height="600"></picture></div>
-    <div class="season-card-meta"><span class="se-dates">23 марта – 2 апреля 2027</span><span class="se-price">2 000 €</span></div>
+    <div class="season-card-meta"><span class="se-dates">23 марта – 2 апреля 2027</span><span class="se-price">2 200 $</span></div>
     <h3>Китай</h3>
     <span class="se-project">Путь в Шангри-Ла</span>
-    <span class="season-card-foot"><span class="se-action">Программа</span><span class="se-what">1 место по ранней цене</span></span>
+    <span class="season-card-foot"><span class="se-action">Программа</span></span>
   </a>
 </li><li data-moods="mountains">
   <a href="#kanchenjunga">
@@ -483,6 +484,14 @@ footer a{color:var(--ink-soft)}
   </a>
 </li></ul>
   <p class="season-empty" role="status" hidden>По этому направлению пока нет поездок.</p>
+</section>
+
+<section class="wrap meaning" id="shunyata" aria-labelledby="meaning-title">
+  <div class="meaning-text">
+    <h2 id="meaning-title">Почему «Шуньята»</h2>
+    <p>Мы создали «Шуньяту», чтобы соединить две вещи, которые давно были частью нашей жизни: дорогу и практику. Нам важно успеть пожить в месте — пройти его пешком, поговорить с теми, кто здесь живёт, увидеть, как меняется один и тот же склон от рассвета до вечера.</p><p>Śūnyatā — слово из санскрита. В буддийской традиции оно напоминает, что всё возникает благодаря причинам и условиям. В дороге это легко почувствовать: одно и то же место открывается по-разному в зависимости от того, когда и с кем мы туда пришли.</p><p>Мы ездим небольшими группами с местными гидами. Там, где в программе есть движение, дыхание или медитация, каждый решает, участвовать ли. В расписании оставляем время, которым можно распорядиться самому.</p><p class="meaning-zero"><svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" pathLength="100"/></svg><span>Круг в нашем логотипе отсылает к śūnya. В индийской математике так называли ноль. Для клуба это знак открытости новому опыту.</span></p>
+  </div>
+  <figure><div class="meaning-photo" style="--rx:48.3%;--ry:20%;--rd:24%"><picture><source srcset="img/moment-himalaya-sunrise-360.webp 360w, img/moment-himalaya-sunrise-640.webp 640w, img/moment-himalaya-sunrise-960.webp 960w" sizes="(max-width:979px) 100vw, 680px" type="image/webp"><img src="img/moment-himalaya-sunrise.jpg" alt="Группа на утренней практике на рассвете, руки подняты к солнцу над гималайской долиной" width="960" height="640" loading="lazy" decoding="async"></picture><svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" pathLength="100"/></svg></div><figcaption>Рассвет в Гималаях</figcaption></figure>
 </section>
 
 <nav class="tripnav" aria-label="Поездки сезона"><div class="wrap tripnav-in"><a href="#patagonia">Патагония <small>январь</small></a><a href="#bali">Бали <small>февраль</small></a><a href="#cambodia">Камбоджа <small>февраль</small></a><a href="#kohrong">Ко Ронг <small>март</small></a><a href="#china">Китай <small>март</small></a><a href="#kanchenjunga">Канченджанга <small>апрель</small></a><a href="#tibet">Тибет <small>август</small></a></div></nav>
@@ -579,7 +588,6 @@ footer a{color:var(--ink-soft)}
         <dl class="facts"><dt>Даты</dt><dd>8–15 марта 2027</dd><dt>Длительность</dt><dd>7 дней</dd><dt>Ведут</dt><dd>Илья Баринов, Леонид Кутузов</dd><dt>Группа</dt><dd>до 20 человек</dd></dl>
       </div>
       <div class="aside">
-        
         <p class="aside-label">Стоимость</p><ol class="ladder"><li class="tier is-now"><span class="tier-price">1 000 €</span><span class="tier-label">Двухместное размещение</span><span class="tier-state">сейчас</span></li></ol>
         <a class="btn btn-primary" href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%B1%D1%80%D0%BE%D0%BD%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C%20%D0%BC%D0%B5%D1%81%D1%82%D0%BE%3A%20%D0%9A%D0%BE%20%D0%A0%D0%BE%D0%BD%D0%B3%2C%20%C2%AB%D0%A0%D0%B5%D1%82%D1%80%D0%B8%D1%82%20%D0%BD%D0%B0%20%D0%BE%D1%81%D1%82%D1%80%D0%BE%D0%B2%D0%B5%C2%BB%2C%208%E2%80%9315%20%D0%BC%D0%B0%D1%80%D1%82%D0%B0%202027." target="_blank" rel="noopener">Забронировать место</a>
         <p class="micro">Место закрепляет предоплата 1 000 €.</p>
@@ -590,7 +598,7 @@ footer a{color:var(--ink-soft)}
   <article class="trip t-china" id="china" data-start="2027-03-23" data-end="2027-04-02">
     <a class="trip-photo" href="https://shangrila-trip.ru" target="_blank" rel="noopener" aria-label="Китай: открыть сайт поездки">
       <picture><source media="(max-width:599px)" srcset="img/china-800.webp 800w, img/china-1200.webp 1200w" sizes="100vw" type="image/webp"><source srcset="img/china-1440.webp 1440w, img/china-2400.webp 2400w" sizes="(max-width:1600px) 100vw, 1600px" type="image/webp"><img src="img/china.jpg" class="photo" alt="Двое монахов в красных одеждах на деревянном мостике у озера, за ними монастырь Сонгцзанлинь в Шангри-Ла" loading="lazy" decoding="async"></picture>
-      <span class="badges"><span class="stamp">23 марта – 2 апреля 2027</span><span class="chips"><span class="flag">1 место по ранней цене</span><span class="status" hidden></span></span></span>
+      <span class="badges"><span class="stamp">23 марта – 2 апреля 2027</span><span class="chips"><span class="status" hidden></span></span></span>
       <div class="cap">
         <span class="kicker">Авторское путешествие</span>
         <h2>Китай</h2>
@@ -604,11 +612,14 @@ footer a{color:var(--ink-soft)}
         <dl class="facts"><dt>Даты</dt><dd>23 марта – 2 апреля 2027</dd><dt>Длительность</dt><dd>11 дней</dd><dt>Ведут</dt><dd>Илья Баринов, Андрей Баранов, Елена Бакина</dd><dt>Группа</dt><dd>до 20 человек</dd></dl>
       </div>
       <div class="aside">
-        <div class="seats"><span class="dots" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot free"></span></span><strong>По ранней цене осталось 1 место из 5</strong></div>
-        <p class="aside-label">Стоимость</p><ol class="ladder"><li class="tier is-now"><span class="tier-price">2 000 €</span><span class="tier-label">Первые 5 участников</span><span class="tier-state">сейчас</span></li><li class="tier is-next"><span class="tier-price">2 300 €</span><span class="tier-label">Следующие места</span><span class="tier-state">потом</span></li></ol>
+        <p class="aside-label">Стоимость</p><ol class="ladder"><li class="tier is-now"><span class="tier-price">2 200 $</span><span class="tier-label">Следующие 5 мест</span><span class="tier-state">сейчас</span></li><li class="tier is-next"><span class="tier-price">2 500 $</span><span class="tier-label">Для остальных участников</span><span class="tier-state">потом</span></li></ol>
         <a class="btn btn-primary" href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%B1%D1%80%D0%BE%D0%BD%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C%20%D0%BC%D0%B5%D1%81%D1%82%D0%BE%3A%20%D0%9A%D0%B8%D1%82%D0%B0%D0%B9%2C%20%C2%AB%D0%9F%D1%83%D1%82%D1%8C%20%D0%B2%20%D0%A8%D0%B0%D0%BD%D0%B3%D1%80%D0%B8-%D0%9B%D0%B0%C2%BB%2C%2023%20%D0%BC%D0%B0%D1%80%D1%82%D0%B0%20%E2%80%93%202%20%D0%B0%D0%BF%D1%80%D0%B5%D0%BB%D1%8F%202027." target="_blank" rel="noopener">Забронировать место</a>
         <p class="micro">Место закрепляет предоплата 1 000 €.</p>
         <a class="more" href="https://shangrila-trip.ru" target="_blank" rel="noopener">Программа и условия · shangrila-trip.ru <span aria-hidden="true">↗</span></a>
+        <div class="trip-contacts" aria-label="Контакты по поездке">
+          <p>Маршрут, билеты и бронь: <a href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%B1%D1%80%D0%BE%D0%BD%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C%20%D0%BC%D0%B5%D1%81%D1%82%D0%BE%3A%20%D0%9A%D0%B8%D1%82%D0%B0%D0%B9%2C%20%C2%AB%D0%9F%D1%83%D1%82%D1%8C%20%D0%B2%20%D0%A8%D0%B0%D0%BD%D0%B3%D1%80%D0%B8-%D0%9B%D0%B0%C2%BB%2C%2023%20%D0%BC%D0%B0%D1%80%D1%82%D0%B0%20%E2%80%93%202%20%D0%B0%D0%BF%D1%80%D0%B5%D0%BB%D1%8F%202027." target="_blank" rel="noopener">написать Андрею</a>.</p>
+          <p>Сомневаетесь, подойдёт ли вам маршрут по нагрузке, уровню практики или самочувствию? <a href="https://t.me/barinov_dao?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%2C%20%D0%98%D0%BB%D1%8C%D1%8F%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%BE%D0%B1%D1%81%D1%83%D0%B4%D0%B8%D1%82%D1%8C%20%D0%BF%D0%BE%D0%B5%D0%B7%D0%B4%D0%BA%D1%83%20%C2%AB%D0%9F%D1%83%D1%82%D1%8C%20%D0%B2%20%D0%A8%D0%B0%D0%BD%D0%B3%D1%80%D0%B8-%D0%9B%D0%B0%C2%BB%20%D0%B8%20%D0%B4%D0%BE%D0%B3%D0%BE%D0%B2%D0%BE%D1%80%D0%B8%D1%82%D1%8C%D1%81%D1%8F%20%D0%BE%20%D0%BA%D0%BE%D1%80%D0%BE%D1%82%D0%BA%D0%BE%D0%BC%20%D0%B7%D0%B2%D0%BE%D0%BD%D0%BA%D0%B5." target="_blank" rel="noopener">Напишите Илье Баринову</a> и договоритесь о 10-минутном созвоне.</p>
+        </div>
       </div>
     </div>
   </article>
@@ -634,6 +645,10 @@ footer a{color:var(--ink-soft)}
         <a class="btn btn-primary" href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%B1%D1%80%D0%BE%D0%BD%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C%20%D0%BC%D0%B5%D1%81%D1%82%D0%BE%3A%20%D0%9A%D0%B0%D0%BD%D1%87%D0%B5%D0%BD%D0%B4%D0%B6%D0%B0%D0%BD%D0%B3%D0%B0%2C%20%C2%AB%D0%9F%D1%8F%D1%82%D1%8C%20%D1%81%D0%BE%D0%BA%D1%80%D0%BE%D0%B2%D0%B8%D1%89%20%D1%81%D0%BD%D0%B5%D0%B3%D0%BE%D0%B2%C2%BB%2C%205%E2%80%9320%20%D0%B0%D0%BF%D1%80%D0%B5%D0%BB%D1%8F%202027." target="_blank" rel="noopener">Забронировать место</a>
         <p class="micro">Место закрепляет предоплата 1 000 €.</p>
         <a class="more" href="https://kanchenjunga.ru" target="_blank" rel="noopener">Программа и условия · kanchenjunga.ru <span aria-hidden="true">↗</span></a>
+        <div class="trip-contacts" aria-label="Контакты по поездке">
+          <p>Маршрут, билеты и бронь: <a href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%B1%D1%80%D0%BE%D0%BD%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C%20%D0%BC%D0%B5%D1%81%D1%82%D0%BE%3A%20%D0%9A%D0%B0%D0%BD%D1%87%D0%B5%D0%BD%D0%B4%D0%B6%D0%B0%D0%BD%D0%B3%D0%B0%2C%20%C2%AB%D0%9F%D1%8F%D1%82%D1%8C%20%D1%81%D0%BE%D0%BA%D1%80%D0%BE%D0%B2%D0%B8%D1%89%20%D1%81%D0%BD%D0%B5%D0%B3%D0%BE%D0%B2%C2%BB%2C%205%E2%80%9320%20%D0%B0%D0%BF%D1%80%D0%B5%D0%BB%D1%8F%202027." target="_blank" rel="noopener">написать Андрею</a>.</p>
+          <p>Сомневаетесь, подойдёт ли вам маршрут по нагрузке, уровню практики или самочувствию? <a href="https://t.me/barinov_dao?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%2C%20%D0%98%D0%BB%D1%8C%D1%8F%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%BE%D0%B1%D1%81%D1%83%D0%B4%D0%B8%D1%82%D1%8C%20%D0%BF%D0%BE%D0%B5%D0%B7%D0%B4%D0%BA%D1%83%20%C2%AB%D0%9F%D1%8F%D1%82%D1%8C%20%D1%81%D0%BE%D0%BA%D1%80%D0%BE%D0%B2%D0%B8%D1%89%20%D1%81%D0%BD%D0%B5%D0%B3%D0%BE%D0%B2%C2%BB%20%D0%B8%20%D0%B4%D0%BE%D0%B3%D0%BE%D0%B2%D0%BE%D1%80%D0%B8%D1%82%D1%8C%D1%81%D1%8F%20%D0%BE%20%D0%BA%D0%BE%D1%80%D0%BE%D1%82%D0%BA%D0%BE%D0%BC%20%D0%B7%D0%B2%D0%BE%D0%BD%D0%BA%D0%B5." target="_blank" rel="noopener">Напишите Илье Баринову</a> и договоритесь о 10-минутном созвоне.</p>
+        </div>
       </div>
     </div>
   </article>
@@ -669,18 +684,6 @@ footer a{color:var(--ink-soft)}
     <h2 id="moments-title">Как это было</h2>
     <div class="moments"><figure class="wide" style="--col:1 / 8;--shift:0"><picture><source srcset="img/moment-japan-lake-360.webp 360w, img/moment-japan-lake-640.webp 640w, img/moment-japan-lake-960.webp 960w" sizes="(max-width:979px) 100vw, 677px" type="image/webp"><img src="img/moment-japan-lake.jpg" alt="Осенний лес с красными и жёлтыми деревьями над синим озером с островами" width="960" height="480" loading="lazy" decoding="async"></picture></figure><figure style="--col:9 / 12;--shift:3rem"><picture><source srcset="img/moment-wudang-taiji-360.webp 360w, img/moment-wudang-taiji-640.webp 640w, img/moment-wudang-taiji-960.webp 960w" sizes="(max-width:979px) 50vw, 290px" type="image/webp"><img src="img/moment-wudang-taiji.jpg" alt="Девушка в белом костюме для тайцзи в низкой стойке у ворот храма Пурпурного облака" width="960" height="1200" loading="lazy" decoding="async"></picture></figure><figure style="--col:2 / 5;--shift:1rem"><picture><source srcset="img/moment-himalaya-group-360.webp 360w, img/moment-himalaya-group-640.webp 640w, img/moment-himalaya-group-960.webp 960w" sizes="(max-width:979px) 50vw, 290px" type="image/webp"><img src="img/moment-himalaya-group.jpg" alt="Счастливая группа на фоне снежных вершин" width="960" height="1200" loading="lazy" decoding="async"></picture></figure><figure class="wide" style="--col:6 / 11;--shift:0"><picture><source srcset="img/moment-bhutan-dochula-360.webp 360w, img/moment-bhutan-dochula-640.webp 640w, img/moment-bhutan-dochula-960.webp 960w" sizes="(max-width:979px) 100vw, 483px" type="image/webp"><img src="img/moment-bhutan-dochula.jpg" alt="Мотоциклы у чортенов перевала Дочула" width="960" height="640" loading="lazy" decoding="async"></picture></figure><figure style="--col:11 / 13;--shift:5rem"><picture><source srcset="img/moment-japan-pine-360.webp 360w, img/moment-japan-pine-640.webp 640w, img/moment-japan-pine-960.webp 960w" sizes="(max-width:979px) 50vw, 193px" type="image/webp"><img src="img/moment-japan-pine.jpg" alt="Ветви японской сосны на фоне солнца и облаков, справа небоскрёб" width="960" height="1200" loading="lazy" decoding="async"></picture></figure><figure style="--col:1 / 4;--shift:1rem"><picture><source srcset="img/moment-himalaya-flags-360.webp 360w, img/moment-himalaya-flags-640.webp 640w, img/moment-himalaya-flags-960.webp 960w" sizes="(max-width:979px) 50vw, 290px" type="image/webp"><img src="img/moment-himalaya-flags.jpg" alt="Группа на перевале среди молитвенных флагов" width="960" height="1200" loading="lazy" decoding="async"></picture></figure><figure class="wide" style="--col:5 / 10;--shift:0"><picture><source srcset="img/moment-china-gate-360.webp 360w, img/moment-china-gate-640.webp 640w, img/moment-china-gate-960.webp 960w" sizes="(max-width:979px) 100vw, 483px" type="image/webp"><img src="img/moment-china-gate.jpg" alt="Вся группа под резными воротами-пайфан, за ними горы в дымке" width="960" height="640" loading="lazy" decoding="async"></picture></figure><figure style="--col:10 / 13;--shift:3rem"><picture><source srcset="img/moment-japan-fuji-360.webp 360w, img/moment-japan-fuji-640.webp 640w, img/moment-japan-fuji-960.webp 960w" sizes="(max-width:979px) 50vw, 290px" type="image/webp"><img src="img/moment-japan-fuji.jpg" alt="Вершина Фудзи над облаками, на переднем плане сосны и жёлтые цветы" width="960" height="1200" loading="lazy" decoding="async"></picture></figure><figure style="--col:1 / 4;--shift:2rem"><picture><source srcset="img/moment-china-circle-360.webp 360w, img/moment-china-circle-640.webp 640w, img/moment-china-circle-960.webp 960w" sizes="(max-width:979px) 50vw, 290px" type="image/webp"><img src="img/moment-china-circle.jpg" alt="Двое практикуют на большом круге инь-ян в сумерках, вокруг триграммы багуа" width="960" height="1200" loading="lazy" decoding="async"></picture></figure><figure class="wide" style="--col:5 / 12;--shift:0"><picture><source srcset="img/moment-bhutan-ridge-360.webp 360w, img/moment-bhutan-ridge-640.webp 640w, img/moment-bhutan-ridge-960.webp 960w" sizes="(max-width:979px) 100vw, 677px" type="image/webp"><img src="img/moment-bhutan-ridge.jpg" alt="Мотоциклы группы в ряд на перевале на фоне гор" width="960" height="480" loading="lazy" decoding="async"></picture></figure><figure style="--col:1 / 4;--shift:2rem"><picture><source srcset="img/moment-japan-climb-360.webp 360w, img/moment-japan-climb-640.webp 640w" sizes="(max-width:979px) 50vw, 290px" type="image/webp"><img src="img/moment-japan-climb.jpg" alt="Участница в жёлтой куртке поднимается по каменистой тропе, ниже море облаков" width="960" height="1200" loading="lazy" decoding="async"></picture></figure><figure style="--col:5 / 8;--shift:4rem"><picture><source srcset="img/moment-himalaya-qigong-360.webp 360w, img/moment-himalaya-qigong-640.webp 640w, img/moment-himalaya-qigong-960.webp 960w" sizes="(max-width:979px) 50vw, 290px" type="image/webp"><img src="img/moment-himalaya-qigong.jpg" alt="Группа на практике цигун на террасе лоджи с видом на гималайские вершины" width="960" height="1200" loading="lazy" decoding="async"></picture></figure><figure class="wide" style="--col:9 / 13;--shift:0"><picture><source srcset="img/moment-japan-garden-360.webp 360w, img/moment-japan-garden-640.webp 640w, img/moment-japan-garden-960.webp 960w" sizes="(max-width:979px) 100vw, 387px" type="image/webp"><img src="img/moment-japan-garden.jpg" alt="Японский сад с прудом и соснами на фоне небоскрёбов Токио" width="960" height="640" loading="lazy" decoding="async"></picture></figure><figure style="--col:1 / 4;--shift:2rem"><picture><source srcset="img/moment-bhutan-yaks-360.webp 360w, img/moment-bhutan-yaks-640.webp 640w, img/moment-bhutan-yaks-960.webp 960w" sizes="(max-width:979px) 50vw, 290px" type="image/webp"><img src="img/moment-bhutan-yaks.jpg" alt="Мотоциклы группы едут по горной дороге среди яков" width="960" height="1200" loading="lazy" decoding="async"></picture></figure><figure style="--col:5 / 8;--shift:0"><picture><source srcset="img/moment-wudang-stairs-360.webp 360w, img/moment-wudang-stairs-640.webp 640w, img/moment-wudang-stairs-960.webp 960w" sizes="(max-width:979px) 50vw, 290px" type="image/webp"><img src="img/moment-wudang-stairs.jpg" alt="Крутая каменная лестница между стенами храма в тумане, на ступенях трое из группы" width="960" height="1200" loading="lazy" decoding="async"></picture></figure><figure class="wide" style="--col:8 / 13;--shift:3rem"><picture><source srcset="img/moment-bhutan-morning-360.webp 360w, img/moment-bhutan-morning-640.webp 640w, img/moment-bhutan-morning-960.webp 960w" sizes="(max-width:979px) 100vw, 483px" type="image/webp"><img src="img/moment-bhutan-morning.jpg" alt="Райдеры в шлемах на мотоциклах перед выездом" width="960" height="640" loading="lazy" decoding="async"></picture></figure></div>
   </div>
-</section>
-
-<section class="wrap manifesto">
-  <p class="manifesto-text">В каждой поездке есть время,<br>которым вы распоряжаетесь сами.</p>
-</section>
-
-<section class="wrap meaning" id="shunyata" aria-labelledby="meaning-title">
-  <div class="meaning-text">
-    <h2 id="meaning-title">Почему «Шуньята»</h2>
-    <p>Название мы взяли из санскрита. В буддийской традиции śūnyatā выражает мысль о том, что всё возникает благодаря причинам и условиям.</p><p>Один и тот же перевал выглядит иначе на рассвете и в полдень. А монастырь порой запоминается одним разговором. Мы оставляем в маршруте время, чтобы присмотреться к месту и поговорить с людьми, которые там живут.</p><p class="meaning-zero"><svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" pathLength="100"/></svg><span>Круг в нашем знаке отсылает к слову śūnya. Так в индийской математике называли ноль.</span></p>
-  </div>
-  <figure><div class="meaning-photo" style="--rx:48.3%;--ry:20%;--rd:24%"><picture><source srcset="img/moment-himalaya-sunrise-360.webp 360w, img/moment-himalaya-sunrise-640.webp 640w, img/moment-himalaya-sunrise-960.webp 960w" sizes="(max-width:979px) 100vw, 680px" type="image/webp"><img src="img/moment-himalaya-sunrise.jpg" alt="Группа на утренней практике на рассвете, руки подняты к солнцу над гималайской долиной" width="960" height="640" loading="lazy" decoding="async"></picture><svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" pathLength="100"/></svg></div><figcaption>Рассвет в Гималаях</figcaption></figure>
 </section>
 
 <section class="wrap about" id="about" aria-labelledby="about-title">
@@ -728,7 +731,7 @@ footer a{color:var(--ink-soft)}
 
 <footer class="wrap">
   <span>Клуб путешествий Шуньята · Андрей Баранов · 2026–2027. Места и цены на 5 ноября 2026.</span>
-  <span>Фото с Wikimedia Commons, кадрировано: Бали: <a href="https://commons.wikimedia.org/w/index.php?curid=60538665" target="_blank" rel="noopener">Putu Andika Panendra</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>; Шангри-Ла: <a href="https://commons.wikimedia.org/w/index.php?curid=72452742" target="_blank" rel="noopener">Luca Casartelli</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>; Кайлас: <a href="https://commons.wikimedia.org/wiki/File:Kailash-Tibet-27-Sept-2018.jpg" target="_blank" rel="noopener">Tibetissimo</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>; Ко Ронг Самлоем: <a href="https://commons.wikimedia.org/wiki/File:Cambodia_island_paradise_koh_rong_sanloem.jpg" target="_blank" rel="noopener">Wikirictor</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>. Остальные снимки из материалов поездок.</span>
+  <span>Фото с Wikimedia Commons, кадрировано: Бали: <a href="https://commons.wikimedia.org/w/index.php?curid=60538665" target="_blank" rel="noopener">Putu Andika Panendra</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>; Шангри-Ла: <a href="https://commons.wikimedia.org/w/index.php?curid=72452742" target="_blank" rel="noopener">Luca Casartelli</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>; Кайлас: <a href="https://commons.wikimedia.org/wiki/File:Kailash-Tibet-27-Sept-2018.jpg" target="_blank" rel="noopener">Tibetissimo</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>; Ко Ронг Самлоем: <a href="https://commons.wikimedia.org/wiki/File:Cambodia_island_paradise_koh_rong_sanloem.jpg" target="_blank" rel="noopener">Wikirictor</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>; Гималаи, обложка: <a href="https://commons.wikimedia.org/wiki/File:Gokyo_Lake,_Arakamtse,_Cholatse,_Nepal,_Himalayas.jpg" target="_blank" rel="noopener">Vyacheslav Argenberg</a>, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. Остальные снимки из материалов поездок.</span>
 </footer>
 
 <a class="side-cta" href="https://t.me/vsemaya?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%9F%D0%BE%D0%BC%D0%BE%D0%B3%D0%B8%D1%82%D0%B5%20%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D1%82%D1%8C%20%D0%BF%D0%BE%D0%B5%D0%B7%D0%B4%D0%BA%D1%83." target="_blank" rel="noopener">Подобрать поездку</a>

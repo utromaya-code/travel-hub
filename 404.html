@@ -24,7 +24,7 @@
 @font-face{font-family:"Onest";font-style:normal;font-weight:400 600;font-display:swap;src:url(fonts/onest-latin.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 
 /* Клуб путешествий Шуньята: фотографическая обложка, каталог поездок, подробности маршрутов,
-   манифест и «Почему Шуньята», снимки прошлых поездок, о клубе. */
+   «Почему Шуньята», снимки прошлых поездок, о клубе. */
 :root{
   --paper:#F7F4EE; --surface:#FFFDF8; --ink:#211D19; --ink-soft:#585048; --line:#D9D1C6;
   --stamp:#873B30; --stamp-wash:rgba(135,59,48,.08);
@@ -225,6 +225,9 @@ picture{display:contents}
 .btn-ghost{border:1.5px solid var(--ink);color:var(--ink)}
 .btn-ghost:hover{background:var(--ink);color:var(--paper)}
 .aside .btn-primary{margin-top:.35rem}
+.trip-contacts{display:grid;gap:.8rem;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--line)}
+.trip-contacts p{margin:0;color:var(--ink-soft);line-height:1.5}
+.trip-contacts a{font-weight:600;text-underline-offset:.2em}
 .micro{margin:0;font-size:.82rem;line-height:1.45;color:var(--ink-soft);text-align:center}
 .more{justify-self:center;margin-top:.35rem;font:500 .95rem/1.4 var(--f-body);color:var(--ink);text-align:center;
   text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.3em;text-decoration-color:var(--line);
@@ -283,8 +286,6 @@ picture{display:contents}
 .principles li p{margin:0;color:var(--ink-soft);line-height:1.6}
 
 /* Фраза о свободном времени в маршруте */
-.manifesto{padding-block:clamp(5rem,12vw,9rem)}
-.manifesto-text{margin:0;max-width:22ch;font:400 clamp(2rem,5.4vw,4.3rem)/1.08 var(--f-display);letter-spacing:-.02em;text-wrap:balance}
 
 /* Знак клуба: тонкое кольцо с разрывом */
 .ring{display:block;overflow:visible;pointer-events:none}
